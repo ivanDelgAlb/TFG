@@ -12,7 +12,7 @@ def obtener_informacion():
 
     fecha_actual = datetime.now()
     # Crear el nombre del fichero con el timestamp
-    nombre_archivo = fecha_actual.strftime("%d/%m/%Y_%H:%M:%S.txt")
+    nombre_archivo = fecha_actual.strftime("%d-%m-%Y_%H-%M-%S.txt")
 
     for backend in backends:
         try:
@@ -53,5 +53,5 @@ schedule.every(2).hours.do(obtener_informacion)
 while True:
     print("Esperando próxima ejecución...")
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(60)
 

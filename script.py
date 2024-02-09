@@ -3,39 +3,36 @@ from datetime import datetime
 import schedule
 import time
 
-
 def obtener_informacion():
-        # Cargar tu cuenta de IBM Quantum Experience
-    # Asegúrate de reemplazar 'tu_token' con tu token real
+    # Cargar el proveedor de IBM Quantum
     provider = IBMProvider(token='4fdcd337fa47374d321d5f6d9fcd74c771cdc846e23e51f7d1256ce4839a44dfbc543b009a3fd6111ce286e9ec69b15e943a4a2f5b15291c98394127a22c82df')
 
-    # Obtener la lista de backends disponibles y operativos
-    backends = provider.backends(simulator=False, operational=True)
+    # Obtener la lista de backends disponibles
+    backends = provider.backends(simulator=False)
 
     fecha_actual = datetime.now()
-    nombre_archivo = fecha_actual.strftime("%d-%m-%Y_%H;%M;%S.txt")
+    # Crear el nombre del fichero con el timestamp
+    nombre_archivo = fecha_actual.strftime("%d/%m/%Y_%H:%M:%S.txt")
 
     for backend in backends:
         try:
-            # Obtener información actualizada del backend
+            # Obtener información del backend
             backend_obtenido = provider.get_backend(name=backend.name)
-            
+
             partes = backend_obtenido.backend_version.split('.')
             primer_numero = int(partes[0])
-
             # Verificar si el primer número es 1 o 2
             if primer_numero in [1, 2]:
                 with open(nombre_archivo, 'w') as archivo:
                     try:
                         properties = backend_obtenido.properties()
-                        #print("Escribiendo:", properties.to_dict())
                         archivo.write(str(properties.to_dict()))
                     except TypeError as e:
                         print(f"Error al escribir propiedades: {e}")
 
             # Verificar si el primer número es 2
             if primer_numero == 2:
-                with open(nombre_archivo, 'a') as archivo:  # Usar 'a' para agregar al archivo existente
+                with open(nombre_archivo, 'a') as archivo:
                     configuration = backend_obtenido.configuration()
                     archivo.write(str(configuration.to_dict()))
 
@@ -43,24 +40,18 @@ def obtener_informacion():
             #with open(nombre_archivo, 'w') as archivo:  # Usar 'a' para agregar al archivo existente
             #      qubitProperties = backend_obtenido.qubit_properties(qubit)
             #     archivo.write(str(qubitProperties.to_dict()))
-
         except Exception as e:
             print(f"Error: {e}")
 
-
 #Agregar registro de inicio
 print("Programa iniciado.")
-
-# Ejecutar inmediatamente al inicio
-obtener_informacion()
 
 # Programar la ejecución cada dos horas
 schedule.every(2).hours.do(obtener_informacion)
 
 # Bucle principal
 while True:
-    # Agregar registro de espera
     print("Esperando próxima ejecución...")
     schedule.run_pending()
-    # Considerar ajustar el tiempo de espera según tus necesidades
-    time.sleep(60)  # Esperar 1 minuto antes de verificar de nuevo
+    time.sleep(1)
+

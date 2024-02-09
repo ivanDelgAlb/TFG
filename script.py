@@ -53,5 +53,5 @@ schedule.every(2).hours.do(obtener_informacion)
 while True:
     print("Esperando próxima ejecución...")
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(60)
 

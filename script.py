@@ -2,6 +2,7 @@ from qiskit_ibm_provider import IBMProvider
 from datetime import datetime
 import schedule
 import time
+import json
 
 def obtener_informacion():
     # Cargar el proveedor de IBM Quantum
@@ -12,7 +13,9 @@ def obtener_informacion():
 
     fecha_actual = datetime.now()
     # Crear el nombre del fichero con el timestamp
-    nombre_archivo = fecha_actual.strftime("%d-%m-%Y_%H-%M-%S.txt")
+    nombre_archivo = fecha_actual.strftime("%Y-%m-%d_%H-%M-%S.txt")
+
+    lista_backends = []
 
     for backend in backends:
         try:
@@ -21,30 +24,63 @@ def obtener_informacion():
 
             partes = backend_obtenido.backend_version.split('.')
             primer_numero = int(partes[0])
-            # Verificar si el primer número es 1 o 2
-            if primer_numero in [1, 2]:
-                with open(nombre_archivo, 'w') as archivo:
-                    try:
-                        properties = backend_obtenido.properties()
-                        archivo.write(str(properties.to_dict()))
-                    except TypeError as e:
-                        print(f"Error al escribir propiedades: {e}")
+
+            # Crear diccionario para el backend
+            diccionario_backend = {}
+            diccionario_backend['name'] = backend.name
+            diccionario_backend['version'] = primer_numero
+
+            # Saco las propiedades
+            properties = backend_obtenido.properties().to_dict()
+
+            # Formateo la fecha para que sea JSON serializable
+            last_update_date = properties['last_update_date'].strftime('%Y-%m-%d %H:%M:%S')
+            properties['last_update_date'] = last_update_date
+
+            # Eliminar la fecha de los qubits
+            qubits = properties['qubits']
+            qubits_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in qubits[0]]
+            properties['qubits'] = qubits_sin_fecha
+
+            # Eliminar la fecha de gate
+            gates = properties['gates']
+            for gate in gates:
+                parameters = gate['parameters']
+                parameters_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in parameters]
+                gate['parameters'] = parameters_sin_fecha
+            properties['gates'] = gates
+
+            # Eliminar la fecha de general
+            general = properties['general']
+            general_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in general]
+            properties['general'] = general_sin_fecha
+
+            diccionario_backend['properties'] = properties
 
             # Verificar si el primer número es 2
             if primer_numero == 2:
-                with open(nombre_archivo, 'a') as archivo:
-                    configuration = backend_obtenido.configuration()
-                    archivo.write(str(configuration.to_dict()))
+                diccionario_backend['configuration'] = backend_obtenido.configuration()
+            else:
+                diccionario_backend['configuration'] = None
 
+            # Meter el diccionario en la lista
+            lista_backends.append(diccionario_backend)
 
-            #with open(nombre_archivo, 'w') as archivo:  # Usar 'a' para agregar al archivo existente
-            #      qubitProperties = backend_obtenido.qubit_properties(qubit)
-            #     archivo.write(str(qubitProperties.to_dict()))
         except Exception as e:
             print(f"Error: {e}")
+            print("Fecha: " + str(fecha_actual))
+            print("Backend: " + backend.name)
+
+    # Escribir en el fichero la lista en formato JSON
+    with open(nombre_archivo, 'a') as archivo:
+        for backend_info in lista_backends:
+            backend_info['properties']['last_update_date'] = str(backend_info['properties']['last_update_date'])
+        json.dump(lista_backends, archivo)
 
 #Agregar registro de inicio
 print("Programa iniciado.")
+
+obtener_informacion()
 
 # Programar la ejecución cada dos horas
 schedule.every(2).hours.do(obtener_informacion)

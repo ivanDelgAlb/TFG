@@ -13,7 +13,7 @@ def obtener_informacion():
 
     fecha_actual = datetime.now()
     # Crear el nombre del fichero con el timestamp
-    nombre_archivo = fecha_actual.strftime("%Y-%m-%d_%H-%M-%S.txt")
+    nombre_archivo = fecha_actual.strftime("%Y-%m-%d_%H-%M-%S.json")
 
     lista_backends = []
 

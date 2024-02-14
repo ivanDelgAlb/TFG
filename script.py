@@ -21,7 +21,7 @@ def obtener_informacion():
         try:
             # Obtener información del backend
             backend_obtenido = provider.get_backend(name=backend.name)
-
+            
             partes = backend_obtenido.backend_version.split('.')
             primer_numero = int(partes[0])
 
@@ -39,21 +39,21 @@ def obtener_informacion():
 
             # Eliminar la fecha de los qubits
             qubits = properties['qubits']
-            qubits_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in qubits[0]]
-            properties['qubits'] = qubits_sin_fecha
+            qubits_serializados = [[{'date': item['date'].strftime('%Y-%m-%d %H:%M:%S'), 'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in qubit] for qubit in qubits]
+            properties['qubits'] = qubits_serializados
 
             # Eliminar la fecha de gate
             gates = properties['gates']
             for gate in gates:
                 parameters = gate['parameters']
-                parameters_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in parameters]
-                gate['parameters'] = parameters_sin_fecha
+                parameters_serializados = [{'date': item['date'].strftime('%Y-%m-%d %H:%M:%S'), 'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in parameters]
+                gate['parameters'] = parameters_serializados
             properties['gates'] = gates
 
             # Eliminar la fecha de general
             general = properties['general']
-            general_sin_fecha = [{'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in general]
-            properties['general'] = general_sin_fecha
+            general_serializados = [{'date': item['date'].strftime('%Y-%m-%d %H:%M:%S'), 'name': item['name'], 'unit': item['unit'], 'value': item['value']} for item in general]
+            properties['general'] = general_serializados
 
             diccionario_backend['properties'] = properties
 

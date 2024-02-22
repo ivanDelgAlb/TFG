@@ -19,7 +19,7 @@ def obtener_informacion():
 
     for backend in backends:
         try:
-            # Obtener información del backend
+            # Obtener informacion del backend
             backend_obtenido = provider.get_backend(name=backend.name)
             
             partes = backend_obtenido.backend_version.split('.')
@@ -57,7 +57,7 @@ def obtener_informacion():
 
             diccionario_backend['properties'] = properties
 
-            # Verificar si el primer número es 2
+            # Verificar si el primer numero es 2
             if primer_numero == 2:
                 diccionario_backend['configuration'] = backend_obtenido.configuration()
             else:
@@ -67,9 +67,11 @@ def obtener_informacion():
             lista_backends.append(diccionario_backend)
 
         except Exception as e:
-            print(f"Error: {e}")
-            print("Fecha: " + str(fecha_actual))
-            print("Backend: " + backend.name)
+            fichero_errores = "errores.txt"
+            with open(fichero_errores, 'a') as errores:
+                errores.write("Error: {}\n".format(e))
+                errores.write("Fecha: " + str(fecha_actual) + "\n")
+                errores.write("Backend: " + backend.name + "\n")
 
     # Escribir en el fichero la lista en formato JSON
     with open(nombre_archivo, 'a') as archivo:
@@ -78,16 +80,19 @@ def obtener_informacion():
         json.dump(lista_backends, archivo)
 
 #Agregar registro de inicio
-print("Programa iniciado.")
+fichero_salidas = "registro.txt"
+with open(fichero_salidas, 'a') as fichero:
+    fichero.write("Programa iniciado.\n")
 
 obtener_informacion()
 
-# Programar la ejecución cada dos horas
+# Programar la ejecucion cada dos horas
 schedule.every(2).hours.do(obtener_informacion)
 
 # Bucle principal
 while True:
-    print("Esperando próxima ejecución...")
+    with open(fichero_salidas, 'a') as fichero:
+        fichero.write("Esperando proxima ejecucion.\n")
     schedule.run_pending()
     time.sleep(60)
 

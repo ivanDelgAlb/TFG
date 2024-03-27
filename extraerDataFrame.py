@@ -1,21 +1,22 @@
 from pymongo import MongoClient
 import csv
 
-mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+mongo_uri = 'mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/'
 client = MongoClient(mongo_uri)
 
-collection_name_Origen = "dataFrame"
+collection_name_Origen = 'dataFrame'
 
-db = client["TFG"]
+db = client['TFG']
 
 datos = db[collection_name_Origen].find({'name': 'ibm_brisbane'})
 
 dataFrame = [
-    ['ds', 'y']
+    ['ds', 'y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0']
 ]
 
 for item in datos[0]['data']:
-    dataFrame.append([item['date'], item['T1']['media']])
+    dataFrame.append([item['date'], item['T1']['media'], item['T2']['media'], item['prob_meas0_prep1']['media'], item['prob_meas1_prep0']['media']
+                    ])
 
 nombre_archivo = 'datos.csv'
 

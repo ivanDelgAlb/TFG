@@ -23,6 +23,7 @@ set_log_level("ERROR")
 model.add_lagged_regressor("T2")
 model.add_lagged_regressor("probMeas0Prep1")
 model.add_lagged_regressor("probMeas1Prep0")
+model.add_lagged_regressor("readout_error")
 
 model.set_plotting_backend("plotly-static")
 

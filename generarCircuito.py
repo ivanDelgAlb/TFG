@@ -58,5 +58,4 @@ def generar_circuito(n_qubits, profundidad):
 
     return circuito
 
-
 #circuito = generar_circuito(127, 5)

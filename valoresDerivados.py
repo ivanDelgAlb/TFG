@@ -7,7 +7,7 @@ client = MongoClient(mongo_uri)
 
 # Nombre de la colección en MongoDB Compass
 collection_name_Destino = "derivado"
-collection_name_Origen = "procesado"
+collection_name_Origen = "data"
 
 # Conectarse a la base de datos en MongoDB Atlas
 db = client["TFG"]

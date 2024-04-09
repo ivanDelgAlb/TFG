@@ -1,21 +1,24 @@
 from pymongo import MongoClient
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
-client = MongoClient(mongo_uri)
+mongo_uri_origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+mongo_uri_destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+client_origen = MongoClient(mongo_uri_origen)
+client_destino = MongoClient(mongo_uri_destino)
 
 # Nombre de la colección en MongoDB Compass
-collection_name_Destino = "procesado"
+collection_name_Destino = "derivado"
 collection_name_Origen = "data"
 
 # Conectarse a la base de datos en MongoDB Atlas
-db = client["TFG"]
+db_origen = client_origen["TFG"]
+db_destino = client_destino["TFG"]
 
 # Borro la colección por si tenía algún dato
-db[collection_name_Destino].drop()
+db_destino[collection_name_Destino].drop()
 print("Colección borrada con éxito")
 
-datos = db[collection_name_Origen].find()
+datos = db_origen[collection_name_Origen].find()
 #numero_elementos = len(datos)
 #print(numero_elementos)
 for dato in datos:
@@ -45,7 +48,7 @@ for dato in datos:
     dato.pop('configuration', None)
     
     # Insertar documento modificado en la colección de destino
-    collection = db[collection_name_Destino]
+    collection = db_destino[collection_name_Destino]
     collection.insert_one(dato)
 
 print("Se han seleccionado los datos correctamente")

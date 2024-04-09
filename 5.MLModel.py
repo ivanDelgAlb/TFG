@@ -45,6 +45,15 @@ def create_model(fichero):
 
 def predict(n_steps):
     try:
+        
+        '''
+        model_T1 = create_model('dataframeT1.csv')
+        model_T2 = create_model('dataframeT2.csv')
+        model_Prob0 = create_model('dataframeProb0.csv')
+        model_Prob1 = create_model('dataframeProb1.csv')
+        model_error = create_model('dataframeError.csv')
+        '''
+
         with open('modelT1.pkl', "rb") as file:
             model_T1 = pickle.load(file)
         with open('modelT2.pkl', "rb") as file:
@@ -126,3 +135,5 @@ def predict(n_steps):
         raise FileNotFoundError("No se ha encontrado uno de los modelos")
 
 predict(4)
+
+print("Modelo creado con éxito")

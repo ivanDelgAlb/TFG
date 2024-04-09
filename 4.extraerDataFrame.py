@@ -81,3 +81,5 @@ with open(nombre_archivo, 'w', newline='') as archivo_csv:
     
     for fila in dataFrame_error:
         escritor_csv.writerow(fila)
+
+print("Extracción finalizada")

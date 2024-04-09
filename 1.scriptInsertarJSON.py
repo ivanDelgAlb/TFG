@@ -1,5 +1,6 @@
 import requests
 from pymongo import MongoClient
+from datetime import datetime
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
 mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
@@ -15,7 +16,7 @@ collection_name = "data"
 
 
 github_username = "marinasayago"
-github_token = "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"
+github_token = "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"
 
 # Conectarse a la base de datos en MongoDB Atlas
 db = client["TFG"]
@@ -48,6 +49,17 @@ for file in files:
         response = requests.get(raw_url, auth=(github_username, github_token))
         response.raise_for_status()  # Verificar si hay errores en la respuesta HTTP
         json_data = response.json()
+
+        fecha_str = file.split(".")[0].replace("_", " ")
+
+        # Convertir la cadena de fecha en un objeto datetime
+        fecha_objeto = datetime.strptime(fecha_str, "%Y-%m-%d %H-%M-%S")
+
+        # Formatear la fecha en el formato deseado
+        fecha_formateada = fecha_objeto.strftime("%Y-%m-%d %H:%M:%S")
+
+        for documento in json_data:
+            documento['date'] = fecha_formateada
         
         # Insertar datos en la colección de MongoDB Compass
         collection = db[collection_name]

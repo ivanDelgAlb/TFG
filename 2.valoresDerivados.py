@@ -94,7 +94,7 @@ for dato in datos:
     gates = dato["properties"]["gates"]
     gates_derivados = []
         
-    atributos = ["T1", "T2", "prob_meas0_prep1", "prob_meas1_prep0", "readout_length","gate_error", "gate_length"] 
+    atributos = ["T1", "T2", "prob_meas0_prep1", "prob_meas1_prep0", "readout_error","gate_error", "gate_length"] 
     nqubits = [1, 2]
 
     for atributo in atributos:
@@ -125,6 +125,10 @@ for dato in datos:
 
     dato['properties']['qubits'] = qubits_derivados
     dato['properties']['gates'] = gates_derivados
+
+    dato['properties'].pop('general', None)
+    dato['properties'].pop('general_qlists', None)
+    dato.pop('configuration', None)
 
 
     collection = db[collection_name_Destino]

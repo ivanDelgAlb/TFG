@@ -2,17 +2,21 @@ from pymongo import MongoClient
 import statistics
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
-client = MongoClient(mongo_uri)
+mongo_uri_Origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+client_Origen = MongoClient(mongo_uri_Origen)
+
+mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+client_Destino = MongoClient(mongo_uri_Destino)
 
 # Nombre de la colección en MongoDB Compass
 collection_name_Destino = "derivado"
 collection_name_Origen = "data"
 
 # Conectarse a la base de datos en MongoDB Atlas
-db = client["TFG"]
+db_Origen = client_Origen["TFG"]
+db_Destino = client_Destino["TFG"]
 
-db[collection_name_Destino].drop()
+db_Destino[collection_name_Destino].drop()
 print("Colección borrada con éxito")
 
 def calcMedia(datos, nqubit, atributo):
@@ -84,7 +88,7 @@ def calcDesviacion(datos, nqubit, atributo):
     return desviacion_estandar
 
     
-datos = db[collection_name_Origen].find()
+datos = db_Origen[collection_name_Origen].find()
 
 for dato in datos:
 
@@ -131,7 +135,7 @@ for dato in datos:
     dato.pop('configuration', None)
 
 
-    collection = db[collection_name_Destino]
+    collection = db_Destino[collection_name_Destino]
     collection.insert_one(dato)
 
    

@@ -126,11 +126,11 @@ def predict(n_steps):
     except FileNotFoundError:
         raise FileNotFoundError("No se ha encontrado uno de los modelos")
 
-create_model('dataframeT1.csv')
-create_model('dataframeT2.csv')
-create_model('dataframeProb0.csv')
-create_model('dataframeProb1.csv')
-create_model('dataframeError.csv')
-predict(4)
+#create_model('dataframeT1.csv')
+#create_model('dataframeT2.csv')
+#create_model('dataframeProb0.csv')
+#create_model('dataframeProb1.csv')
+#create_model('dataframeError.csv')
+predict(2)
 
 print("Modelo creado con éxito")

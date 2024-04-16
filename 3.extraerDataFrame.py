@@ -103,3 +103,7 @@ maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"]
 for maquina in maquinas:
     dataFrame(maquina)
 
+<<<<<<< Updated upstream
+=======
+dataFrame("ibm_brisbane")
+>>>>>>> Stashed changes

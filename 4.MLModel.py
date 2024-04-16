@@ -44,7 +44,7 @@ def create_model(fichero):
 
 
 def predict(n_steps, nombreMaquina):
-    nombreMaquina = nombreMaquina.split("_")[1].capitalize();
+    nombreMaquina = nombreMaquina.split("_")[1].capitalize()
     try:
 
         with open('modelT1' + nombreMaquina + '.pkl', "rb") as file:

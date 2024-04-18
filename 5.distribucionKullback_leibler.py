@@ -5,6 +5,48 @@ from generarCircuito import generate_circuit
 from qiskit_aer import AerSimulator
 from math import log
 from qiskit.providers.models.backendproperties import BackendProperties
+from qiskit.providers import Backend
+
+
+def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error, date, backend):
+    new_values = {
+        'T1': T1,
+        'T2': T2,
+        'prob_meas0_prep1': prob_meas0_prep1,
+        'prob_meas1_prep0': prob_meas1_prep0,
+        'readout_error': readout_error
+    }
+
+    configuration = backend.configuration()
+    properties = backend.properties()
+    qubits = properties.to_dict()['qubits']
+    gates = properties.to_dict()['gates']
+    general = properties.to_dict()['general']
+
+    new_qubits = []
+    for list in qubits:
+        new_qubit_data = []
+        for dictionary in list:
+            if dictionary['name'] in new_values:
+                dictionary['value'] = new_values[dictionary['name']]
+            new_qubit_data.append(dictionary)
+        new_qubits.append(new_qubit_data)
+
+    new_data = {
+        'backend_name': backend.name,
+        'backend_version': properties.backend_version,
+        'last_update_date': date,
+        'qubits': new_qubits,
+        'gates': gates,
+        'general': general
+    }
+    new_properties = BackendProperties.from_dict(new_data)
+
+    new_backend = backend
+    new_backend.configuration = configuration
+    new_backend.properties = new_properties
+
+    return new_backend
 
 
 def calculate_configuration_error(circuit, configuration):
@@ -54,6 +96,7 @@ def calculate_configuration_error(circuit, configuration):
     print("Divergence calculated")
 
     return divergence
+
 
 # properties = BackendProperties()
 configuration = {'backend_name': 'ibm_brisbane'}

@@ -25,7 +25,7 @@ def dataFrame(nombre_maquina):
         ['ds', 'y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'T1']
     ]
     
-    formatearNombre = nombre_maquina.split("_")[1].capitalize();
+    formatearNombre = nombre_maquina.split("_")[1].capitalize()
 
     
     mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
@@ -103,7 +103,5 @@ maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"]
 for maquina in maquinas:
     dataFrame(maquina)
 
-<<<<<<< Updated upstream
-=======
 dataFrame("ibm_brisbane")
->>>>>>> Stashed changes
+

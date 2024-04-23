@@ -14,15 +14,15 @@ def dataFrame(nombre_maquina):
     ]
 
     dataFrame_Prob0 = [
-        ['ds', 'y', 'T2', 'T1', 'probMeas1Prep0', 'readout_error']
+        ['ds', 'y', 'T1', 'T2', 'probMeas1Prep0', 'readout_error']
     ]
 
     dataFrame_Prob1 = [
-        ['ds', 'y', 'T2', 'probMeas0Prep1', 'T1', 'readout_error']
+        ['ds', 'y', 'T1', 'T2', 'probMeas0Prep1','readout_error']
     ]
 
     dataFrame_error = [
-        ['ds', 'y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'T1']
+        ['ds', 'y', 'T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0']
     ]
     
     formatearNombre = nombre_maquina.split("_")[1].capitalize();
@@ -103,7 +103,3 @@ maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"]
 for maquina in maquinas:
     dataFrame(maquina)
 
-<<<<<<< Updated upstream
-=======
-dataFrame("ibm_brisbane")
->>>>>>> Stashed changes

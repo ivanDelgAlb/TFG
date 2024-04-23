@@ -25,7 +25,7 @@ def dataFrame(nombre_maquina):
         ['ds', 'y', 'T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0']
     ]
     
-    formatearNombre = nombre_maquina.split("_")[1].capitalize();
+    formatearNombre = nombre_maquina.split("_")[1].capitalize()
 
     
     mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"

@@ -49,7 +49,7 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
     return new_backend
 
 
-def calculate_configuration_error(circuit, configuration):
+def calculate_configuration_error(circuit, backend):
     """
     Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
     :param circuit: Quantum circuit from qiskit
@@ -62,15 +62,11 @@ def calculate_configuration_error(circuit, configuration):
 
     shots = 1000
 
-    service = QiskitRuntimeService(channel='ibm_quantum',
-                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
-    fake_backend = service.get_backend(configuration['backend_name'])
+    noise_model = NoiseModel.from_backend(backend)
 
-    noise_model = NoiseModel.from_backend(fake_backend)
-
-    transpiled_circuit = transpile(circuit, backend=fake_backend)
-
-    real_machine = AerSimulator.from_backend(fake_backend)
+    transpiled_circuit = transpile(circuit, backend=backend)
+    real_backend = generate_backend_configuration(225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656, 0.024343307086614172, '2024-02-27T19:38:28', backend)
+    real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
 
@@ -80,7 +76,7 @@ def calculate_configuration_error(circuit, configuration):
     # ----------------------------------------------------------------------------------------
 
     noise_model.reset()
-    ideal_machine = AerSimulator.from_backend(fake_backend)
+    ideal_machine = AerSimulator.from_backend(real_backend)
 
     job_ideal_machine = ideal_machine.run(transpiled_circuit, shots=shots)
     counts_ideal_machine = job_ideal_machine.result().get_counts()
@@ -98,7 +94,8 @@ def calculate_configuration_error(circuit, configuration):
     return divergence
 
 
-# properties = BackendProperties()
-configuration = {'backend_name': 'ibm_brisbane'}
+service = QiskitRuntimeService(channel='ibm_quantum',
+                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
+fake_backend = service.get_backend('ibm_brisbane')
 circuit = generate_circuit(4, 5)
-print(calculate_configuration_error(circuit, configuration))
+print(calculate_configuration_error(circuit, fake_backend))

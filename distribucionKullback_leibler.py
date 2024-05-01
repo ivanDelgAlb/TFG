@@ -55,7 +55,7 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
     return new_backend
 
 
-def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error, date):
+def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_gates, date):
     """
     Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
     :param circuit: Quantum circuit from qiskit
@@ -71,7 +71,7 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     noise_model = NoiseModel.from_backend(backend)
 
     transpiled_circuit = transpile(circuit, backend=backend)
-    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error, date, backend)
+    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_gates, date, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
@@ -98,7 +98,7 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     print("Divergence calculated")
 
     return divergence
-
+'''
 import pandas as pd
 from pymongo import MongoClient
 import csv
@@ -183,7 +183,6 @@ for i in range(5):
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
         error_qubits = item['properties']['qubits'][4]['media']
-        error_puertas = 
 
         kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
 
@@ -219,3 +218,4 @@ for i in range(5):
 
         dataframe_perceptron_kyoto.append([])
 
+'''

@@ -13,7 +13,7 @@ def create_model(fichero):
     substring = fichero[start:end]
 
     # Especifica el índice donde se dividirán los datos (90% entrenamiento, 10% validacion)
-    train_index = int(len(df) * 0.9)
+    train_index = int(len(df) * 0.8)
 
     # Dividir el DataFrame en conjuntos de entrenamiento y prueba
     df_train = df.iloc[:train_index]
@@ -22,8 +22,7 @@ def create_model(fichero):
     # Se crea el modelo 
     model = NeuralProphet(
         n_forecasts=1,
-        learning_rate=0.01,
-        quantiles=[0.05, 0.95]
+        learning_rate=0.1
     )
 
     set_log_level("ERROR")
@@ -37,6 +36,7 @@ def create_model(fichero):
     model.set_plotting_backend("plotly-static")
 
     metrics = model.fit(df=df_train, freq="H", validation_df=df_test)
+    print(metrics)
 
     file_name = 'model' + substring + '.pkl'
     with open(file_name, "wb") as file:
@@ -121,12 +121,16 @@ def predict(n_steps, nombreMaquina):
                 future_Prob0 = model_Prob0.make_future_dataframe(df=future_Prob0, n_historic_predictions=True, periods=n_steps)
                 future_Prob1 = model_Prob1.make_future_dataframe(df=future_Prob1, n_historic_predictions=True, periods=n_steps)
                 future_error = model_error.make_future_dataframe(df=future_error, n_historic_predictions=True, periods=n_steps)
-        
+
+        '''
         model_T1.highlight_nth_step_ahead_of_each_forecast(1)
         model_T1.plot(forecast_future_T1[-12:])
+        '''
+        return future_T1, future_T2, future_Prob0, future_Prob1, future_error
 
     except FileNotFoundError:
         raise FileNotFoundError("No se ha encontrado uno de los modelos")
+
 
 maquinas = ["Brisbane", "Kyoto", "Osaka"] 
 ficheros = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
@@ -136,7 +140,12 @@ for maquina in maquinas:
         print("Maquina: " + maquina + ", fichero: " + fichero)
         csv = fichero + maquina + '.csv'
         create_model(csv)
-
-#predict(4, "ibm_Brisbane")
-
 print("Modelo creado con éxito")
+
+'''
+future_T1, future_T2, future_Prob0, future_Prob1, future_error = predict(4, "ibm_Brisbane")
+print(future_T1)
+'''
+
+
+

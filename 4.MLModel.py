@@ -5,7 +5,8 @@ import pickle
 
 def create_model(fichero):
     # Se leen los datos
-    df = pd.read_csv(fichero, encoding="latin1")
+    directorio = 'dataframes/'
+    df = pd.read_csv(directorio + fichero, encoding="latin1")
     columns = df.columns.to_list()
 
     start = fichero.find("dataframe") + len("dataframe")
@@ -36,9 +37,9 @@ def create_model(fichero):
     model.set_plotting_backend("plotly-static")
 
     metrics = model.fit(df=df_train, freq="H", validation_df=df_test)
-    print(metrics)
+    #print(metrics)
 
-    file_name = 'model' + substring + '.pkl'
+    file_name = 'models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
         pickle.dump(model, file)
 
@@ -46,23 +47,25 @@ def create_model(fichero):
 def predict(n_steps, nombreMaquina):
     nombreMaquina = nombreMaquina.split("_")[1].capitalize()
     try:
-
-        with open('modelT1' + nombreMaquina + '.pkl', "rb") as file:
+        directorio = 'models_neuralProphet'
+        with open(directorio + 'modelT1' + nombreMaquina + '.pkl', "rb") as file:
             model_T1 = pickle.load(file)
-        with open('modelT2' + nombreMaquina + '.pkl', "rb") as file:
+        with open(directorio + 'modelT2' + nombreMaquina + '.pkl', "rb") as file:
             model_T2 = pickle.load(file)
-        with open('modelProb0' + nombreMaquina + '.pkl', "rb") as file:
+        with open(directorio + 'modelProb0' + nombreMaquina + '.pkl', "rb") as file:
             model_Prob0 = pickle.load(file)
-        with open('modelProb1' + nombreMaquina + '.pkl', "rb") as file:
+        with open(directorio + 'modelProb1' + nombreMaquina + '.pkl', "rb") as file:
             model_Prob1 = pickle.load(file)
-        with open('modelError' + nombreMaquina + '.pkl', "rb") as file:
+        with open(directorio + 'modelError' + nombreMaquina + '.pkl', "rb") as file:
             model_error = pickle.load(file)
+        
+        directorio_dataframes = 'dataframes/'
 
-        df_T1 = pd.read_csv('dataframeT1' + nombreMaquina + '.csv', encoding="latin1")
-        df_T2 = pd.read_csv('dataframeT2' + nombreMaquina + '.csv', encoding="latin1")
-        df_Prob0 = pd.read_csv('dataframeProb0' + nombreMaquina + '.csv', encoding="latin1")
-        df_Prob1 = pd.read_csv('dataframeProb1' + nombreMaquina + '.csv', encoding="latin1")
-        df_error = pd.read_csv('dataframeError' + nombreMaquina + '.csv', encoding='latin1')
+        df_T1 = pd.read_csv(directorio_dataframes + 'dataframeT1' + nombreMaquina + '.csv', encoding="latin1")
+        df_T2 = pd.read_csv(directorio_dataframes + 'dataframeT2' + nombreMaquina + '.csv', encoding="latin1")
+        df_Prob0 = pd.read_csv(directorio_dataframes + 'dataframeProb0' + nombreMaquina + '.csv', encoding="latin1")
+        df_Prob1 = pd.read_csv(directorio_dataframes + 'dataframeProb1' + nombreMaquina + '.csv', encoding="latin1")
+        df_error = pd.read_csv(directorio_dataframes + 'dataframeError' + nombreMaquina + '.csv', encoding='latin1')
 
         model_T1.restore_trainer()
         model_T2.restore_trainer()

@@ -43,8 +43,9 @@ def dataFrame(nombre_maquina):
         dataFrame_Prob0.append([item['date'], item['properties']['qubits'][2]['media'], item['properties']['qubits'][0]['media'], item['properties']['qubits'][1]['media'], item['properties']['qubits'][3]['media'], item['properties']['qubits'][4]['media']])
         dataFrame_Prob1.append([item['date'], item['properties']['qubits'][3]['media'],  item['properties']['qubits'][0]['media'], item['properties']['qubits'][1]['media'], item['properties']['qubits'][2]['media'], item['properties']['qubits'][4]['media']])
         dataFrame_error.append([item['date'], item['properties']['qubits'][4]['media'],  item['properties']['qubits'][0]['media'], item['properties']['qubits'][1]['media'], item['properties']['qubits'][2]['media'], item['properties']['qubits'][3]['media']])
-
-    nombre_archivo = 'dataframeT1'+ formatearNombre + '.csv'
+    
+    directorio = 'dataframes/'
+    nombre_archivo = directorio + 'dataframeT1'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         
@@ -53,7 +54,7 @@ def dataFrame(nombre_maquina):
         for fila in dataFrame_T1:
             escritor_csv.writerow(fila)
 
-    nombre_archivo = 'dataframeT2'+ formatearNombre + '.csv'
+    nombre_archivo = directorio + 'dataframeT2'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         
@@ -62,7 +63,7 @@ def dataFrame(nombre_maquina):
         for fila in dataFrame_T2:
             escritor_csv.writerow(fila)
 
-    nombre_archivo = 'dataframeProb0'+ formatearNombre + '.csv'
+    nombre_archivo = directorio + 'dataframeProb0'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         
@@ -71,7 +72,7 @@ def dataFrame(nombre_maquina):
         for fila in dataFrame_Prob0:
             escritor_csv.writerow(fila)
 
-    nombre_archivo = 'dataframeProb1'+ formatearNombre + '.csv'
+    nombre_archivo = directorio + 'dataframeProb1'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         
@@ -80,7 +81,7 @@ def dataFrame(nombre_maquina):
         for fila in dataFrame_Prob1:
             escritor_csv.writerow(fila)
         
-    nombre_archivo = 'dataframeError'+ formatearNombre + '.csv'
+    nombre_archivo = directorio + 'dataframeError'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         

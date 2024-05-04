@@ -7,7 +7,7 @@ from math import log
 from qiskit.providers.models.backendproperties import BackendProperties
 
 
-def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_gates, date, backend):
+def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_one_qubit_gates, readout_error_two_qubit_gates, date, backend):
     new_values = {
         'T1': T1,
         'T2': T2,
@@ -33,10 +33,15 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
     
     new_gates = []
     for gate in gates:
-        for parameter in gate['parameters']:
-            if parameter['name'] == 'gate_error':
-                parameter['value'] = readout_error_gates
-        new_gates.append(gate)
+        if len(gate['qubits']) == 1:
+            for parameter in gate['parameters']:
+                if parameter['name'] == 'gate_error':
+                    parameter['value'] = readout_error_one_qubit_gates
+        else:
+            for parameter in gate['parameters']:
+                if parameter['name'] == 'gate_error':
+                    parameter['value'] = readout_error_two_qubit_gates
+    new_gates.append(gate)
 
     new_data = {
         'backend_name': backend.name,
@@ -55,7 +60,7 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
     return new_backend
 
 
-def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_gates, date):
+def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_one_qubit_gates, readout_error_two_qubit_gates, date):
     """
     Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
     :param circuit: Quantum circuit from qiskit
@@ -71,7 +76,7 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     noise_model = NoiseModel.from_backend(backend)
 
     transpiled_circuit = transpile(circuit, backend=backend)
-    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_gates, date, backend)
+    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_one_qubit_gates, readout_error_two_qubit_gates, date, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
@@ -98,7 +103,20 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     print("Divergence calculated")
 
     return divergence
+
 '''
+circuit = generate_circuit(15, 5)
+service = QiskitRuntimeService(channel='ibm_quantum',
+                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
+
+fake_backend_brisbane = service.get_backend('ibm_brisbane')
+fake_date = '2024-02-27T19:38:28'
+kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, 225.34260521453552,
+                                               145.04435990153732, 0.023973228346456682, 0.024713385826771656,
+                                               0.024343307086614172, 332.9217636223684, fake_date)
+print(kullback_error)
+'''
+
 import pandas as pd
 from pymongo import MongoClient
 import csv
@@ -116,16 +134,16 @@ fake_date = '2024-02-27T19:38:28'
 
 db = client["TFG"]
 
-datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"})
-datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"})
-datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"})
+datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(50)
+datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(50)
+datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(50)
 
 for i in range(5):
 
-    circuit = generate_circuit(5, 5)
+    circuit = generate_circuit(10, 5)
 
     dataframe_perceptron_brisbane = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_brisbane:
@@ -133,14 +151,16 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_brisbane.append([])
+        dataframe_perceptron_brisbane.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_kyoto = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_kyoto:
@@ -148,14 +168,16 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_kyoto, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_kyoto.append([])
+        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_osaka = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_osaka:
@@ -163,18 +185,20 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_osaka, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_kyoto.append([])
+        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
 for i in range(5):
 
-    circuit = generate_circuit(5, 10)
+    circuit = generate_circuit(10, 10)
 
     dataframe_perceptron_brisbane = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_brisbane:
@@ -182,14 +206,16 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error_qubits = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_brisbane.append([])
+        dataframe_perceptron_brisbane.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_kyoto = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_kyoto:
@@ -197,14 +223,16 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_kyoto, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_kyoto.append([])
+        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_osaka = [
-
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_osaka:
@@ -212,10 +240,10 @@ for i in range(5):
         T2 = item['properties']['qubits'][1]['media']
         probMeas0Prep1 = item['properties']['qubits'][2]['media']
         probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        error = item['properties']['qubits'][4]['media']
+        qubit_error = item['properties']['qubits'][4]['media']
+        one_qubit_error = item['properties']['gates'][0]['media']
+        two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_osaka, T1, T2, probMeas0Prep1, probMeas1Prep0, error, fake_date)
+        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, fake_date)
 
-        dataframe_perceptron_kyoto.append([])
-
-'''
+        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])

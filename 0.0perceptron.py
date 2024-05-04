@@ -2,8 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from keras import Sequential
 from keras.layers import Dense
-from generarCircuito import generate_circuit
-from distribucionKullback_leibler import calculate_configuration_error
+from generateCircuit import generate_circuit
+from distributionKullback import calculate_configuration_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
 
@@ -20,6 +20,9 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
     collection_name_Origen = "derivado"
 
     db = client["TFG"]
+
+    service = QiskitRuntimeService(channel='ibm_quantum',
+                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
     dataFrame = [
         ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error', 'divergence']

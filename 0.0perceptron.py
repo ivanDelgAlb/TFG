@@ -6,7 +6,7 @@ from generateCircuit import generate_circuit
 from calculateNoiseError import calculate_configuration_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
-
+from keras.models import load_model
 
 from pymongo import MongoClient
 import csv
@@ -66,7 +66,7 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
             dataFrame.append(fila)
             contador += 1
 
-        nombre_archivo = 'dataframe_'+ formatearNombre + '.csv'
+        nombre_archivo = 'dataframes/dataframe_'+ formatearNombre + '.csv'
 
         with open(nombre_archivo, 'w', newline='') as archivo_csv:
             escritor_csv = csv.writer(archivo_csv)
@@ -85,7 +85,45 @@ fake_backend = service.get_backend('ibm_brisbane')
 extraer_dataframe_normalizado(circuit, fake_backend)
 '''
 # Cargar el dataframe desde el archivo CSV
-dataFrame = pd.read_csv('dataframe_Brisbane.csv')
+def create_model():
+    # Construir el modelo de perceptrón multicapa
+    model = Sequential()
+    model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(1, activation='linear'))
+
+    # Compilar el modelo
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+
+    # Entrenar el modelo
+    model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
+
+    # Evaluar el rendimiento del modelo en el conjunto de prueba
+    mse, mae = model.evaluate(X_test, y_test)
+    print("Error cuadrático medio:", mse)
+    print("Error absoluto medio:", mae)
+
+    # Guardar el modelo
+    model.save('models_perceptron/model_Brisbane.h5')
+
+
+
+def predict():
+    # Reconstrucción de datos de prueba
+    # Cargar el modelo
+    model = load_model('models_perceptron/model_Brisbane.h5')
+    reconstructed_data_X = model.predict(X_test)
+
+    # Comparación entre datos originales y datos reconstruidos
+    for i in range(len(X_test)):
+        original_data_y = y_test.iloc[i]  # Accede al valor de la etiqueta i del DataFrame y_test
+        reconstructed_sample_X = reconstructed_data_X[i]  # Predicción reconstruida para la muestra i de X
+        print("Original_Y:", original_data_y)
+        print("Reconstruido_X:", reconstructed_sample_X)
+        print("\n")
+
+
+dataFrame = pd.read_csv('dataframes/dataframe_Brisbane.csv')
 
 X = dataFrame.drop('divergence', axis=1)  # Características
 y = dataFrame['divergence']  # Etiqueta (divergencia)
@@ -93,34 +131,6 @@ y = dataFrame['divergence']  # Etiqueta (divergencia)
 # Dividir los datos en conjuntos de entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Construir el modelo de perceptrón multicapa
-model = Sequential()
-model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(1, activation='linear'))
-
-# Compilar el modelo
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
-
-# Entrenar el modelo
-model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
-
-# Evaluar el rendimiento del modelo en el conjunto de prueba
-mse, mae = model.evaluate(X_test, y_test)
-print("Error cuadrático medio:", mse)
-print("Error absoluto medio:", mae)
-
-
-# Reconstrucción de datos de prueba
-reconstructed_data_X = model.predict(X_test)
-
-# Comparación entre datos originales y datos reconstruidos
-for i in range(len(X_test)):
-    original_data_y = y_test.iloc[i]  # Accede al valor de la etiqueta i del DataFrame y_test
-    reconstructed_sample_X = reconstructed_data_X[i]  # Predicción reconstruida para la muestra i de X
-    print("Original_Y:", original_data_y)
-    print("Reconstruido_X:", reconstructed_sample_X)
-    print("\n")
-
-
+#create_model()
+predict()
 

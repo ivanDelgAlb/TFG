@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from keras import Sequential
 from keras.layers import Dense
 from generateCircuit import generate_circuit
-from distributionKullback import calculate_configuration_error
+from calculateNoiseError import calculate_configuration_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
 

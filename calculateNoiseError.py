@@ -39,7 +39,7 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
         'readout_error': readout_error_qubits
     }
 
-    fake_date = '2024-02-27T19:38:28' # A random date that does not affect the system
+    fake_date = '2024-02-27T19:38:28'  # A random date that does not affect the system
     configuration = backend.configuration()
     properties = backend.properties()
     qubits = properties.to_dict()['qubits']
@@ -54,7 +54,7 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
                 dictionary['value'] = new_values[dictionary['name']]
             new_qubit_data.append(dictionary)
         new_qubits.append(new_qubit_data)
-    
+
     new_gates = []
     for gate in gates:
         if len(gate['qubits']) == 1:
@@ -106,8 +106,8 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     :type readout_error_qubits: float
     :type readout_error_one_qubit_gates: float
     :type readout_error_two_qubit_gates: float
-    :return: The Kullback-Leibler divergence of an ideal machine compared to the given configuration
-    :rtype: float
+    :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
+    :rtype: tuple(float, float)
     """
 
     circuit.measure_all()
@@ -117,7 +117,8 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     noise_model = NoiseModel.from_backend(backend)
 
     transpiled_circuit = transpile(circuit, backend=backend)
-    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, readout_error_one_qubit_gates, readout_error_two_qubit_gates, backend)
+    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits,
+                                                  readout_error_one_qubit_gates, readout_error_two_qubit_gates, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
@@ -136,28 +137,73 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
     print("Ideal backend executed")
 
+    kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
+    print("Kullback-Leibler divergence calculated")
+
+    jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
+    print("Jensen-Shannon divergence calculated")
+
+    return kullback_divergence, jensen_divergence
+
+
+def calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine):
+    """
+    Calculates the Kullback-Leibler divergence given two dictionaries with the results of an execution of a circuit and their probabilities
+    :param probabilities_real_machine: Dictionary of the execution of a circuit and their probabilities of a real quantum machine
+    :param probabilities_ideal_machine: Dictionary of the execution of a circuit and their probabilities of an ideal quantum machine
+    :type probabilities_ideal_machine: dict[str, float]
+    :type probabilities_real_machine: dict[str, float]
+    :return: The Kullback-Leibler divergence of the distributions
+    :rtype: float
+    """
     divergence = 0.0
     for status in probabilities_real_machine:
         if probabilities_ideal_machine.get(status, 0) != 0:
             divergence += probabilities_ideal_machine.get(status, 0) * log(
                 (probabilities_ideal_machine.get(status, 0) / probabilities_real_machine[status]))
-    print("Divergence calculated")
 
     return divergence
 
+
+def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine):
+    """
+    Calculates the Jensen-Shannon divergence given two dictionaries with the results of an execution of a circuit and their probabilities
+    :param probabilities_real_machine: Dictionary of the execution of a circuit and their probabilities of a real quantum machine
+    :param probabilities_ideal_machine: Dictionary of the execution of a circuit and their probabilities of an ideal quantum machine
+    :type probabilities_ideal_machine: dict[str, float]
+    :type probabilities_real_machine: dict[str, float]
+    :return: The Jensen-Shannon divergence of the distributions
+    :rtype: float
+    """
+
+    mixture_distribution = {}
+    for status in probabilities_real_machine:
+        mixture_distribution.update(
+            {status: (probabilities_real_machine[status] * 0.5 + probabilities_ideal_machine.get(status, 0) * 0.5)})
+
+    for status in probabilities_ideal_machine:
+        if mixture_distribution.get(status, 0) == 0:
+            mixture_distribution.update(
+                {status: (probabilities_real_machine.get(status, 0) * 0.5 + probabilities_ideal_machine[status] * 0.5)})
+
+    divergence = 0.5 * calculate_kullback_divergence(probabilities_ideal_machine, mixture_distribution) + 0.5 * calculate_kullback_divergence(probabilities_real_machine, mixture_distribution)
+
+    return divergence
+
+
 '''
-circuit = generate_circuit(15, 5)
+circuit = generate_circuit(4, 5)
 service = QiskitRuntimeService(channel='ibm_quantum',
                                    token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
 fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_date = '2024-02-27T19:38:28'
-kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, 225.34260521453552,
-                                               145.04435990153732, 0.023973228346456682, 0.024713385826771656,
-                                               0.024343307086614172, 332.9217636223684)
-print(kullback_error)
+kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, 225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656,
+                                                                0.024343307086614172, 473.2249909452478, 332.9217636223684)
+print("Kullback error: " + str(kullback_error))
+print("Jensen error: " + str(jensen_error))
 '''
-
+'''
 import pandas as pd
 from pymongo import MongoClient
 import csv
@@ -166,12 +212,11 @@ mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.n
 client = MongoClient(mongo_uri)
 collection_name_origin = "derivado"
 service = QiskitRuntimeService(channel='ibm_quantum',
-                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
+                               token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
 fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_backend_osaka = service.get_backend('ibm_osaka')
 fake_backend_kyoto = service.get_backend('ibm_kyoto')
-
 
 db = client["TFG"]
 
@@ -184,7 +229,8 @@ for i in range(5):
     circuit = generate_circuit(10, 5)
 
     dataframe_perceptron_brisbane = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_brisbane:
@@ -196,12 +242,15 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_brisbane.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_kyoto = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_kyoto:
@@ -213,12 +262,15 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_kyoto.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_osaka = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_osaka:
@@ -230,16 +282,19 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_kyoto.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
 for i in range(5):
 
     circuit = generate_circuit(10, 10)
 
     dataframe_perceptron_brisbane = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_brisbane:
@@ -251,12 +306,15 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_brisbane.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_kyoto = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_kyoto:
@@ -268,12 +326,15 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_kyoto.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
 
     dataframe_perceptron_osaka = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error', 'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
+         'readout_two_qubit_gate_error', 'kullback_error']
     ]
 
     for item in datos_osaka:
@@ -285,6 +346,9 @@ for i in range(5):
         one_qubit_error = item['properties']['gates'][0]['media']
         two_qubit_error = item['properties']['gates'][1]['media']
 
-        kullback_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
 
-        dataframe_perceptron_kyoto.append([T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_kyoto.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+'''

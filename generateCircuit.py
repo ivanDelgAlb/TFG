@@ -84,13 +84,15 @@ class CircuitGenerationTests(unittest.TestCase):
             (2, 3),
             (3, 4),
             (5, 2),
-            (3, 5)
+            (3, 5),
+            (20, 5)
         ]
         expected_depths = [
             2,
             3,
             4,
             2,
+            5,
             5
         ]
 

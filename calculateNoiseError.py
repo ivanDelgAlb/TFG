@@ -146,7 +146,7 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     return kullback_divergence, jensen_divergence
 
 
-def calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine):
+def calculate_kullback_divergence(probabilities_ideal_machine, probabilities_real_machine):
     """
     Calculates the Kullback-Leibler divergence given two dictionaries with the results of an execution of a circuit and their probabilities
     :param probabilities_real_machine: Dictionary of the execution of a circuit and their probabilities of a real quantum machine
@@ -191,8 +191,8 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
     return divergence
 
 
-'''
-circuit = generate_circuit(4, 5)
+circuit = generate_circuit(20, 5)
+print("Circuit generated")
 service = QiskitRuntimeService(channel='ibm_quantum',
                                    token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
@@ -202,7 +202,7 @@ kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backe
                                                                 0.024343307086614172, 473.2249909452478, 332.9217636223684)
 print("Kullback error: " + str(kullback_error))
 print("Jensen error: " + str(jensen_error))
-'''
+
 '''
 import pandas as pd
 from pymongo import MongoClient

@@ -7,26 +7,21 @@ from math import log
 from qiskit.providers.models.backendproperties import BackendProperties
 
 
-def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits,
-                                   readout_error_one_qubit_gates, readout_error_two_qubit_gates, backend):
+def generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, backend):
     """
-    Generates a BackendV2 object with the given configuration
-    :param backend: A backend frp, the QiskitService library
-    :param T1: average of T1 of the qubits
-    :param T2: average of T2 of the qubits
-    :param prob_meas0_prep1: average of prob_meas0_prep1 of the qubits
-    :param prob_meas1_prep0: average of prob_meas1_prep0 of the qubits
-    :param readout_error_qubits: average of readout_error of the qubits
-    :param readout_error_one_qubit_gates: average of readout_error of the gates using one qubit
-    :param readout_error_two_qubit_gates: average of readout_error of the gates using two qubits
+    Generates a BackendV2 object with the given configuration for the qubits
+    :param backend: A backend from, the QiskitService library
+    :param T1: median of T1 of the qubits
+    :param T2: median of T2 of the qubits
+    :param prob_meas0_prep1: median of prob_meas0_prep1 of the qubits
+    :param prob_meas1_prep0: median of prob_meas1_prep0 of the qubits
+    :param readout_error_qubits: median of readout_error of the qubits
     :type backend: BackendV2
     :type T1: float
     :type T2: float
     :type prob_meas0_prep1: float
     :type prob_meas1_prep0: float
     :type readout_error_qubits: float
-    :type readout_error_one_qubit_gates: float
-    :type readout_error_two_qubit_gates: float
     :return: A backend with the given configuration
     :rtype: BackendV2
     """
@@ -55,23 +50,59 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
             new_qubit_data.append(dictionary)
         new_qubits.append(new_qubit_data)
 
+    new_data = {
+        'backend_name': backend.name,
+        'backend_version': properties.backend_version,
+        'last_update_date': fake_date,
+        'qubits': new_qubits,
+        'gates': gates,
+        'general': general
+    }
+    new_properties = BackendProperties.from_dict(new_data)
+
+    new_backend = backend
+    new_backend.configuration = configuration
+    new_backend.properties = new_properties
+
+    return new_backend
+
+def generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_gates, backend):
+    """
+    Generates a BackendV2 object with the given configuration for the gates
+    :param backend: A backend from, the QiskitService library
+    :param error_one_qubit_gates: median of the gate_error of 1-qubit-entrance gate
+    :param error_two_qubit_gates: median of the gate_error of 2-qubits-entrance gate
+    :type backend: BackendV2
+    :type error_one_qubit_gates: float
+    :type error_two_qubit_gates: float
+    :return: A backend with the given configuration
+    :rtype: BackendV2
+    """
+
+    fake_date = '2024-02-27T19:38:28'  # A random date that does not affect the system
+    configuration = backend.configuration()
+    properties = backend.properties()
+    qubits = properties.to_dict()['qubits']
+    gates = properties.to_dict()['gates']
+    general = properties.to_dict()['general']
+
     new_gates = []
     for gate in gates:
         if len(gate['qubits']) == 1:
             for parameter in gate['parameters']:
                 if parameter['name'] == 'gate_error':
-                    parameter['value'] = readout_error_one_qubit_gates
+                    parameter['value'] = error_one_qubit_gates
         else:
             for parameter in gate['parameters']:
                 if parameter['name'] == 'gate_error':
-                    parameter['value'] = readout_error_two_qubit_gates
+                    parameter['value'] = error_two_qubit_gates
         new_gates.append(gate)
 
     new_data = {
         'backend_name': backend.name,
         'backend_version': properties.backend_version,
         'last_update_date': fake_date,
-        'qubits': new_qubits,
+        'qubits': qubits,
         'gates': new_gates,
         'general': general
     }
@@ -84,19 +115,16 @@ def generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, r
     return new_backend
 
 
-def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits,
-                                  readout_error_one_qubit_gates, readout_error_two_qubit_gates):
+def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits):
     """
     Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
     :param circuit: Quantum circuit from qiskit
-    :param backend: A backend frp, the QiskitService library
-    :param T1: average of T1 of the qubits
-    :param T2: average of T2 of the qubits
-    :param prob_meas0_prep1: average of prob_meas0_prep1 of the qubits
-    :param prob_meas1_prep0: average of prob_meas1_prep0 of the qubits
-    :param readout_error_qubits: average of readout_error of the qubits
-    :param readout_error_one_qubit_gates: average of readout_error of the gates using one qubit
-    :param readout_error_two_qubit_gates: average of readout_error of the gates using two qubits
+    :param backend: A backend from, the QiskitService library
+    :param T1: median of T1 of the qubits
+    :param T2: median of T2 of the qubits
+    :param prob_meas0_prep1: median of prob_meas0_prep1 of the qubits
+    :param prob_meas1_prep0: median of prob_meas1_prep0 of the qubits
+    :param readout_error_qubits: median of readout_error of the qubits
     :type circuit: QuantumCircuit
     :type backend: BackendV2
     :type T1: float
@@ -104,8 +132,6 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     :type prob_meas0_prep1: float
     :type prob_meas1_prep0: float
     :type readout_error_qubits: float
-    :type readout_error_one_qubit_gates: float
-    :type readout_error_two_qubit_gates: float
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
@@ -117,8 +143,57 @@ def calculate_configuration_error(circuit, backend, T1, T2, prob_meas0_prep1, pr
     noise_model = NoiseModel.from_backend(backend)
 
     transpiled_circuit = transpile(circuit, backend=backend)
-    real_backend = generate_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits,
-                                                  readout_error_one_qubit_gates, readout_error_two_qubit_gates, backend)
+    real_backend = generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, backend)
+    real_machine = AerSimulator.from_backend(real_backend)
+    job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
+    counts_real_machine = job_real_machine.result().get_counts(0)
+
+    probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
+    print("Backend with noise executed")
+
+    # ----------------------------------------------------------------------------------------
+
+    noise_model.reset()
+    ideal_machine = AerSimulator.from_backend(real_backend)
+
+    job_ideal_machine = ideal_machine.run(transpiled_circuit, shots=shots)
+    counts_ideal_machine = job_ideal_machine.result().get_counts()
+
+    probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
+    print("Ideal backend executed")
+
+    kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
+    print("Kullback-Leibler divergence calculated")
+
+    jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
+    print("Jensen-Shannon divergence calculated")
+
+    return kullback_divergence, jensen_divergence
+
+
+def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, error_two_qubit_gates):
+    """
+    Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
+    :param circuit: Quantum circuit from qiskit
+    :param backend: A backend from, the QiskitService library
+    :param error_one_qubit_gates: median of readout_error of the gates using one qubit
+    :param error_two_qubit_gates: median of readout_error of the gates using two qubits
+    :type circuit: QuantumCircuit
+    :type backend: BackendV2
+    :type error_one_qubit_gates: float
+    :type error_two_qubit_gates: float
+    :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
+    :rtype: tuple(float, float)
+    """
+
+    circuit.measure_all()
+
+    shots = 1000
+
+    noise_model = NoiseModel.from_backend(backend)
+
+    transpiled_circuit = transpile(circuit, backend=backend)
+    real_backend = generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_gates, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
@@ -190,18 +265,24 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
 
     return divergence
 
-
-circuit = generate_circuit(20, 5)
+'''
+circuit = generate_circuit(4, 5)
 print("Circuit generated")
+
 service = QiskitRuntimeService(channel='ibm_quantum',
                                    token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
 fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_date = '2024-02-27T19:38:28'
-kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, 225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656,
-                                                                0.024343307086614172, 473.2249909452478, 332.9217636223684)
-print("Kullback error: " + str(kullback_error))
-print("Jensen error: " + str(jensen_error))
+qubit_kullback_error, qubit_jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, 225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656, 0.024343307086614172)
+print("Kullback error on qubits: " + str(qubit_kullback_error))
+print("Jensen error on qubits: " + str(qubit_jensen_error))
+
+fake_backend_brisbane = service.get_backend('ibm_brisbane')
+gate_kullback_error, gate_jensen_error = calculate_configuration_gate_error(circuit, fake_backend_brisbane, 0.0000785365131764739, 0.007890508160354082)
+print("Kullback error on gates: " + str(gate_kullback_error))
+print("Jensen error on gates: " + str(gate_jensen_error))
+'''
 
 '''
 import pandas as pd

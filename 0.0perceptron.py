@@ -3,7 +3,7 @@ from sklearn.model_selection import train_test_split
 from keras import Sequential
 from keras.layers import Dense
 from generateCircuit import generate_circuit
-from calculateNoiseError import calculate_configuration_error
+from calculateNoiseError import calculate_configuration_qubit_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
@@ -50,10 +50,10 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
             probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
             readout_error = item['properties']['qubits'][4]['mediana']
 
-            divergence = calculate_configuration_error(circuit, fake_backend, T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error, date)
+            divergence = calculate_configuration_qubit_error(circuit, fake_backend, T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
             print("Divergencia calculada :)")
-            fila_min = min(T1,T2, probMeas0Prep1, probMeas1Prep0, readout_error)
-            fila_max = max(T1,T2, probMeas0Prep1, probMeas1Prep0, readout_error)
+            fila_min = min(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
+            fila_max = max(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
 
             T1_norm = (T1 - fila_min) / (fila_max - fila_min)
             T2_norm = (T2 - fila_min) / (fila_max - fila_min)

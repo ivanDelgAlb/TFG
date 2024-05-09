@@ -19,6 +19,7 @@ db_Destino = client_Destino["TFG"]
 db_Destino[collection_name_Destino].drop()
 print("Colección borrada con éxito")
 
+
 def calcMedia(datos, nqubit, atributo):
     media = 0
     cont = 0
@@ -27,8 +28,9 @@ def calcMedia(datos, nqubit, atributo):
         if nqubit > 0:
             if len(dato['qubits']) == nqubit:
                 for gate in dato['parameters']:
-                    media += gate['value']
-                    cont += 1
+                    if gate['name'] == 'gate_error':
+                        media += gate['value']
+                        cont += 1
         else:
             for qubit in dato:
                 if qubit['name'] == atributo:
@@ -98,7 +100,7 @@ for dato in datos:
     gates = dato["properties"]["gates"]
     gates_derivados = []
         
-    atributos = ["T1", "T2", "prob_meas0_prep1", "prob_meas1_prep0", "readout_error","gate_error", "gate_length"] 
+    atributos = ["T1", "T2", "prob_meas0_prep1", "prob_meas1_prep0", "readout_error", "gate_error", "gate_length"]
     nqubits = [1, 2]
 
     for atributo in atributos:
@@ -138,6 +140,4 @@ for dato in datos:
     collection = db_Destino[collection_name_Destino]
     collection.insert_one(dato)
 
-   
-        
-print("Se insertado todos los valores derivados correctamente")
+print("Se han insertado todos los valores derivados correctamente")

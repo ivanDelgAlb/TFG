@@ -137,5 +137,5 @@ def predict(machine_name, data):
 
 # generate_dataframe_gates()
 # create_model("ibm_brisbane")
-prediction = predict("ibm_brisbane", [[0.00013306438200978542, 0.004955224553499893]])
+prediction = predict("ibm_brisbane", [[9.270778544713076e-05, 0.006445129191761059]])
 print(prediction)

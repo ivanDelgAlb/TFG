@@ -44,7 +44,7 @@ def dataFrame(nombre_maquina):
         dataFrame_Prob1.append([item['date'], item['properties']['qubits'][3]['media'],  item['properties']['qubits'][0]['media'], item['properties']['qubits'][1]['media'], item['properties']['qubits'][2]['media'], item['properties']['qubits'][4]['media']])
         dataFrame_error.append([item['date'], item['properties']['qubits'][4]['media'],  item['properties']['qubits'][0]['media'], item['properties']['qubits'][1]['media'], item['properties']['qubits'][2]['media'], item['properties']['qubits'][3]['media']])
     
-    directorio = 'dataframes/'
+    directorio = 'dataframes_neuralProphet/'
     nombre_archivo = directorio + 'dataframeT1'+ formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:

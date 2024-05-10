@@ -66,7 +66,7 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
             dataFrame.append(fila)
             contador += 1
 
-        nombre_archivo = 'dataframes/dataframe_'+ formatearNombre + '.csv'
+        nombre_archivo = 'dataframes_neuralProphet/dataframe_'+ formatearNombre + '.csv'
 
         with open(nombre_archivo, 'w', newline='') as archivo_csv:
             escritor_csv = csv.writer(archivo_csv)
@@ -123,7 +123,7 @@ def predict():
         print("\n")
 
 
-dataFrame = pd.read_csv('dataframes/dataframe_Brisbane.csv')
+dataFrame = pd.read_csv('dataframes_neuralProphet/dataframe_Brisbane.csv')
 
 X = dataFrame.drop('divergence', axis=1)  # Características
 y = dataFrame['divergence']  # Etiqueta (divergencia)

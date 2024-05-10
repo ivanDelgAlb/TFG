@@ -10,7 +10,7 @@ def create_model(file):
     :return: None
     """
 
-    directory = 'dataframes/'
+    directory = 'dataframes_neuralProphet/'
     df = pd.read_csv(directory + file, encoding="latin1")
     columns = df.columns.to_list()
 
@@ -72,9 +72,9 @@ def predict(n_steps, machine_name):
         with open(models_directory + 'modelError' + machine_name + '.pkl', "rb") as file:
             model_error = pickle.load(file)
         
-        dataframes_directory = 'dataframes/'
+        dataframes_directory = 'dataframes_neuralProphet/'
 
-        # Take the dataframes
+        # Take the dataframes_neuralProphet
         df_T1 = pd.read_csv(dataframes_directory + 'dataframeT1' + machine_name + '.csv', encoding="latin1")
         df_T2 = pd.read_csv(dataframes_directory + 'dataframeT2' + machine_name + '.csv', encoding="latin1")
         df_Prob0 = pd.read_csv(dataframes_directory + 'dataframeProb0' + machine_name + '.csv', encoding="latin1")

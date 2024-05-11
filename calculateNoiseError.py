@@ -1,3 +1,5 @@
+import json
+
 from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit import transpile
 from qiskit_aer.noise import NoiseModel
@@ -135,7 +137,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-
+    print("Calculating qubit configuration error")
     circuit.measure_all()
 
     shots = 1000
@@ -185,7 +187,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-
+    print("Calculating gate configuration error")
     circuit.measure_all()
 
     shots = 1000
@@ -265,8 +267,9 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
 
     return divergence
 
+
 '''
-circuit = generate_circuit(4, 5)
+circuit = generate_circuit(25, 5)
 print("Circuit generated")
 
 service = QiskitRuntimeService(channel='ibm_quantum',
@@ -283,15 +286,17 @@ gate_kullback_error, gate_jensen_error = calculate_configuration_gate_error(circ
 print("Kullback error on gates: " + str(gate_kullback_error))
 print("Jensen error on gates: " + str(gate_jensen_error))
 '''
-
 '''
-import pandas as pd
 from pymongo import MongoClient
-import csv
 
 mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
 client = MongoClient(mongo_uri)
 collection_name_origin = "derivado"
+db = client["TFG"]
+datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(10)
+datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(10)
+datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(10)
+'''
 service = QiskitRuntimeService(channel='ibm_quantum',
                                token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
@@ -299,137 +304,211 @@ fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_backend_osaka = service.get_backend('ibm_osaka')
 fake_backend_kyoto = service.get_backend('ibm_kyoto')
 
-db = client["TFG"]
+with open("TFG.derivado.json", "r") as file:
+    datos_brisbane = json.load(file)
 
-datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(50)
-datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(50)
-datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(50)
+# datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(10)
+# datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(10)
+# datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(10)
 
 for i in range(5):
 
-    circuit = generate_circuit(10, 5)
+    circuit_10 = generate_circuit(10, 5)
+    circuit_15 = generate_circuit(15, 5)
+    circuit_20 = generate_circuit(20, 5)
 
-    dataframe_perceptron_brisbane = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+    dataframe_perceptron_qubits_brisbane = [
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error', 'n_qubits', 'depth']
+    ]
+
+    dataframe_perceptron_gates_brisbane = [
+        ['gate_error_one_qubit', 'gate_error_two_qubit', 'kullback_error', 'jensen-error', 'n_gates']
     ]
 
     for item in datos_brisbane:
-        T1 = item['properties']['qubits'][0]['media']
-        T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        qubit_copy_circuit_10 = circuit_10.copy()
+        qubit_copy_circuit_15 = circuit_15.copy()
+        qubit_copy_circuit_20 = circuit_20.copy()
+        gate_copy_circuit_10 = circuit_10.copy()
+        gate_copy_circuit_15 = circuit_15.copy()
+        gate_copy_circuit_20 = circuit_20.copy()
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        dataframe_perceptron_brisbane.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        kullback_qubit_error_10, jensen_qubit_error_10 = calculate_configuration_qubit_error(qubit_copy_circuit_10, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                                                probMeas1Prep0, qubit_error)
 
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+
+        kullback_qubit_error_15, jensen_qubit_error_15 = calculate_configuration_qubit_error(qubit_copy_circuit_15, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                                                probMeas1Prep0, qubit_error)
+
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+
+        kullback_qubit_error_20, jensen_qubit_error_20 = calculate_configuration_qubit_error(qubit_copy_circuit_20, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                                                probMeas1Prep0, qubit_error)
+
+        dataframe_perceptron_qubits_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_qubit_error_10, jensen_qubit_error_10, 10, 5]
+        )
+
+        dataframe_perceptron_qubits_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_qubit_error_10, jensen_qubit_error_15, 15, 5]
+        )
+
+        dataframe_perceptron_qubits_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_qubit_error_10, jensen_qubit_error_20, 20, 5]
+        )
+
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+
+        kullback_gate_error_10, jensen_gate_error_10 = calculate_configuration_gate_error(gate_copy_circuit_10, fake_backend_brisbane, one_qubit_error, two_qubit_error)
+
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+
+        kullback_gate_error_15, jensen_gate_error_15 = calculate_configuration_gate_error(gate_copy_circuit_15, fake_backend_brisbane, one_qubit_error, two_qubit_error)
+
+        fake_backend_brisbane = service.get_backend('ibm_brisbane')
+
+        kullback_gate_error_20, jensen_gate_error_20 = calculate_configuration_gate_error(gate_copy_circuit_20, fake_backend_brisbane, one_qubit_error, two_qubit_error)
+
+        dataframe_perceptron_gates_brisbane.append(
+            [one_qubit_error, two_qubit_error, kullback_gate_error_10, jensen_gate_error_10, copy_circuit_10.count_ops()]
+        )
+
+        dataframe_perceptron_gates_brisbane.append(
+            [one_qubit_error, two_qubit_error, kullback_gate_error_15, jensen_gate_error_15, copy_circuit_15.count_ops()]
+        )
+
+        dataframe_perceptron_gates_brisbane.append(
+            [one_qubit_error, two_qubit_error, kullback_gate_error_20, jensen_gate_error_20, copy_circuit_20.count_ops()]
+        )
+
+    with open("dataframe_perceptron_qubits_Brisbane.csv", 'w', newline='') as archivo_csv:
+
+        escritor_csv = csv.writer(archivo_csv)
+
+        for fila in dataframe_perceptron_qubits_brisbane:
+            escritor_csv.writerow(fila)
+
+    with open("dataframe_perceptron_gates_Brisbane.csv", 'w', newline='') as archivo_csv:
+
+        escritor_csv = csv.writer(archivo_csv)
+
+        for fila in dataframe_perceptron_gates_brisbane:
+            escritor_csv.writerow(fila)
+
+'''
     dataframe_perceptron_kyoto = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error', 'n_qubits', 'depth']
     ]
 
     for item in datos_kyoto:
-        T1 = item['properties']['qubits'][0]['media']
-        T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(50)
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error)
 
         dataframe_perceptron_kyoto.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_error, jensen_error]
+        )
 
     dataframe_perceptron_osaka = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error']
     ]
 
     for item in datos_osaka:
-        T1 = item['properties']['qubits'][0]['media']
+        fake_backend_osaka = service.get_backend('ibm_osaka')
+        T1 = item['properties']['qubits'][0]['mediana']
         T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
+                                                       probMeas1Prep0, qubit_error)
 
         dataframe_perceptron_kyoto.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_error, jensen_error]
+        )
 
 for i in range(5):
 
     circuit = generate_circuit(10, 10)
 
-    dataframe_perceptron_brisbane = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+    dataframe_perceptron_qubits_brisbane = [
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error']
     ]
 
     for item in datos_brisbane:
-        T1 = item['properties']['qubits'][0]['media']
-        T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, T1, T2,
+                                                                           probMeas0Prep1, probMeas1Prep0, qubit_error)
 
-        dataframe_perceptron_brisbane.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+        dataframe_perceptron_qubits_brisbane.append(
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_error, jensen_error]
+        )
 
     dataframe_perceptron_kyoto = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error']
     ]
 
     for item in datos_kyoto:
-        T1 = item['properties']['qubits'][0]['media']
-        T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, T1, T2,
+                                                                           probMeas0Prep1, probMeas1Prep0, qubit_error)
 
         dataframe_perceptron_kyoto.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_error, jensen_error]
+        )
 
     dataframe_perceptron_osaka = [
-        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'readout_one_qubit_gate_error',
-         'readout_two_qubit_gate_error', 'kullback_error']
+        ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error']
     ]
 
     for item in datos_osaka:
-        T1 = item['properties']['qubits'][0]['media']
-        T2 = item['properties']['qubits'][1]['media']
-        probMeas0Prep1 = item['properties']['qubits'][2]['media']
-        probMeas1Prep0 = item['properties']['qubits'][3]['media']
-        qubit_error = item['properties']['qubits'][4]['media']
-        one_qubit_error = item['properties']['gates'][0]['media']
-        two_qubit_error = item['properties']['gates'][1]['media']
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        qubit_error = item['properties']['qubits'][4]['mediana']
+        one_qubit_error = item['properties']['gates'][0]['mediana']
+        two_qubit_error = item['properties']['gates'][1]['mediana']
 
-        kullback_error, jensen_error = calculate_configuration_error(circuit, fake_backend_brisbane, T1, T2, probMeas0Prep1,
-                                                       probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error)
+        kullback_error, jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, T1, T2,
+                                                                           probMeas0Prep1, probMeas1Prep0, qubit_error)
 
         dataframe_perceptron_kyoto.append(
-            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, one_qubit_error, two_qubit_error, kullback_error])
+            [T1, T2, probMeas0Prep1, probMeas1Prep0, qubit_error, kullback_error, jensen_error]
+        )
 '''

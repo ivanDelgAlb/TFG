@@ -6,10 +6,7 @@ client = MongoClient(mongo_uri)
 
 collection_name_Origen = "derivado"
 
-# Conectarse a la base de datos en MongoDB Atlas
 db = client["TFG"]
-
-
 
 def createDataFrame(machine):
     formatearNombre = machine.split("_")[1].capitalize()
@@ -22,7 +19,7 @@ def createDataFrame(machine):
                               item['properties']['gates'][2]['mediana'],item['properties']['gates'][3]['mediana']])
 
     directorio = 'dataframes/'
-    nombre_archivo = directorio + 'dataframe_Gates'+ formatearNombre + '.csv'
+    nombre_archivo = directorio + 'dataframe_Gates' + formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
         

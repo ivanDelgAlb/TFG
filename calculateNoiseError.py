@@ -1,5 +1,4 @@
 import json
-
 from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit import transpile
 from qiskit_aer.noise import NoiseModel
@@ -7,6 +6,7 @@ from generateCircuit import generate_circuit
 from qiskit_aer import AerSimulator
 from math import log
 from qiskit.providers.models.backendproperties import BackendProperties
+import csv
 
 
 def generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, backend):
@@ -380,15 +380,15 @@ for i in range(5):
         kullback_gate_error_20, jensen_gate_error_20 = calculate_configuration_gate_error(gate_copy_circuit_20, fake_backend_brisbane, one_qubit_error, two_qubit_error)
 
         dataframe_perceptron_gates_brisbane.append(
-            [one_qubit_error, two_qubit_error, kullback_gate_error_10, jensen_gate_error_10, copy_circuit_10.count_ops()]
+            [one_qubit_error, two_qubit_error, kullback_gate_error_10, jensen_gate_error_10, gate_copy_circuit_10.count_ops()]
         )
 
         dataframe_perceptron_gates_brisbane.append(
-            [one_qubit_error, two_qubit_error, kullback_gate_error_15, jensen_gate_error_15, copy_circuit_15.count_ops()]
+            [one_qubit_error, two_qubit_error, kullback_gate_error_15, jensen_gate_error_15, gate_copy_circuit_10.count_ops()]
         )
 
         dataframe_perceptron_gates_brisbane.append(
-            [one_qubit_error, two_qubit_error, kullback_gate_error_20, jensen_gate_error_20, copy_circuit_20.count_ops()]
+            [one_qubit_error, two_qubit_error, kullback_gate_error_20, jensen_gate_error_20, gate_copy_circuit_10.count_ops()]
         )
 
     with open("dataframe_perceptron_qubits_Brisbane.csv", 'w', newline='') as archivo_csv:

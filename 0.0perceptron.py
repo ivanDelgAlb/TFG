@@ -7,6 +7,7 @@ from calculateNoiseError import calculate_configuration_qubit_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
+from sklearn.preprocessing import MinMaxScaler
 
 from pymongo import MongoClient
 import csv
@@ -76,16 +77,11 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
 
     normalized("ibm_brisbane")
 
-'''
-circuit = generate_circuit(4, 5)
-service = QiskitRuntimeService(channel='ibm_quantum',
-                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
-fake_backend = service.get_backend('ibm_brisbane')
 
-extraer_dataframe_normalizado(circuit, fake_backend)
-'''
+
+
 # Cargar el dataframe desde el archivo CSV
-def create_model():
+def create_model(machine, depth):
     # Construir el modelo de perceptrón multicapa
     model = Sequential()
     model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
@@ -104,14 +100,15 @@ def create_model():
     print("Error absoluto medio:", mae)
 
     # Guardar el modelo
-    model.save('models_perceptron/model_Brisbane.h5')
+    directory = 'backend/models_perceptron/model_qubits_' + machine + '_' + str(depth) + '.h5'
+    model.save(directory)
 
 
 
 def predict():
     # Reconstrucción de datos de prueba
     # Cargar el modelo
-    model = load_model('models_perceptron/model_Brisbane.h5')
+    model = load_model('backend/models_perceptron/model_qubits_Brisbane_5.h5')
     reconstructed_data_X = model.predict(X_test)
 
     # Comparación entre datos originales y datos reconstruidos
@@ -121,16 +118,37 @@ def predict():
         print("Original_Y:", original_data_y)
         print("Reconstruido_X:", reconstructed_sample_X)
         print("\n")
+'''
+circuit = generate_circuit(20, 5)
+service = QiskitRuntimeService(channel='ibm_quantum',
+                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
+fake_backend = service.get_backend('ibm_brisbane')
+
+extraer_dataframe_normalizado(circuit, fake_backend)
+
+'''
+
+machines = ["Osaka"]
+
+for machine in machines:
+    directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
+    dataFrame = pd.read_csv(directory)
+
+    X = dataFrame.drop(['kullback_error', 'jensen-error', 'n_qubits', 'depth'], axis=1)
+
+    X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    
+    y = dataFrame['jensen-error']  # Etiqueta (divergencia)
 
 
-dataFrame = pd.read_csv('dataframes_neuralProphet/dataframe_Brisbane.csv')
+    depth = dataFrame['depth'][1]
 
-X = dataFrame.drop('divergence', axis=1)  # Características
-y = dataFrame['divergence']  # Etiqueta (divergencia)
+    # Dividir los datos en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
 
-# Dividir los datos en conjuntos de entrenamiento y prueba
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    #create_model(machine, depth)
+    predict()
+print("Models created")
 
-#create_model()
-predict()
+#predict()
 

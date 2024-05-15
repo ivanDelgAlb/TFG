@@ -2,7 +2,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import prediction, predictionData
+from routers import predictionCalibration
+from routers import predictionData
+from routers import predictionError
 
 app = FastAPI()
 
@@ -16,7 +18,8 @@ app.add_middleware(
 )
 
 # Cargamos las rutas desde el archivo routers/prediction.py
-app.include_router(prediction.router, prefix="/predict")
+app.include_router(predictionError.router, prefix="/predict")
+app.include_router(predictionCalibration.router, prefix="/predictCalibration")
 app.include_router(predictionData.router, prefix="/predictData")
 
 

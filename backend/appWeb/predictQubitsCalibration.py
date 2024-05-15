@@ -1,4 +1,3 @@
-from neuralprophet import NeuralProphet, set_log_level
 import pandas as pd
 import pickle
 
@@ -99,10 +98,6 @@ def predict_qubits_calibration(n_steps, machine_name):
 
     except FileNotFoundError:
         raise FileNotFoundError("One of the models is missing")
-
-
-
-
 
 
 

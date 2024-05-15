@@ -164,13 +164,13 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
     print("Ideal backend executed")
 
-    kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
+    #kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
     print("Kullback-Leibler divergence calculated")
 
     jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
     print("Jensen-Shannon divergence calculated")
 
-    return kullback_divergence, jensen_divergence
+    return jensen_divergence
 
 
 def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, error_two_qubit_gates):
@@ -296,7 +296,7 @@ db = client["TFG"]
 datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(10)
 datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(10)
 datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(10)
-'''
+
 service = QiskitRuntimeService(channel='ibm_quantum',
                                token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
@@ -405,7 +405,7 @@ for i in range(5):
         for fila in dataframe_perceptron_gates_brisbane:
             escritor_csv.writerow(fila)
 
-'''
+
     dataframe_perceptron_kyoto = [
         ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'kullback_error', 'jensen-error', 'n_qubits', 'depth']
     ]

@@ -10,7 +10,7 @@ def create_model(file):
     :return: None
     """
 
-    directory = 'dataframes_neuralProphet/'
+    directory = 'backend/dataframes_neuralProphet/'
     df = pd.read_csv(directory + file, encoding="latin1")
     columns = df.columns.to_list()
 
@@ -39,11 +39,11 @@ def create_model(file):
 
     model.set_plotting_backend("plotly-static")
 
-    metrics = model.fit(df=df_train, freq="H", validation_df=df_test)
+    metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
     #print(metrics)
 
     # Saving the model
-    file_name = 'models_neuralProphet/model' + substring + '.pkl'
+    file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
         pickle.dump(model, file)
 
@@ -60,7 +60,7 @@ def predict(n_steps, machine_name):
     machine_name = machine_name.split("_")[1].capitalize()
 
     try:
-        models_directory = 'models_neuralProphet/'
+        models_directory = 'backend/models_neuralProphet/'
         with open(models_directory + 'modelT1' + machine_name + '.pkl', "rb") as file:
             model_T1 = pickle.load(file)
         with open(models_directory + 'modelT2' + machine_name + '.pkl', "rb") as file:
@@ -72,7 +72,7 @@ def predict(n_steps, machine_name):
         with open(models_directory + 'modelError' + machine_name + '.pkl', "rb") as file:
             model_error = pickle.load(file)
         
-        dataframes_directory = 'dataframes_neuralProphet/'
+        dataframes_directory = 'backend/dataframes_neuralProphet/'
 
         # Take the dataframes_neuralProphet
         df_T1 = pd.read_csv(dataframes_directory + 'dataframeT1' + machine_name + '.csv', encoding="latin1")
@@ -150,7 +150,7 @@ def predict(n_steps, machine_name):
     except FileNotFoundError:
         raise FileNotFoundError("One of the models is missing")
 
-'''
+
 machines = ["Brisbane", "Kyoto", "Osaka"]
 files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
 
@@ -161,10 +161,11 @@ for machine in machines:
         create_model(csv)
 print("Models created")
 
-
+'''
 future_T1 = predict(4, "ibm_Brisbane")
 print(type(future_T1))
 '''
+
 
 
 

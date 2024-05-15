@@ -3,8 +3,9 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 import pytz
-from appWeb.predictQubitsCalibration import predict_qubits_calibration
-from typing import List, Dict
+from appWeb import predictQubitsCalibration
+from appWeb import predictQubitsError
+from typing import List, Dict, Union
 
 router = APIRouter()
 
@@ -12,9 +13,10 @@ class PredictionData(BaseModel):
     machine: str
     date: Optional[str] = None
     selection: Optional[str] = None
+    depth: Optional[str] = None
 
 @router.post("/")
-async def predict(data: PredictionData) -> Dict[str, List[Dict[str, float]]]:
+async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
     # Aquí realizas la predicción con los datos recibidos
     print("Datos recibidos:", data)
     
@@ -24,12 +26,12 @@ async def predict(data: PredictionData) -> Dict[str, List[Dict[str, float]]]:
         prediction = predict_puertas(data)
     else:
         prediction = None
-    
+        
     return {"prediction": prediction}
 
-def predict_qubits(data: PredictionData) -> List[Dict[str, float]]:
-    n_steps = calculate_hours_elapsed(data.date) 
-    future_T1, future_T2, future_Prob0, future_Prob1, future_error = predict_qubits_calibration(n_steps, data.machine)
+def predict_qubits(data: PredictionData) ->List[Dict[str, Union[float, str]]]:
+    n_steps = calculate_time_difference(data.date) 
+    future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, data.machine)
     
     predictions = []
     for i in range(n_steps):
@@ -42,9 +44,10 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, float]]:
         }
         predictions.append(prediction)
 
-    print(predictions)
-
+    predictions = predictQubitsError.predict_qubits_error(predictions, data.machine, data.depth)
+    
     return predictions
+
 
 def predict_puertas(data: PredictionData):
     # Aquí realizas la predicción específica para puertas
@@ -53,15 +56,21 @@ def predict_puertas(data: PredictionData):
     return 0.05  # Esta es solo una predicción de ejemplo
 
 
-def calculate_hours_elapsed(selected_date_str):
-    local_timezone = pytz.timezone('Europe/Madrid')  # Replace 'Europe/Madrid' with your actual local timezone
-    current_date = datetime.now(local_timezone)  # Get current time in local timezone
-    current_date_utc = current_date.astimezone(pytz.utc)  # Convert local time to UTC
-    selected_date = datetime.fromisoformat(selected_date_str.replace('Z', '+00:00'))
-    selected_date = selected_date.replace(tzinfo=pytz.utc)  # Make selected date timezone-aware
-    time_difference = selected_date - current_date_utc
-    hours_elapsed = time_difference.total_seconds() / 3600
-    return round(hours_elapsed)
+def calculate_time_difference(selected_date_str):
+    local_timezone = pytz.timezone('Europe/Madrid')  # Reemplaza 'Europe/Madrid' con tu zona horaria local real
+    current_date = datetime.now(local_timezone)  # Obtener la hora actual en la zona horaria local
+
+    # Convertir la fecha seleccionada de cadena ISO a datetime
+    selected_date = datetime.fromisoformat(selected_date_str)
+
+    # Calcular la diferencia de tiempo en horas
+    time_difference = (selected_date - current_date).total_seconds() / 3600
+    
+    # Redondear la cantidad de horas al múltiplo de 2 más cercano
+    rounded_hours = round(time_difference / 2)
+    print(rounded_hours)
+    return rounded_hours
+
 
 import plotly.graph_objects as go
 

@@ -42,15 +42,25 @@ body {
 
 .selectors {
   display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center; /* Centra los elementos horizontalmente */
+  align-items: center; /* Centra los elementos verticalmente */
+  margin-bottom: 10px;
 }
-/* Selector de fecha */
+
+.machine-selector,
+.option-selector,
+.depth-selector {
+  flex: 1; /* Distribuye el espacio disponible igualmente entre los elementos */
+  max-width: 200px; /* Limita el ancho máximo de los elementos */
+  margin: 5px; /* Espacio entre los elementos */
+}
+
 .date-selector {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+  margin: 0;
+  margin-left: 5px;
 }
+
 
 /* Selector personalizado de fecha */
 .custom-datepicker-input {
@@ -69,11 +79,6 @@ body {
 /* Icono del calendario */
 .icon-calendar {
   margin-left: 10px;
-}
-
-/* Selector de opción */
-.option-selector {
-  margin-left: 20px;
 }
 
 /* Botón */
@@ -114,16 +119,14 @@ body {
   }
 }
 
-/* Separación entre selectores */
-.option-selector {
-  margin: 0 10px; /* Añade espacio horizontal entre los selectores */
-}
-
 .loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100px; /* Ajusta la altura según sea necesario */
+  text-align: center;
+  margin-top: 20px;
 }
 
 .spinner {
@@ -133,6 +136,7 @@ body {
   border-top-color: #009688;
   border-radius: 50%;
   animation: spin 1s linear infinite; /* Aquí se define la animación */
+  margin-top: 10px;
 }
 
 @keyframes spin {
@@ -147,5 +151,22 @@ body {
 .graph-container {
   width: 100%; /* O cualquier otro valor que desees */
   height: 400px; /* O cualquier otro valor que desees */
+  margin-top: 10px;
+  text-align: center;
 }
 
+.graph {
+  flex-direction: column;
+}
+
+.custom-datepicker-input{
+  align-items: center;
+}
+
+.custom-datepicker-input > *{
+  margin-right: 10px;
+}
+
+.svg-inline--fa{
+  margin-right: 0;
+}

@@ -20,7 +20,7 @@ const DateTimePicker = ({ selectedDateTime, onChange }) => (
     onChange={onChange}
     showTimeSelect
     timeFormat="HH:mm"
-    timeIntervals={15}
+    timeIntervals={60}
     dateFormat="dd/MM/yyyy HH:mm"
     customInput={<CustomDateTimePickerInput />}
   />
@@ -66,6 +66,8 @@ function App() {
         return;
     }
 
+    const isoDate = date.toISOString();
+
     try {
       const response = await fetch('http://localhost:8000/predict', {
         method: 'POST',
@@ -74,7 +76,7 @@ function App() {
         },
         body: JSON.stringify({ 
           machine: machine,
-          date: date,
+          date: isoDate,
           selection: selection,
           depth: depth
         })
@@ -102,7 +104,7 @@ function App() {
       </div>
       
       <div className="selectors">
-        <div className="selector-option">
+        <div className="machine-selector">
           <select value={machine} onChange={handleChangeMachine}>
             <option value="">Selecciona una máquina</option>
             <option value="ibm Brisbane">ibm Brisbane</option>
@@ -141,13 +143,16 @@ function App() {
       
       {loading && ( // Mostrar el spinner si está cargando
         <div className="loading">
-          <div className="spinner"></div>
+          <h2>Cargando...</h2>
+          <div>
+            <div className="spinner"></div>
+          </div>
         </div>
       )}
 
-      {prediction && !loading && ( // Mostrar la gráfica si hay datos y no está cargando
+      {prediction.length !== 0 && !loading && ( // Mostrar la gráfica si hay datos y no está cargando
         <div className="graph-container">
-          <h1>Quantum Predictions</h1>
+          <h2>Quantum Predictions:</h2>
           <GraphError predictions={prediction} /> {/* Mostrar la gráfica */}
         </div>
       )}

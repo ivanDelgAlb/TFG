@@ -29,7 +29,7 @@ async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float,
         
     return {"prediction": prediction}
 
-def predict_qubits(data: PredictionData) ->List[Dict[str, Union[float, str]]]:
+def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str]]]:
     n_steps = calculate_time_difference(data.date) 
     future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, data.machine)
     
@@ -61,7 +61,7 @@ def calculate_time_difference(selected_date_str):
     current_date = datetime.now(local_timezone)  # Obtener la hora actual en la zona horaria local
 
     # Convertir la fecha seleccionada de cadena ISO a datetime
-    selected_date = datetime.fromisoformat(selected_date_str)
+    selected_date = datetime.fromisoformat(selected_date_str.replace('Z', '+00:00'))
 
     # Calcular la diferencia de tiempo en horas
     time_difference = (selected_date - current_date).total_seconds() / 3600

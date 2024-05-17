@@ -114,11 +114,11 @@ const Graph = ({ predictions }) => {
   }, [predictions, isRange]);
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>
+    <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>
       <canvas ref={chartRef} width={400} height={200}></canvas>
       {minDivergenceDates.length > 0 && (
         <p>
-          Best Result: {minDivergence} at {minDivergenceDates.join(', ')}
+          Best Result: An error of {minDivergence} at {minDivergenceDates.join(', ')}
         </p>
       )}
     </div>

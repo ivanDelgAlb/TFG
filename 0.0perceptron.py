@@ -128,7 +128,7 @@ extraer_dataframe_normalizado(circuit, fake_backend)
 
 '''
 
-machines = ["Osaka"]
+machines = ["Brisbane", "Kyoto","Osaka"]
 
 for machine in machines:
     directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
@@ -146,8 +146,8 @@ for machine in machines:
     # Dividir los datos en conjuntos de entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
 
-    #create_model(machine, depth)
-    predict()
+    create_model(machine, depth)
+    #predict()
 print("Models created")
 
 #predict()

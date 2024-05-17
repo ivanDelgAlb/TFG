@@ -68,6 +68,7 @@ def generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_pr
 
     return new_backend
 
+
 def generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_gates, backend):
     """
     Generates a BackendV2 object with the given configuration for the gates
@@ -117,7 +118,8 @@ def generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_g
     return new_backend
 
 
-def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits):
+def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_prep1, prob_meas1_prep0,
+                                        readout_error_qubits):
     """
     Calculates the Kullback-Leibler divergence given a quantum circuit and a configuration for the quantum machine in comparison to an ideal machine
     :param circuit: Quantum circuit from qiskit
@@ -145,7 +147,8 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     noise_model = NoiseModel.from_backend(backend)
 
     transpiled_circuit = transpile(circuit, backend=backend)
-    real_backend = generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0, readout_error_qubits, backend)
+    real_backend = generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0,
+                                                        readout_error_qubits, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
     counts_real_machine = job_real_machine.result().get_counts(0)
@@ -263,7 +266,9 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
             mixture_distribution.update(
                 {status: (probabilities_real_machine.get(status, 0) * 0.5 + probabilities_ideal_machine[status] * 0.5)})
 
-    divergence = 0.5 * calculate_kullback_divergence(probabilities_ideal_machine, mixture_distribution) + 0.5 * calculate_kullback_divergence(probabilities_real_machine, mixture_distribution)
+    divergence = 0.5 * calculate_kullback_divergence(probabilities_ideal_machine,
+                                                     mixture_distribution) + 0.5 * calculate_kullback_divergence(
+        probabilities_real_machine, mixture_distribution)
 
     return divergence
 
@@ -296,7 +301,12 @@ db = client["TFG"]
 datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(10)
 datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(10)
 datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(10)
+<<<<<<< Updated upstream
 
+=======
+'''
+'''
+>>>>>>> Stashed changes
 service = QiskitRuntimeService(channel='ibm_quantum',
                                token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
 
@@ -304,12 +314,13 @@ fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_backend_osaka = service.get_backend('ibm_osaka')
 fake_backend_kyoto = service.get_backend('ibm_kyoto')
 
-with open("TFG.derivado.json", "r") as file:
+with open("Brisbane.json", "r") as file:
     datos_brisbane = json.load(file)
 
 # datos_brisbane = db[collection_name_origin].find({"name": "ibm_brisbane"}).limit(10)
 # datos_kyoto = db[collection_name_origin].find({"name": "ibm_kyoto"}).limit(10)
 # datos_osaka = db[collection_name_origin].find({"name": "ibm_osaka"}).limit(10)
+
 
 for i in range(5):
 
@@ -404,6 +415,7 @@ for i in range(5):
 
         for fila in dataframe_perceptron_gates_brisbane:
             escritor_csv.writerow(fila)
+'''
 
 
     dataframe_perceptron_kyoto = [

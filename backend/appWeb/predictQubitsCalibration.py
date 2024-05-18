@@ -4,9 +4,9 @@ import pickle
 def predict_qubits_calibration(n_steps, machine_name):
     """
     Predicts the configuration for a given machine in n_steps (each step is an hour)
-    :param n_steps: the number of steps to predict
-    :param machine_name: the name of the machine to predict the configuration
-    :return: A dataframe with the past data and the predicted ones
+    :param n_steps: Number of steps to predict
+    :param machine_name: Name of the machine to predict the configuration
+    :return: Dataframe with the past data and the predicted ones
     :rtype: pandas.core.frame.DataFrame
     """
 

@@ -18,7 +18,7 @@ def createDataFrame(machine):
       dataFrame_gates.append([item['date'], item['properties']['gates'][0]['mediana'], item['properties']['gates'][1]['mediana'],
                               item['properties']['gates'][2]['mediana'],item['properties']['gates'][3]['mediana']])
 
-    directorio = 'dataframes/'
+    directorio = 'dataframes_gates/'
     nombre_archivo = directorio + 'dataframe_Gates' + formatearNombre + '.csv'
 
     with open(nombre_archivo, 'w', newline='') as archivo_csv:
@@ -34,4 +34,4 @@ maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"]
 for maquina in maquinas:
     createDataFrame(maquina)
 
-print("Dataframes creados con exitos")
+print("Dataframes creados con exito")

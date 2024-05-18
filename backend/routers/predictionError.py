@@ -5,6 +5,8 @@ from datetime import datetime
 import pytz
 from appWeb import predictQubitsCalibration
 from appWeb import predictQubitsError
+from appWeb import predictGatesCalibration
+from appWeb import predictGatesError
 from typing import List, Dict, Union
 
 router = APIRouter()
@@ -45,15 +47,16 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str]]]:
         predictions.append(prediction)
 
     predictions = predictQubitsError.predict_qubits_error(predictions, data.machine, data.depth)
-    
+    print("Diccionario")
+    print(predictions)
     return predictions
 
 
 def predict_puertas(data: PredictionData):
-    # Aquí realizas la predicción específica para puertas
-    # Puedes implementar tu lógica aquí
-    # Por ejemplo:
-    return 0.05  # Esta es solo una predicción de ejemplo
+    gate_error1, gate_error2 = predictGatesCalibration.predict(data.machine, data.date)
+    error_prediction = predictGatesError.predict(data.machine, [[gate_error1, gate_error2]])
+    print(error_prediction)
+    return [{'Date': data.date, 'divergence': error_prediction[0]}]
 
 
 def calculate_time_difference(selected_date_str):

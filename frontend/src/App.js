@@ -116,8 +116,8 @@ function App() {
         <div className="option-selector">
           <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
             <option value="">Selecciona una opción</option>
-            <option value="qubits">Qubits</option>
-            <option value="puertas">Puertas</option>
+            <option value="Qubits">Qubits</option>
+            <option value="Puertas">Puertas</option>
           </select>
         </div>
 
@@ -152,7 +152,7 @@ function App() {
 
       {prediction.length !== 0 && !loading && ( // Mostrar la gráfica si hay datos y no está cargando
         <div className="graph-container">
-          <h2>Quantum Predictions:</h2>
+          <h2>Predicciones del error:</h2>
           <GraphError predictions={prediction} /> {/* Mostrar la gráfica */}
         </div>
       )}

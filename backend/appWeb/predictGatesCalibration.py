@@ -5,7 +5,7 @@ import numpy as np
 
 def predict(maquina, fecha_prediccion_iso):
     formatearNombre = maquina.split(" ")[1].capitalize()
-    directorio = 'models_lstm/'
+    directorio = 'backend/models_lstm/'
     nombre_archivo = directorio + 'model_' + formatearNombre + '.h5'
     model = load_model(nombre_archivo)
 

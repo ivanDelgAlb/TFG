@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import pytz
 from appWeb import predictQubitsCalibration
 from appWeb import predictQubitsError
@@ -20,7 +20,7 @@ class PredictionData(BaseModel):
 @router.post("/")
 async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str, str, str, str, str, str]]]]:
     # Aquí realizas la predicción con los datos recibidos
-    print("Datos recibidos:", data)
+    print("Datos recibidos predict error:", data)
     
     if data.selection == "Qubits":
         prediction = predict_qubits(data)
@@ -52,11 +52,25 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
     return predictions
 
 
-def predict_puertas(data: PredictionData):
-    gate_error1, gate_error2 = predictGatesCalibration.predict(data.machine, data.date)
-    error_prediction = predictGatesError.predict(data.machine, [[gate_error1, gate_error2]])
-    print(error_prediction)
-    return [{'Date': data.date, 'divergence': error_prediction[0]}]
+def predict_puertas(data: PredictionData) -> List[Dict[str, Union[float, str]]]:
+    current_date = datetime.now(timezone.utc)
+    end_date = datetime.fromisoformat(data.date.replace('Z', '+00:00'))
+
+    predictions = []
+
+    while(current_date <= end_date):
+        print(current_date)
+        gate_error1, gate_error2 = predictGatesCalibration.predict(data.machine, current_date)
+        print(gate_error1)
+        print(gate_error2)
+        error_prediction = predictGatesError.predict(data.machine, [[gate_error1, gate_error2]])
+        new_prediction = {'Date': current_date.strftime('%Y-%m-%d %H:%M:%S'), 'divergence': error_prediction[0]}
+        predictions.append(new_prediction)
+        current_date += timedelta(hours=2)
+
+    print("Diccionario")
+    print(predictions)
+    return predictions
 
 
 def calculate_time_difference(selected_date_str):

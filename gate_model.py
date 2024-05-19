@@ -61,12 +61,13 @@ def create_model(machine_name):
     """
     formated_name = machine_name.split("_")[1].capitalize()
 
-    columns = ["gate_error_one_qubit", "gate_error_two_qubit", "divergence"]
+    columns = ["gate_error_one_qubit", "gate_error_two_qubit", "divergence", "n_gates"]
 
     dataset = pd.read_csv('dataframes_xgboost/dataframe_gates_' + formated_name + '.csv', names=columns)
     dataset['gate_error_one_qubit'] = pd.to_numeric(dataset['gate_error_one_qubit'], errors='coerce')
     dataset['gate_error_two_qubit'] = pd.to_numeric(dataset['gate_error_two_qubit'], errors='coerce')
     dataset['divergence'] = pd.to_numeric(dataset['divergence'], errors='coerce')
+    dataset['n_gates'] = pd.to_numeric(dataset['n_gates'], errors='coerce')
 
     train_set, test_set = train_test_split(dataset, test_size=0.2)
     train_set = train_set.dropna(subset=['divergence'])
@@ -92,7 +93,7 @@ def create_model(machine_name):
     rmse = mean_squared_error(y_test, predictions, squared=False)
     print("RMSE:", rmse)
 
-    file = 'models_xgboost/xgboost_gate_model_' + formated_name + '.model'
+    file = 'backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
     xgb_model.save_model(file)
     print("Model created")
 
@@ -122,7 +123,7 @@ def predict(machine_name, data):
     """
     formated_name = machine_name.split("_")[1].capitalize()
 
-    file = 'models_xgboost/xgboost_gate_model_' + formated_name + '.model'
+    file = 'backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
@@ -136,6 +137,10 @@ def predict(machine_name, data):
 
 
 # generate_dataframe_gates()
-# create_model("ibm_brisbane")
+'''
+create_model("ibm_brisbane")
+create_model("ibm_osaka")
+create_model("ibm_kyoto")
+'''
 prediction = predict("ibm_brisbane", [[9.270778544713076e-05, 0.006445129191761059]])
 print(prediction)

@@ -56,7 +56,7 @@ def calcMediana(datos, nqubit, atributo):
             for qubit in dato:
                 if qubit['name'] == atributo:
                     valores.append(qubit['value'])  # Agrega el qubit a la lista si cumple con las condiciones
-
+    valores.sort()
     n = len(valores)
     
     if n % 2 == 0:

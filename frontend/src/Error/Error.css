@@ -1,0 +1,134 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container */
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Purple Bar */
+.purple-bar {
+  background-color: #64ace8; /* Azul UMA */
+  border-radius: 8px;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box; /* Considerar el padding en el ancho */
+  margin-bottom: 20px; /* Ajusta el margen inferior */
+}
+
+
+
+/* Título */
+.title {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+/* Selectors */
+.selectors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.machine-selector,
+.option-selector,
+.depth-selector,
+.date-selector {
+  flex: 1;
+  min-width: 200px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Custom Date Picker Input */
+.custom-datepicker-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.icono-calendario {
+  margin-left: 10px;
+  color: #64ace8;
+}
+
+/* Button */
+.container-button {
+  text-align: center;
+  margin: 20px 0;
+  justify-content: flex-end;
+  display: flex;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #64ace8; 
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #b0d7f7;;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  text-align: center;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+}
+
+.spinner {
+  border: 4px solid rgba(192, 192, 192, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #64ace8;
+  margin: 10px auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

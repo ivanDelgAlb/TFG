@@ -18,20 +18,20 @@ class PredictionData(BaseModel):
     depth: Optional[str] = None
 
 @router.post("/")
-async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
+async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str, str, str, str, str, str]]]]:
     # Aquí realizas la predicción con los datos recibidos
     print("Datos recibidos:", data)
     
-    if data.selection == "qubits":
+    if data.selection == "Qubits":
         prediction = predict_qubits(data)
-    elif data.selection == "puertas":
+    elif data.selection == "Puertas":
         prediction = predict_puertas(data)
     else:
         prediction = None
         
     return {"prediction": prediction}
 
-def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str]]]:
+def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str, str, str, str, str]]]:
     n_steps = calculate_time_difference(data.date) 
     future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, data.machine)
     
@@ -73,17 +73,4 @@ def calculate_time_difference(selected_date_str):
     rounded_hours = round(time_difference / 2)
     print(rounded_hours)
     return rounded_hours
-
-
-import plotly.graph_objects as go
-
-
-
-def plot_calibration_plotly(predictions):
-    # Crear un gráfico para cada calibración
-    for key, values in predictions.items():
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=list(range(1, len(values) + 1)), y=values, mode='lines', name=key))
-        fig.update_layout(title=f'{key} Calibration Predictions', xaxis_title='Sample', yaxis_title='Prediction')
-        fig.show()
 

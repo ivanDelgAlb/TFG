@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import './App.css';
+import './Error.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import GraphError from './GraphError'; // Importa el componente de la gráfica
+import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
 
 // Define DateTimePicker component outside of App
 const CustomDateTimePickerInput = ({ value, onClick }) => (
@@ -35,6 +35,12 @@ function App() {
   const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad del spinner
   const [error, setError] = useState(null);
 
+  const [showCalibrationGraphs, setShowCalibrationGraphs] = useState(false);
+
+  const handleButtonCalibration = () => {
+    setShowCalibrationGraphs(!showCalibrationGraphs); // Cambiar el estado de visibilidad
+  };
+
   const handleChangeMachine = (event) => {
     setMachine(event.target.value);
   };
@@ -48,6 +54,7 @@ function App() {
   };
 
   const handleButtonClick = async () => {
+    setError(null)
     setLoading(true); // Mostrar el spinner al inicio de la carga
 
     if (!machine || !selection || !date || !depth) {
@@ -69,7 +76,7 @@ function App() {
     const isoDate = date.toISOString();
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch('http://localhost:8000/predictError', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -84,7 +91,7 @@ function App() {
       const data = await response.json();
       console.log(data.prediction)
       if (data.prediction && data.prediction.length > 0) {
-        console.log(data)
+        console.log(data.prediction)
         setPrediction(data.prediction);
         setError(null);
       } else {
@@ -98,9 +105,10 @@ function App() {
   };
 
   return (
+    <>
     <div className="container">
       <div className="purple-bar">
-        <h1 className="title">Mi TFG</h1>
+        <h1 className="title">Predicción dado un rango de fechas</h1>
       </div>
       
       <div className="selectors">
@@ -153,12 +161,43 @@ function App() {
       {prediction.length !== 0 && !loading && ( // Mostrar la gráfica si hay datos y no está cargando
         <div className="graph-container">
           <h2>Predicciones del error:</h2>
-          <GraphError predictions={prediction} /> {/* Mostrar la gráfica */}
+          <Graph predictions={prediction} type={'divergence'} /> {/* Mostrar la gráfica */}
+          <div className="container-button">
+            <button onClick={handleButtonCalibration} className="button">
+              {showCalibrationGraphs ? "Ocultar Gráficas de Calibraciones" : "Ver Gráficas de Calibraciones"}
+            </button>
+          </div>
+          {showCalibrationGraphs && (
+            <div>
+              <div style={{ marginBottom: '40px' }}>
+                <h2>Predicciones T1:</h2>
+                <Graph predictions={prediction} type={'T1'} />
+              </div>
+              <div style={{ marginBottom: '40px' }}>
+                <h2>Predicciones T2:</h2>
+                <Graph predictions={prediction} type={'T2'} />
+              </div>
+              <div style={{ marginBottom: '40px' }}>
+                <h2>Predicciones Prob0:</h2>
+                <Graph predictions={prediction} type={'Prob0'} />
+              </div>
+              <div style={{ marginBottom: '40px' }}>
+                <h2>Predicciones Prob1:</h2>
+                <Graph predictions={prediction} type={'Prob1'} />
+              </div>
+              <div style={{ marginBottom: '40px' }}>
+                <h2>Predicciones Error length:</h2>
+                <Graph predictions={prediction} type={'Error'} />
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 
       
     </div>
+    </>
   );
 }
 

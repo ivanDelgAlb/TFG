@@ -11,12 +11,11 @@ db = client["TFG"]
 def createDataFrame(machine):
     formatearNombre = machine.split("_")[1].capitalize()
     dataFrame_gates = [
-        ['date', 'gate_error_1', 'gate_error_2', 'gate_length_1', 'gate_length_2']
+        ['date', 'gate_error_1', 'gate_error_2']
     ]
     items = db[collection_name_Origen].find({"name": machine})
     for item in items:
-      dataFrame_gates.append([item['date'], item['properties']['gates'][0]['mediana'], item['properties']['gates'][1]['mediana'],
-                              item['properties']['gates'][2]['mediana'],item['properties']['gates'][3]['mediana']])
+      dataFrame_gates.append([item['date'], item['properties']['gates'][0]['mediana'], item['properties']['gates'][1]['mediana']])
 
     directorio = 'dataframes_gates/'
     nombre_archivo = directorio + 'dataframe_Gates' + formatearNombre + '.csv'

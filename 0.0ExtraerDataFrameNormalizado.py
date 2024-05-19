@@ -55,27 +55,28 @@ def generate_dataframe_gates(nombre_maquina):
     datos = db[collection_name_Origen].find({"name": nombre_maquina})
 
     for item in datos:
+        date = item['date']
         gate_error_one_qubit = item['properties']['gates'][0]['mediana']
         gate_error_two_qubit = item['properties']['gates'][1]['mediana']
 
-        data_gates.append([gate_error_one_qubit, gate_error_two_qubit])
+        data_gates.append([date, gate_error_one_qubit, gate_error_two_qubit])
 
-    df_gates = pd.DataFrame(data_gates, columns=['gate_error_one_qubit', 'gate_error_two_qubit'])
+    df_gates = pd.DataFrame(data_gates, columns=['date', 'gate_error_1', 'gate_error_2'])
 
-    nombre_archivo = 'dataframes_gates/'
+    nombre_archivo = 'backend/dataframes_gates/'
     scaler = MinMaxScaler()
 
     df_gates.iloc[:, 1:] = scaler.fit_transform(df_gates.iloc[:, 1:])
-    joblib.dump(scaler, 'dataframes_gates/scalerGates' + formatearNombre + '.pkl')
+    joblib.dump(scaler, 'backend/dataframes_gates/scalerGates' + formatearNombre + '.pkl')
 
-    df_gates.to_csv(os.path.join(nombre_archivo, f'dataframeGates{formatearNombre}.csv'), index=False)
+    df_gates.to_csv(os.path.join(nombre_archivo, f'dataframe_Gates{formatearNombre}.csv'), index=False)
 
     print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
 
 
-normalised_qubits("ibm_brisbane")
-normalised_qubits("ibm_kyoto")
-normalised_qubits("ibm_osaka")
+#normalised_qubits("ibm_brisbane")
+#normalised_qubits("ibm_kyoto")
+#normalised_qubits("ibm_osaka")
 generate_dataframe_gates("ibm_brisbane")
 generate_dataframe_gates("ibm_kyoto")
 generate_dataframe_gates("ibm_osaka")

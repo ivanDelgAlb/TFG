@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 import './Graph.css'
 
-const Graph = ({ predictions, type }) => {
+const Graph = ({ predictions, type, historical }) => {
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -26,8 +26,8 @@ const Graph = ({ predictions, type }) => {
     const typeData = predictions.map(prediction => prediction[type]);
 
     // Calcular el valor mínimo del tipo especificado
+    
     const minTypeValue = Math.min(...typeData);
-
     // Obtener todas las fechas correspondientes al valor mínimo del tipo especificado
     const minTypeDates = predictions
       .filter(prediction => prediction[type] === minTypeValue)
@@ -112,7 +112,7 @@ const Graph = ({ predictions, type }) => {
   return (
     <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>
       <canvas ref={chartRef} width={400} height={200}></canvas>
-      {minTypeDates.length > 0 && (
+      {!historical && minTypeDates.length > 0 && (
         <div className="best-result" style={{margin: '20px'}}>
           <p>
             <span style={{ fontWeight: 'bold'}}>Best Result:</span> {type} of <span style={{ fontWeight: 'bold' , color: '#64ace8' }}>{minType}</span> at <span style={{ fontWeight: 'bold', color: 'rgb(182, 182, 182)' }}>{minTypeDates.join(', ')}</span>

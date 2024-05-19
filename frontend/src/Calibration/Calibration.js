@@ -44,7 +44,7 @@ function Calibration() {
   const handleButtonClick = async () => {
     setLoading(true); 
     if (!machine || !t1 || !t2 || !prob0 || !prob1 || !readoutError || !depth) {
-      setError("Todos los campos son obligatorios");
+      setError("All the field must be filled");
       setLoading(false)
       return;
     }
@@ -86,53 +86,54 @@ function Calibration() {
     <div className="container">
 
       <div className="bar">
-        <h1 className="title">Predicción dada una calibración</h1>
+        <h1 className="title">Noise prediction of a calibration</h1>
       </div>
 
-      <div className="selectors">
+      <div className="selectors-row">
         <div className="selector-option">
           <select value={machine} onChange={handleChangeOpcion} className="selector-option-select">
-            <option value="">Selecciona una opción</option>
+            <option value="">Choose a machine</option>
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
             <option value="ibm Osaka">ibm Osaka</option>
-            {/* Agrega más opciones según sea necesario */}
           </select>
         </div>
 
-        <div className="input-container">
-          <label>T1:</label>
-          <input type="number" value={t1} onChange={handleChangeT1} />
-        </div>
-
-        <div className="input-container">
-          <label>T2:</label>
-          <input type="number" value={t2} onChange={handleChangeT2} />
-        </div>
-
-        <div className="input-container">
-          <label>Prob0:</label>
-          <input type="number" value={prob0} onChange={handleChangeProb0} />
-        </div>
-
-        <div className="input-container">
-          <label>Prob1:</label>
-          <input type="number" value={prob1} onChange={handleChangeProb1} />
-        </div>
-
-        <div className="input-container">
-          <label>Readout Error:</label>
-          <input type="number" value={readoutError} onChange={handleChangeReadoutError} />
-        </div>
-      </div>
-
-      <div className="depth-selector">
+        <div className="depth-selector">
           <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
-            <option value="">Selecciona una profundidad</option>
+            <option value="">Choose a depth</option>
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
           </select>
+          </div>
+        </div>
+
+        <div className="inputs-row">
+          <div className="input-container">
+            <label>T1:</label>
+            <input type="number" value={t1} onChange={handleChangeT1} />
+          </div>
+
+          <div className="input-container">
+            <label>T2:</label>
+            <input type="number" value={t2} onChange={handleChangeT2} />
+          </div>
+
+          <div className="input-container">
+            <label>Prob_meas0_prep1:</label>
+            <input type="number" value={prob0} onChange={handleChangeProb0} />
+          </div>
+
+          <div className="input-container">
+            <label>Prob_meas1_prep0:</label>
+            <input type="number" value={prob1} onChange={handleChangeProb1} />
+          </div>
+
+          <div className="input-container">
+            <label>Readout Error:</label>
+            <input type="number" value={readoutError} onChange={handleChangeReadoutError} />
+          </div>
         </div>
 
       {error && 

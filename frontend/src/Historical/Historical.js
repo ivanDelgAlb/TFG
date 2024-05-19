@@ -46,24 +46,24 @@ function Historical() {
             {showCalibrationGraphsQubits && calibrationQubits && (
                 <div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predicciones T1:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'T1'} />
+                        <h2>Predictions T1:</h2>
+                        <Graph predictions={calibrationQubits[0].qubits} type={'T1'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predicciones T2:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'T2'} />
+                        <h2>Predictions T2:</h2>
+                        <Graph predictions={calibrationQubits[0].qubits} type={'T2'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predicciones Prob0:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas0Prep1'} />
+                        <h2>Predictions Prob0:</h2>
+                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas0Prep1'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predicciones Prob1:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas1Prep0'} />
+                        <h2>Predictions Prob1:</h2>
+                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas1Prep0'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predicciones readout_error:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'readout_error'} />
+                        <h2>Predictions readout_error:</h2>
+                        <Graph predictions={calibrationQubits[0].qubits} type={'readout_error'} historical={true} />
                     </div>
                 </div>
             )}

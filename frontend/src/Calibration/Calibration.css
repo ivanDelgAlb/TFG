@@ -1,5 +1,3 @@
-
-
 .input-container {
   display: flex;
   align-items: center;
@@ -18,31 +16,38 @@
 }
 
 select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.selectors-row,
+.inputs-row {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin: 20px 0;
+  margin-bottom: 20px;
 }
 
 .selector-option,
 .input-container,
 .depth-selector {
-  flex: 1; /* Distribuye el espacio disponible igualmente entre los elementos */
-  max-width: 200px; /* Limita el ancho máximo de los elementos */
+  flex: 1;
+  max-width: fit-content;
 }
 
-/* Estilo para los elementos select */
-.selector-option select, 
-.input-container input,
-.depth-selector select {
-  width: 100%; /* Hace que los selects ocupen el 100% del ancho disponible dentro del contenedor */
-  padding: 10px; /* Espaciado interno */
-  border: none; /* Elimina el borde predeterminado */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  appearance: none; /* Elimina la apariencia predeterminada del select */
-  -webkit-appearance: none; /* Elimina la apariencia predeterminada en Safari */
-  -moz-appearance: none; /* Elimina la apariencia predeterminada en Firefox */
-  box-sizing: border-box; /* Incluye el padding y el borde en el ancho y alto total del elemento */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el select */
+/* Elimina las flechas de los input numéricos */
+.input-container input[type=number]::-webkit-inner-spin-button,
+.input-container input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-container input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield; /* Firefox */
 }

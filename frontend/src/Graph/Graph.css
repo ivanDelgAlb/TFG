@@ -5,8 +5,9 @@
 }
 
 .graph-container h2 {
-  text-align: center;
+  text-align: left;
   font-size: 20px;
-  color: #64ace8;
+  color:#a4a0a0;
+  margin-left: 20px
 }
 

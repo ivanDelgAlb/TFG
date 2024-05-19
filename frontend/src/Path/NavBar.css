@@ -12,3 +12,18 @@
 .nav-link:hover {
   color: #007bff;
 }
+.img-small {
+  width: 50px; /* Define el ancho deseado */
+  height: auto; /* Ajusta automáticamente la altura para mantener la proporción */
+  border-radius: 10%;
+  margin-left: 2000%; /* Alinea la imagen a la derecha */
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Asegura que el li ocupe todo el ancho disponible */
+}
+
+

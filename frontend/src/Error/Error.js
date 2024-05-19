@@ -26,7 +26,7 @@ const DateTimePicker = ({ selectedDateTime, onChange }) => (
   />
 );
 
-function App() {
+function Error() {
   const [machine, setMachine] = useState(""); // Estado para almacenar la máquina seleccionada
   const [date, setDate] = useState(new Date()); // Estado para almacenar la fecha seleccionada
   const [selection, setSelection] = useState(""); // Estado para almacenar la selección de qubits o puertas
@@ -107,7 +107,7 @@ function App() {
   return (
     <>
     <div className="container">
-      <div className="purple-bar">
+      <div className="bar">
         <h1 className="title">Predicción dado un rango de fechas</h1>
       </div>
       
@@ -201,4 +201,4 @@ function App() {
   );
 }
 
-export default App;
+export default Error;

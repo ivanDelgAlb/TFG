@@ -85,7 +85,7 @@ function Calibration() {
 
     <div className="container">
 
-      <div className="purple-bar">
+      <div className="bar">
         <h1 className="title">Predicción dada una calibración</h1>
       </div>
 

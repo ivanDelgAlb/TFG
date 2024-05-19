@@ -16,8 +16,8 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Purple Bar */
-.purple-bar {
+/* Bar */
+.bar {
   background-color: #64ace8; /* Azul UMA */
   border-radius: 8px;
   width: 100%;
@@ -132,3 +132,6 @@ select {
   }
 }
 
+.h2{
+  color:#ccc
+}

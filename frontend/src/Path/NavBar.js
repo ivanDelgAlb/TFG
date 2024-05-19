@@ -2,6 +2,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import './NavBar.css'; // Para tus estilos personalizados
+import UMA from '../images/uma.jpg'
 
 const Navbar = () => {
     const location = useLocation();
@@ -20,11 +21,18 @@ const Navbar = () => {
                             <a className={ubicacion === 'error' ? 'nav-link active' : 'nav-link'} href="/error">Error</a>
                         </li>
                         <li className="nav-item" style={{marginLeft: "20px"}}>
-                            <a className={ubicacion === 'calibration' ? 'nav-link active' : 'nav-link'} href="/calibration">Calibración</a>
+                            <a className={ubicacion === 'calibration' ? 'nav-link active' : 'nav-link'} href="/calibration">Calibration</a>
                         </li>
                         <li className="nav-item" style={{marginLeft: "20px"}}>
-                            <a className={ubicacion === 'historic' ? 'nav-link active' : 'nav-link'} href="/historic">Histórico</a>
+                            <a className={ubicacion === 'historical' ? 'nav-link active' : 'nav-link'} href="/historical">Historical</a>
                         </li>
+                        <li>
+                        <a href="https://www.uma.es/">
+                            <img class="img-small" src={UMA} alt="Descripción de la imagen" />
+                        </a>
+                        </li>
+
+
                     </ul>
                 </div>
             </div>

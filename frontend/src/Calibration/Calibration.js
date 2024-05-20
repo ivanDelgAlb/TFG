@@ -13,7 +13,7 @@ function Calibration() {
   const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad del spinner
   const [depth, setDepth] = useState(""); // Estado para almacenar la profundidad seleccionada
 
-  const handleChangeOpcion = (event) => {
+  const handleChangeOption = (event) => {
     setMachine(event.target.value);
   };
 
@@ -91,7 +91,7 @@ function Calibration() {
 
       <div className="selectors-row">
         <div className="selector-option">
-          <select value={machine} onChange={handleChangeOpcion} className="selector-option-select">
+          <select value={machine} onChange={handleChangeOption} className="selector-option-select">
             <option value="">Choose a machine</option>
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
@@ -100,7 +100,7 @@ function Calibration() {
         </div>
 
         <div className="depth-selector">
-          <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
+          <select value={depth} onChange={handleChangeDepth} className="selector-option-select">
             <option value="">Choose a depth</option>
             <option value="5">5</option>
             <option value="10">10</option>

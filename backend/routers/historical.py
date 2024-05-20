@@ -9,9 +9,9 @@ async def historical():
     historical = []
 
     qubits = qubitsCalibration()
-    #gates = gatesCalibration()
+    gates = gatesCalibration()
     historical.append(qubits)
-    #historical.append(gates)
+    historical.append(gates)
         
     return {"historical": historical}
 
@@ -41,4 +41,4 @@ def gatesCalibration() -> Dict[str, Union[str, str]]:
     # Eliminar una columna
     gates = gates.drop(columns=['date'])
     
-    return {'calibrationGates': gates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
+    return {'gates': gates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios

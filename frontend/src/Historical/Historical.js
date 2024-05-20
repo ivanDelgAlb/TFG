@@ -3,10 +3,36 @@ import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
 
 function Historical() {
     const [showCalibrationGraphsQubits, setShowCalibrationGraphsQubits] = useState(false);
-    const [calibrationQubits, setCalibrationQubits] = useState([]);
+    const [showCalibrationGraphsGates, setShowCalibrationGraphsGates] = useState(false);
+    const [calibration, setCalibration] = useState([]);
+    const [machine, setMachine] = useState("");
+    const [option, setOption] = useState("");
+    const [error, setError] = useState(null);
 
-    const handleButtonCalibrationQubits = () => {
-        setShowCalibrationGraphsQubits(!showCalibrationGraphsQubits); // Cambiar el estado de visibilidad
+    const handleButtonCalibration = () => {
+        setError(null)
+        if(!machine){
+            setError("You must select a machine")
+            return;
+        }else if(!option){
+            setError("You must select an option")
+            return;
+        }
+        if(option === "Qubits"){
+            setShowCalibrationGraphsQubits(!showCalibrationGraphsQubits);
+            setShowCalibrationGraphsGates(false);
+        }else{
+            setShowCalibrationGraphsGates(!showCalibrationGraphsGates);
+            setShowCalibrationGraphsQubits(false);
+        }
+    };
+
+    const handleChangeMachine = (event) => {
+        setMachine(event.target.value);
+    };
+
+    const handleChangeOption = (event) => {
+        setOption(event.target.value);
     };
 
     useEffect(() => {
@@ -20,8 +46,9 @@ function Historical() {
                   })
                 const data = await response.json();
                 
-                setCalibrationQubits(data.historical);
-                console.log(data.historical[0].qubits)
+                setCalibration(data.historical);
+                console.log(data.historical)
+
             } catch (error) {
                 console.error("Error fetching calibration data:", error);
             }
@@ -35,35 +62,66 @@ function Historical() {
             <div className="bar">
                 <h1 className="title">Historical</h1>
             </div>
+            <div className="selectors-row">
+                <div className="machine-selector">
+                    <select value={machine} onChange={handleChangeMachine} className="selector-option-select">
+                        <option value="">Choose a machine</option>
+                        <option value="ibm Brisbane">ibm Brisbane</option>
+                        <option value="ibm Kyoto">ibm Kyoto</option>
+                        <option value="ibm Osaka">ibm Osaka</option>
+                    </select>
+                </div>
+                <div className="option-selector">
+                    <select value={option} onChange={handleChangeOption} className="selector-option-select">
+                        <option value="">Choose an option</option>
+                        <option value="Qubits">Qubits</option>
+                        <option value="Gates">Gates</option>
+                    </select>
+                </div>
+            </div>
+
+            {error && <p className="error-message">{error}</p>}
 
             <div className="container-button">
-                <button onClick={handleButtonCalibrationQubits} className="button">
-                    {showCalibrationGraphsQubits ? "Hide Qubit Calibration Charts" : "Show Qubit Calibration Charts"}
+                <button onClick={handleButtonCalibration} className="button">
+                    {showCalibrationGraphsQubits || showCalibrationGraphsGates ? "Hide Calibration Charts" : "Show Calibration Charts"}
                 </button>
             </div>
 
             {/* Aquí puedes renderizar tus gráficos de calibración si showCalibrationGraphsQubits es true */}
-            {showCalibrationGraphsQubits && calibrationQubits && (
+            {showCalibrationGraphsQubits && calibration && (
                 <div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predictions T1:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'T1'} historical={true} />
+                        <h2>Historical T1:</h2>
+                        <Graph predictions={calibration[0].qubits} type={'T1'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predictions T2:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'T2'} historical={true} />
+                        <h2>Historical T2:</h2>
+                        <Graph predictions={calibration[0].qubits} type={'T2'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predictions Prob0:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas0Prep1'} historical={true} />
+                        <h2>Historical Prob0:</h2>
+                        <Graph predictions={calibration[0].qubits} type={'probMeas0Prep1'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predictions Prob1:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'probMeas1Prep0'} historical={true} />
+                        <h2>Historical Prob1:</h2>
+                        <Graph predictions={calibration[0].qubits} type={'probMeas1Prep0'} historical={true} />
                     </div>
                     <div style={{ marginBottom: '40px' }}>
-                        <h2>Predictions readout_error:</h2>
-                        <Graph predictions={calibrationQubits[0].qubits} type={'readout_error'} historical={true} />
+                        <h2>Historical readout_error:</h2>
+                        <Graph predictions={calibration[0].qubits} type={'readout_error'} historical={true} />
+                    </div>
+                </div>
+            )}
+            {showCalibrationGraphsGates && calibration && (
+                <div>
+                    <div style={{ marginBottom: '40px' }}>
+                        <h2>Historical Gate error of one-qubit input:</h2>
+                        <Graph predictions={calibration[1].gates} type={'gate_error_one_qubit'} historical={true} />
+                    </div>
+                    <div style={{ marginBottom: '40px' }}>
+                        <h2>Historical Gate error of two-qubit input:</h2>
+                        <Graph predictions={calibration[1].gates} type={'gate_error_two_qubit'} historical={true} />
                     </div>
                 </div>
             )}

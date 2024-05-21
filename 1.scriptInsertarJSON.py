@@ -3,8 +3,11 @@ from pymongo import MongoClient
 from datetime import datetime
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
-client = MongoClient(mongo_uri)
+mongo_uri_part1 = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+client_part1 = MongoClient(mongo_uri_part1)
+
+mongo_uri_part2 = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
+client_part2 = MongoClient(mongo_uri_part2)
 
 # Ruta al directorio que contiene los archivos JSON en el repositorio de GitHub
 github_repo_url = "https://github.com/Zakaria-Dahi/TFG_UMA_2023_2204"
@@ -13,17 +16,12 @@ data_directory = "data"
 # Nombre de la colección en MongoDB Compass
 collection_name = "data"
 
-
-
 github_username = "marinasayago"
 github_token = "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"
 
 # Conectarse a la base de datos en MongoDB Atlas
-db = client["TFG"]
-
-# Borro la colección por si tenía algún dato
-db[collection_name].drop()
-print("Colección borrada con éxito")
+db_part1 = client_part1["TFG"]
+db_part2 = client_part2["TFG"]
 
 # Autenticación con la API de GitHub
 auth_url = "https://api.github.com/user"
@@ -40,6 +38,7 @@ contents_response.raise_for_status()
 files = [file["name"] for file in contents_response.json() if file["name"].endswith(".json")]
 
 # Iterar sobre los archivos y cargar los datos en MongoDB
+#Datos insertados con éxito para el archivo: 2024-04-18_00-19-04.json
 for file in files:
 
     try:
@@ -62,9 +61,22 @@ for file in files:
             documento['date'] = fecha_formateada
         
         # Insertar datos en la colección de MongoDB Compass
-        collection = db[collection_name]
-        collection.insert_many(json_data)
-        print(f"Datos insertados con éxito para el archivo: {file}")
+        if (fecha_objeto < datetime.strptime("2024-04-15 00-00-00", "%Y-%m-%d %H-%M-%S")) :       
+            collection = db_part1[collection_name]  
+            if(collection.find_one({"date": fecha_formateada}) == None) :  
+                collection.insert_many(json_data)
+                print(f"Datos insertados con éxito para el archivo: {file}")
+            else: 
+                print("Ya existe ese fichero")
+        else : 
+            print("HOLA")
+            collection = db_part2[collection_name]
+            if(collection.find_one({"date": fecha_formateada}) == None) : 
+                collection.insert_many(json_data)
+                print(f"Datos insertados con éxito para el archivo: {file}")
+            else: 
+                print("Ya existe ese fichero")
+
 
     except Exception as e:
         print(f"Error: {e}")

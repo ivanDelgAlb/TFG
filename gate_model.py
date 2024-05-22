@@ -4,7 +4,7 @@ from calculateNoiseError import calculate_configuration_gate_error
 from generateCircuit import generate_circuit
 import xgboost as xgb
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 import csv
@@ -85,16 +85,31 @@ def create_model(machine_name):
         "eval_metric": "rmse"
     }
 
-    num_rounds = 100
-    xgb_model = xgb.train(params, dtrain, num_rounds)
+    param_grid = {
+        'max_depth': [3, 4, 5, 6],
+        'learning_rate': [0.01, 0.05, 0.1],
+        'n_estimators': [100, 200, 300],
+        'colsample_bytree': [0.7, 0.8, 0.9, 1.0],
+        'subsample': [0.7, 0.8, 0.9, 1.0]
+    }
 
-    predictions = xgb_model.predict(dtest)
+    xgb_model = xgb.XGBRegressor(**params)
+    grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=3, scoring='neg_mean_squared_error', verbose=1)
+    grid_search.fit(x_train, y_train)
+
+    best_params = grid_search.best_params_
+    print("Best parameters found: ", best_params)
+
+    final_model = xgb.XGBRegressor(**best_params)
+    final_model.fit(x_train, y_train)
+
+    predictions = final_model.predict(x_test)
 
     rmse = mean_squared_error(y_test, predictions, squared=False)
     print("RMSE:", rmse)
 
-    file = 'backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
-    xgb_model.save_model(file)
+    file = f'backend/models_xgboost/xgboost_gate_model_{formated_name}.model'
+    final_model.save_model(file)
     print("Model created")
 
     '''
@@ -127,7 +142,7 @@ def predict(machine_name, data):
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
-    data_np = np.array(data)
+    data_np = np.array(data).reshape(1, -1)
 
     matrix_data = xgb.DMatrix(data_np)
 
@@ -142,5 +157,19 @@ create_model("ibm_brisbane")
 create_model("ibm_osaka")
 create_model("ibm_kyoto")
 '''
-prediction = predict("ibm_brisbane", [[9.270778544713076e-05, 0.006445129191761059]])
-print(prediction)
+
+calibrations = [
+    [0.00020744, 0.00786156],
+    [0.00020788, 0.00786835],
+    [0.00020821, 0.00787827],
+    [0.00020847, 0.00789025],
+    [0.00020983, 0.00799644],
+    [0.00021001, 0.00801272],
+    [0.0002102,  0.00802903],
+    [0.00021038, 0.00804532],
+    [0.00021057, 0.00806158],
+    [0.00021076, 0.00807778]
+]
+
+for calibration in calibrations:
+    print(predict("ibm_brisbane", calibration))

@@ -2,10 +2,12 @@ from pymongo import MongoClient
 import statistics
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri_Origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+#mongo_uri_Origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+mongo_uri_Origen = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
 client_Origen = MongoClient(mongo_uri_Origen)
 
-mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.7yqvagt.mongodb.net/"
+#mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
 client_Destino = MongoClient(mongo_uri_Destino)
 
 # Nombre de la colección en MongoDB Compass

@@ -28,7 +28,7 @@ const Navbar = () => {
                         </li>
                         <li>
                         <a href="https://www.uma.es/">
-                            <img class="img-small" src={UMA} alt="Logo de la UMA" />
+                            <img className="img-small" src={UMA} alt="Logo de la UMA" />
                         </a>
                         </li>
 

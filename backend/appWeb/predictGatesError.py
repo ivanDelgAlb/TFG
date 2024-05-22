@@ -1,5 +1,6 @@
 import numpy as np
 import xgboost as xgb
+from datetime import datetime, timedelta
 
 def predict(machine_name, data):
     """
@@ -7,9 +8,9 @@ def predict(machine_name, data):
     :param machine_name: The name of the quantum machine
     :param data: The inputs for the model
     :type machine_name: String
-    :type data: list of lists
-    :return: The predicted value
-    :rtype: list(float)
+    :type data: list of lists of lists
+    :return: The predicted values
+    :rtype: list of floats
     """
     formated_name = machine_name.split(" ")[1].capitalize()
 
@@ -17,9 +18,35 @@ def predict(machine_name, data):
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
-    data_np = np.array(data)
+    # Convertir data a un array numpy y ajustar las dimensiones
+    data_np = np.array(data).reshape(len(data), -1)
+    
+    # Crear la matriz de datos para XGBoost
     matrix_data = xgb.DMatrix(data_np)
 
-    prediction = xgb_model.predict(matrix_data)
+    # Realizar las predicciones
+    errors = xgb_model.predict(matrix_data)
 
-    return prediction
+    predictions = add_date_and_calibration(errors, data)
+    print(predictions)
+
+    return predictions
+
+def add_date_and_calibration(errors, predictions):
+    data_list = []
+
+    date = datetime.now()
+
+    for i, error in enumerate(errors):
+        error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
+        date = date + timedelta(hours=2)
+        error_dict['divergence'] = error
+
+        # Añadir las predicciones correspondientes
+        if i < len(predictions):
+            error_dict['gate_error_1'] = predictions[i][0][0]
+            error_dict['gate_error_2'] = predictions[i][0][1]
+
+        data_list.append(error_dict)
+
+    return data_list

@@ -3,15 +3,31 @@ import './Calibration.css'
 
 function Calibration() {
   const [machine, setMachine] = useState(""); 
-  const [t1, setT1] = useState(""); 
-  const [t2, setT2] = useState(""); 
-  const [prob0, setProb0] = useState(""); 
-  const [prob1, setProb1] = useState(""); 
-  const [readoutError, setReadoutError] = useState(""); 
+  const [t1, setT1] = useState(null); 
+  const [t2, setT2] = useState(null); 
+  const [prob0, setProb0] = useState(null); 
+  const [prob1, setProb1] = useState(null); 
+  const [readoutError, setReadoutError] = useState(null); 
   const [prediction, setPrediction] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad del spinner
-  const [depth, setDepth] = useState(""); // Estado para almacenar la profundidad seleccionada
+  const [loading, setLoading] = useState(false);
+  const [depth, setDepth] = useState("");
+  const [selection, setSelection] = useState("");
+  const [gate_error_1, setgate1] = useState(null); 
+  const [gate_error_2, setgate2] = useState(null); 
+
+
+  const handleChangeSelection = (event) => {
+    setSelection(event.target.value);
+  };
+
+  const handleChangeGate1 = (event) => {
+    setgate1(event.target.value);
+  };
+
+  const handleChangeGate2 = (event) => {
+    setgate2(event.target.value);
+  };
 
   const handleChangeOption = (event) => {
     setMachine(event.target.value);
@@ -42,8 +58,21 @@ function Calibration() {
   };
 
   const handleButtonClick = async () => {
+    setError("")
     setLoading(true); 
-    if (!machine || !t1 || !t2 || !prob0 || !prob1 || !readoutError || !depth) {
+    if (!machine || !selection) {
+      setError("All the field must be filled");
+      setLoading(false)
+      return;
+    }
+
+    if(selection === 'Qubits' && (!t1 || !t2 || !prob0 || !prob1 || !readoutError || !depth)){
+      setError("All the field must be filled");
+      setLoading(false)
+      return;
+    }
+
+    if(selection === 'Gates' && (!gate_error_1 || !gate_error_2)){
       setError("All the field must be filled");
       setLoading(false)
       return;
@@ -57,12 +86,15 @@ function Calibration() {
         },
         body: JSON.stringify({ 
           machine: machine, 
+          selection: selection,
           t1: t1,
           t2: t2,
           prob0: prob0,
           prob1: prob1,
           readout_error: readoutError,
-          depth: depth
+          depth: depth,
+          gate_error_1: gate_error_1,
+          gate_error_2: gate_error_2
         })
       });
       const data = await response.json();
@@ -99,42 +131,71 @@ function Calibration() {
           </select>
         </div>
 
-        <div className="depth-selector">
-          <select value={depth} onChange={handleChangeDepth} className="selector-option-select">
-            <option value="">Choose a depth</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
+        <div className="option-selector">
+          <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
+            <option value="">Select an option</option>
+            <option value="Qubits">Qubits</option>
+            <option value="Gates">Gates</option>
           </select>
-          </div>
         </div>
 
-        <div className="inputs-row">
-          <div className="input-container">
-            <label>T1:</label>
-            <input type="number" value={t1} onChange={handleChangeT1} />
-          </div>
-
-          <div className="input-container">
-            <label>T2:</label>
-            <input type="number" value={t2} onChange={handleChangeT2} />
-          </div>
-
-          <div className="input-container">
-            <label>Prob_meas0_prep1:</label>
-            <input type="number" value={prob0} onChange={handleChangeProb0} />
-          </div>
-
-          <div className="input-container">
-            <label>Prob_meas1_prep0:</label>
-            <input type="number" value={prob1} onChange={handleChangeProb1} />
-          </div>
-
-          <div className="input-container">
-            <label>Readout Error:</label>
-            <input type="number" value={readoutError} onChange={handleChangeReadoutError} />
-          </div>
         </div>
+
+        
+        {selection === 'Qubits' && 
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="depth-selector">
+                <select value={depth} onChange={handleChangeDepth} className="selector-option-select">
+                  <option value="">Choose a depth</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
+              <div className="input-container" >
+                <label>T1:</label>
+                <input type="number" value={t1 || ""} onChange={handleChangeT1} />
+              </div>
+
+              <div className="input-container">
+                <label>T2:</label>
+                <input type="number" value={t2 || ""} onChange={handleChangeT2} />
+              </div>
+
+              <div className="input-container">
+                <label>Prob_meas0_prep1:</label>
+                <input type="number" value={prob0 || ""} onChange={handleChangeProb0} />
+              </div>
+
+              <div className="input-container">
+                <label>Prob_meas1_prep0:</label>
+                <input type="number" value={prob1 || ""} onChange={handleChangeProb1} />
+              </div>
+
+              <div className="input-container">
+                <label>Readout Error:</label>
+                <input type="number" value={readoutError || ""} onChange={handleChangeReadoutError} />
+              </div>
+            </div>
+          </>
+        }
+
+
+        {selection === 'Gates' && 
+          <>
+              <div className="input-container">
+                <label>Gate error 1:</label>
+                <input type="number" value={gate_error_1 || ""} onChange={handleChangeGate1} />
+              </div>
+
+              <div className="input-container">
+                <label>Gate error 2:</label>
+                <input type="number" value={gate_error_2 || ""} onChange={handleChangeGate2} />
+              </div>
+          </>
+        }
+      
 
       {error && 
         <p className="error-message">{error}</p>

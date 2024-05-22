@@ -14,31 +14,15 @@ const Graph = ({ predictions, type, historical }) => {
 
   
   const chartRef = useRef(null);
-  const [minTypeDates, setMinTypeDates] = useState([]);
-  const [minType, setMinType] = useState(null);
-  const [isRange, setIsRange] = useState(false);
 
   useEffect(() => {
     if (predictions.length === 0) return;
 
-    // Obtener fechas y datos del tipo especificado
     const dates = predictions.map(prediction => prediction.Date);
     const typeData = predictions.map(prediction => prediction[type]);
 
-    // Calcular el valor mínimo del tipo especificado
-    
-    const minTypeValue = Math.min(...typeData);
-    // Obtener todas las fechas correspondientes al valor mínimo del tipo especificado
-    const minTypeDates = predictions
-      .filter(prediction => prediction[type] === minTypeValue)
-      .map(prediction => prediction.Date);
-
-    setMinTypeDates(minTypeDates);
-    setMinType(minTypeValue);
-    setIsRange(minTypeDates.length > 1);
-
-    const margin = (Math.max(...typeData) - minTypeValue) * 0.1; // Margen del 10%
-    const minY = minTypeValue - margin;
+    const margin = (Math.max(...typeData) - Math.min(...typeData)) * 0.1; // Margen del 10%
+    const minY = Math.min(...typeData) - margin;
     const maxY = Math.max(...typeData) + margin;
 
     const cursorColor = getRandomColor();
@@ -51,8 +35,8 @@ const Graph = ({ predictions, type, historical }) => {
           data: typeData,
           borderColor: cursorColor, // Color aleatorio para el borde
           backgroundColor: cursorColor, // Color aleatorio para el fondo
-          pointBackgroundColor: dates.map(date => minTypeDates.includes(date) ? cursorColor : 'rgba(255, 99, 132, 0.2)'), // Usar el mismo color aleatorio para los puntos
-          pointRadius: dates.map(date => minTypeDates.includes(date) ? 5 : 3),
+          pointBackgroundColor: cursorColor, // Usar el mismo color aleatorio para los puntos
+          pointRadius: 3,
         }
       ],
     };
@@ -75,9 +59,6 @@ const Graph = ({ predictions, type, historical }) => {
           callbacks: {
             label: (context) => {
               const label = context.dataset.label || '';
-              if (context.parsed.y === minTypeValue) {
-                return [`Type: ${type}`, `Min value: ${minTypeValue}`];
-              }
               return `${type}: ${context.parsed.y}`;
             }
           }
@@ -107,15 +88,15 @@ const Graph = ({ predictions, type, historical }) => {
       myChart.destroy();
       window.removeEventListener('resize', resizeChart);
     };
-  }, [predictions, type, isRange]);
+  }, [predictions, type]);
 
   return (
     <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>
       <canvas ref={chartRef} width={400} height={200}></canvas>
-      {!historical && minTypeDates.length > 0 && (
+      {!historical && (
         <div className="best-result" style={{margin: '20px'}}>
           <p>
-            <span style={{ fontWeight: 'bold'}}>Best Result:</span> {type} of <span style={{ fontWeight: 'bold' , color: '#64ace8' }}>{minType}</span> at <span style={{ fontWeight: 'bold', color: 'rgb(182, 182, 182)' }}>{minTypeDates.join(', ')}</span>
+            <span style={{ fontWeight: 'bold'}}>Best Result:</span> {type} of <span style={{ fontWeight: 'bold' , color: '#64ace8' }}>{Math.min(...predictions.map(prediction => prediction[type]))}</span>
           </p>
         </div>
       )}

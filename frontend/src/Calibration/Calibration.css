@@ -1,11 +1,14 @@
 .input-container {
   display: flex;
   align-items: center;
+  margin-top: 20px;
 }
 
 .input-container label {
   margin-right: 10px;
+  font-weight: bold;
 }
+
 
 .machine-selector,
 .option-selector,
@@ -50,4 +53,7 @@ select {
 .input-container input[type=number] {
   appearance: textfield;
   -moz-appearance: textfield; /* Firefox */
+  border-radius: 5px;
+  border-color: #ebe8e8;
+  border-top-color: #ffffff;
 }

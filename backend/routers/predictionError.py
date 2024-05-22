@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import pytz
 from appWeb import predictQubitsCalibration
 from appWeb import predictQubitsError
@@ -13,8 +13,8 @@ router = APIRouter()
 
 class PredictionData(BaseModel):
     machine: str
-    date: Optional[str] = None
-    selection: Optional[str] = None
+    date: str
+    selection: str
     depth: Optional[str] = None
 
 @router.post("/")
@@ -24,7 +24,7 @@ async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float,
     
     if data.selection == "Qubits":
         prediction = predict_qubits(data)
-    elif data.selection == "Puertas":
+    elif data.selection == "Gates":
         prediction = predict_puertas(data)
     else:
         prediction = None
@@ -32,6 +32,7 @@ async def predict(data: PredictionData) -> Dict[str, List[Dict[str, Union[float,
     return {"prediction": prediction}
 
 def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str, str, str, str, str]]]:
+
     n_steps = calculate_time_difference(data.date) 
     future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, data.machine)
     
@@ -52,24 +53,12 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
     return predictions
 
 
-def predict_puertas(data: PredictionData) -> List[Dict[str, Union[float, str]]]:
-    current_date = datetime.now(timezone.utc)
-    end_date = datetime.fromisoformat(data.date.replace('Z', '+00:00'))
-
-    predictions = []
-
-    while(current_date <= end_date):
-        print(current_date)
-        gate_error1, gate_error2 = predictGatesCalibration.predict(data.machine, current_date)
-        print(gate_error1)
-        print(gate_error2)
-        error_prediction = predictGatesError.predict(data.machine, [[gate_error1, gate_error2]])
-        new_prediction = {'Date': current_date.strftime('%Y-%m-%d %H:%M:%S'), 'divergence': error_prediction[0]}
-        predictions.append(new_prediction)
-        current_date += timedelta(hours=2)
-
-    print("Diccionario")
+def predict_puertas(data: PredictionData):
+    print("predict puertas")
+    n_steps = calculate_time_difference(data.date)
+    predictions = predictGatesCalibration.predict_future(data.machine, n_steps)
     print(predictions)
+    predictions = predictGatesError.predict(data.machine, predictions)
     return predictions
 
 
@@ -84,7 +73,6 @@ def calculate_time_difference(selected_date_str):
     time_difference = (selected_date - current_date).total_seconds() / 3600
     
     # Redondear la cantidad de horas al múltiplo de 2 más cercano
-    rounded_hours = round(time_difference / 2)
-    print(rounded_hours)
+    rounded_hours = round(time_difference / 2) + 1
     return rounded_hours
 

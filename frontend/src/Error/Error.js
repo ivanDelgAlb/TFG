@@ -4,15 +4,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
-import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
+import Graph from '../Graph/Graph';
 
-// Define DateTimePicker component outside of App
-const CustomDateTimePickerInput = ({ value, onClick }) => (
-  <div className="custom-datepicker-input" onClick={onClick}>
+const CustomDateTimePickerInput = React.forwardRef(({ value, onClick }, ref) => (
+  <div className="custom-datepicker-input" onClick={onClick} ref={ref}>
     <span>{value}</span>
     <FontAwesomeIcon icon={faCalendar} className="icono-calendario" />
   </div>
-);
+));
 
 const DateTimePicker = ({ selectedDateTime, onChange }) => (
   <DatePicker
@@ -27,18 +26,17 @@ const DateTimePicker = ({ selectedDateTime, onChange }) => (
 );
 
 function Error() {
-  const [machine, setMachine] = useState(""); // Estado para almacenar la máquina seleccionada
-  const [date, setDate] = useState(new Date()); // Estado para almacenar la fecha seleccionada
-  const [selection, setSelection] = useState(""); // Estado para almacenar la selección de qubits o puertas
-  const [depth, setDepth] = useState(""); // Estado para almacenar la profundidad seleccionada
+  const [machine, setMachine] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [selection, setSelection] = useState("");
+  const [depth, setDepth] = useState("");
   const [prediction, setPrediction] = useState([]);
-  const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad del spinner
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const [showCalibrationGraphs, setShowCalibrationGraphs] = useState(false);
 
   const handleButtonCalibration = () => {
-    setShowCalibrationGraphs(!showCalibrationGraphs); // Cambiar el estado de visibilidad
+    setShowCalibrationGraphs(!showCalibrationGraphs);
   };
 
   const handleChangeMachine = (event) => {
@@ -47,6 +45,8 @@ function Error() {
 
   const handleChangeSelection = (event) => {
     setSelection(event.target.value);
+    setShowCalibrationGraphs(false); // Ocultar la gráfica al cambiar la selección
+    setPrediction([]); // Borrar los datos de predicción al cambiar la selección
   };
 
   const handleChangeDepth = (event) => {
@@ -54,23 +54,27 @@ function Error() {
   };
 
   const handleButtonClick = async () => {
-    setError(null)
-    setLoading(true); // Mostrar el spinner al inicio de la carga
+    setError(null);
+    setLoading(true);
 
-    if (!machine || !selection || !date || !depth) {
-      setError("Todos los campos son obligatorios");
-      setLoading(false); // Ocultar el spinner al finalizar
+    if (!machine || !selection || !date) {
+      setError("All fields are required");
+      setLoading(false);
       return;
     }
 
-    // Get current date
+    if (selection === 'Qubits' && !depth) {
+      setError("All fields are required");
+      setLoading(false);
+      return;
+    }
+
     const currentDate = new Date();
 
-    // Check if selected date is earlier than current date
     if (date < currentDate) {
-        setError("La fecha seleccionada debe ser posterior a la fecha actual");
-        setLoading(false); // Ocultar el spinner al finalizar
-        return;
+      setError("Selected date must be after the current date");
+      setLoading(false);
+      return;
     }
 
     const isoDate = date.toISOString();
@@ -81,40 +85,41 @@ function Error() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           machine: machine,
           date: isoDate,
           selection: selection,
           depth: depth
         })
-      })
+      });
       const data = await response.json();
-      console.log(data.prediction)
+      console.log(data.prediction);
       if (data.prediction && data.prediction.length > 0) {
-        console.log(data.prediction)
         setPrediction(data.prediction);
         setError(null);
+        setShowCalibrationGraphs(true);
       } else {
-        setError('No se encontraron predicciones válidas');
+        setError('No valid predictions found');
       }
     } catch (error) {
       console.error('Error fetching prediction:', error);
     } finally {
-      setLoading(false); // Ocultar el spinner al finalizar
+      setLoading(false);
     }
   };
+
 
   return (
     <>
     <div className="container">
       <div className="bar">
-        <h1 className="title">Predicción dado un rango de fechas</h1>
+        <h1 className="title">Prediction within a Date Range</h1>
       </div>
       
       <div className="selectors">
         <div className="machine-selector">
           <select value={machine} onChange={handleChangeMachine}>
-            <option value="">Selecciona una máquina</option>
+            <option value="">Select a machine</option>
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
             <option value="ibm Osaka">ibm Osaka</option>
@@ -123,20 +128,22 @@ function Error() {
         
         <div className="option-selector">
           <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
-            <option value="">Selecciona una opción</option>
+            <option value="">Select an option</option>
             <option value="Qubits">Qubits</option>
-            <option value="Puertas">Puertas</option>
+            <option value="Gates">Gates</option>
           </select>
         </div>
 
-        <div className="depth-selector">
-          <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
-            <option value="">Selecciona una profundidad</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-          </select>
-        </div>
+       {selection === 'Qubits' && 
+          <div className="depth-selector">
+            <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
+              <option value="">Select a depth</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+        } 
 
         <div className="date-selector">
           <DateTimePicker selectedDateTime={date} onChange={setDate} />
@@ -148,51 +155,71 @@ function Error() {
       <div className="container-button">
         <button onClick={handleButtonClick} className="button">Submit</button>
       </div>
+
       
-      {loading && ( // Mostrar el spinner si está cargando
+      
+      {loading && (
         <div className="loading">
-          <h2>Cargando...</h2>
+          <h2>Loading...</h2>
           <div>
             <div className="spinner"></div>
           </div>
         </div>
       )}
+      {prediction.length !== 0 && !loading && (
+        <>
+        <div className="container-button">
+          <button onClick={handleButtonCalibration} className="button">
+            {showCalibrationGraphs ? "Hide Calibration Charts" : "Show Calibration Charts"}
+          </button>
+        </div>
+          {showCalibrationGraphs && prediction && (
+            <div className="graph-container">
+              <h2>Error Predictions:</h2>
+              <Graph predictions={prediction} type={'divergence'} />
 
-      {prediction.length !== 0 && !loading && ( // Mostrar la gráfica si hay datos y no está cargando
-        <div className="graph-container">
-          <h2>Predicciones del error:</h2>
-          <Graph predictions={prediction} type={'divergence'} /> {/* Mostrar la gráfica */}
-          <div className="container-button">
-            <button onClick={handleButtonCalibration} className="button">
-              {showCalibrationGraphs ? "Ocultar Gráficas de Calibraciones" : "Ver Gráficas de Calibraciones"}
-            </button>
-          </div>
-          {showCalibrationGraphs && (
-            <div>
-              <div style={{ marginBottom: '40px' }}>
-                <h2>Predicciones T1:</h2>
-                <Graph predictions={prediction} type={'T1'} />
-              </div>
-              <div style={{ marginBottom: '40px' }}>
-                <h2>Predicciones T2:</h2>
-                <Graph predictions={prediction} type={'T2'} />
-              </div>
-              <div style={{ marginBottom: '40px' }}>
-                <h2>Predicciones Prob0:</h2>
-                <Graph predictions={prediction} type={'Prob0'} />
-              </div>
-              <div style={{ marginBottom: '40px' }}>
-                <h2>Predicciones Prob1:</h2>
-                <Graph predictions={prediction} type={'Prob1'} />
-              </div>
-              <div style={{ marginBottom: '40px' }}>
-                <h2>Predicciones Error length:</h2>
-                <Graph predictions={prediction} type={'Error'} />
-              </div>
+              {selection === "Qubits" && showCalibrationGraphs && (
+                <div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical T1:</h2>
+                    <Graph predictions={prediction} type={'T1'} historical={true}/>
+                  </div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical T2:</h2>
+                    <Graph predictions={prediction} type={'T2'} historical={true}/>
+                  </div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical probMeas0Prep1:</h2>
+                    <Graph predictions={prediction} type={'Prob0'} historical={true}/>
+                  </div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical probMeas1Prep0:</h2>
+                    <Graph predictions={prediction} type={'Prob1'} historical={true}/>
+                  </div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical readout_error:</h2>
+                    <Graph predictions={prediction} type={'Error'} historical={true}/>
+                  </div>
+                </div>
+              )}
+
+              {selection === "Gates" && showCalibrationGraphs && (
+                <div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical Gate error of one-qubit input:</h2>
+                    <Graph predictions={prediction} type={'gate_error_1'} historical={true} />
+                  </div>
+                  <div style={{ marginBottom: '40px' }}>
+                    <h2>Historical Gate error of two-qubit input:</h2>
+                    <Graph predictions={prediction} type={'gate_error_2'} historical={true} />
+                  </div>
+                  {/* Rest of historical graphs */}
+                </div>
+              )}
+
             </div>
           )}
-
-        </div>
+        </>
       )}
 
       

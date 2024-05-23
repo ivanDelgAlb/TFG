@@ -16,8 +16,8 @@ def extract_dataframe(backend_name):
         data.extend(json.load(file))
 
     # Definir las columnas para los DataFrames
-    qubits_columns = ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'n_qubits', 'depth', 'kullback_error', 'jensen-error']
-    gates_columns = ['gate_error_one_qubit', 'gate_error_two_qubit', 'kullback_error', 'jensen-error', 'n_gates']
+    qubits_columns = ['date', 'T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error']
+    gates_columns = ['date', 'gate_error_one_qubit', 'gate_error_two_qubit', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error']
 
     # Crear listas para almacenar los datos
     qubits_data = []
@@ -30,21 +30,24 @@ def extract_dataframe(backend_name):
     for item in data:
         for qubit in qubits:
             for depth in depths:
-                qubits_data.append([
-                    item['properties']['qubits'][i]['mediana'] for i in range(5)
-                ] + [qubit, depth, "", ""]
+                qubits_data.append([item['date']] + 
+                    [item['properties']['qubits'][i]['mediana'] for i in range(5)] + 
+                    [qubit, depth, "", "", "", "", "", ""]
                 )
 
         gates_data.extend([
-            [item['properties']['gates'][i]['mediana'] for i in range(2)] + ["", "", ""] for _ in range(12)
+            [item['date']] + [item['properties']['gates'][i]['mediana'] for i in range(2)] + ["", "", "", "", "", "", ""] for _ in range(12)
         ])
 
     # Convertir las listas de datos a DataFrames de pandas
     df_qubits = pd.DataFrame(qubits_data, columns=qubits_columns)
     df_gates = pd.DataFrame(gates_data, columns=gates_columns)
 
+    columns_to_consider = [col for col in df_qubits.columns if col != 'date']
+
     # Eliminar duplicados de las puertas (gates)
     df_gates.drop_duplicates(inplace=True)
+    df_qubits.drop_duplicates(inplace=True, subset=columns_to_consider)
 
     # Replicar filas para las puertas (gates)
     replicated_data = pd.concat([df_gates] * 12, ignore_index=True)

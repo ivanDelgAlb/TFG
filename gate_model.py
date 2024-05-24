@@ -1,55 +1,8 @@
 import pandas as pd
-from pymongo import MongoClient
-from calculateNoiseError import calculate_configuration_gate_error
-from generateCircuit import generate_circuit
 import xgboost as xgb
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error
-from qiskit_ibm_runtime import QiskitRuntimeService
-import csv
-
-
-def generate_dataframe_gates():
-    dataframe = [["gate_error_one_qubit", "gate_error_two_qubit", "divergence"]]
-    mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
-    client = MongoClient(mongo_uri)
-
-    collection_name_Origen = "derivado"
-
-    db = client["TFG"]
-    datos = db[collection_name_Origen].find({"name": "ibm_brisbane"})
-    service = QiskitRuntimeService(channel='ibm_quantum',
-                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
-    circuit = generate_circuit(5, 5)
-    contador = 0
-
-    for item in datos:
-
-        if contador == 50:
-            break
-
-        fila = []
-
-        gate_error_one_qubit = item['properties']['gates'][0]['mediana']
-        gate_error_two_qubit = item['properties']['gates'][1]['mediana']
-
-        backend = service.get_backend("ibm_brisbane")
-
-        divergence = calculate_configuration_gate_error(circuit, backend, gate_error_one_qubit, gate_error_two_qubit)
-
-        fila.extend([gate_error_one_qubit, gate_error_two_qubit, divergence])
-
-        dataframe.append(fila)
-        contador += 1
-
-    nombre_archivo = 'dataframe_gates_' + 'Brisbane' + '.csv'
-
-    with open(nombre_archivo, 'w', newline='') as archivo_csv:
-        escritor_csv = csv.writer(archivo_csv)
-        escritor_csv.writerows(dataframe)
-
-    print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
 
 
 def create_model(machine_name):
@@ -61,21 +14,29 @@ def create_model(machine_name):
     """
     formated_name = machine_name.split("_")[1].capitalize()
 
-    columns = ["gate_error_one_qubit", "gate_error_two_qubit", "divergence", "n_gates"]
+    columns = ['gate_error_one_qubit', 'gate_error_two_qubit', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'jensen-error']
 
     dataset = pd.read_csv('dataframes_xgboost/dataframe_gates_' + formated_name + '.csv', names=columns)
+    dataset.filter(columns)
+
     dataset['gate_error_one_qubit'] = pd.to_numeric(dataset['gate_error_one_qubit'], errors='coerce')
     dataset['gate_error_two_qubit'] = pd.to_numeric(dataset['gate_error_two_qubit'], errors='coerce')
-    dataset['divergence'] = pd.to_numeric(dataset['divergence'], errors='coerce')
-    dataset['n_gates'] = pd.to_numeric(dataset['n_gates'], errors='coerce')
+    dataset['n_qubits'] = pd.to_numeric(dataset['n_qubits'], errors='coerce')
+    dataset['t_gates'] = pd.to_numeric(dataset['t_gates'], errors='coerce')
+    dataset['phase_gates'] = pd.to_numeric(dataset['phase_gates'], errors='coerce')
+    dataset['h_gates'] = pd.to_numeric(dataset['h_gates'], errors='coerce')
+    dataset['cnot_gates'] = pd.to_numeric(dataset['h_gates'], errors='coerce')
+    dataset['jensen-error'] = pd.to_numeric(dataset['jensen-error'], errors='coerce')
+    
+    target_column = 'jensen-error'
 
     train_set, test_set = train_test_split(dataset, test_size=0.2)
-    train_set = train_set.dropna(subset=['divergence'])
+    train_set = train_set.dropna(subset=[target_column])
 
-    x_train = train_set.drop("divergence", axis=1)
-    y_train = train_set["divergence"]
-    x_test = test_set.drop("divergence", axis=1)
-    y_test = test_set["divergence"]
+    x_train = train_set.drop(target_column, axis=1)
+    y_train = train_set[target_column]
+    x_test = test_set.drop(target_column, axis=1)
+    y_test = test_set[target_column]
 
     dtrain = xgb.DMatrix(x_train, label=y_train)
     dtest = xgb.DMatrix(x_test, label=y_test)
@@ -142,7 +103,8 @@ def predict(machine_name, data):
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
-    data_np = np.array(data).reshape(1, -1)
+    if data_np.ndim == 1:
+        data_np = data_np.reshape(1, -1)
 
     matrix_data = xgb.DMatrix(data_np)
 
@@ -157,19 +119,18 @@ create_model("ibm_brisbane")
 create_model("ibm_osaka")
 create_model("ibm_kyoto")
 '''
-
-calibrations = [
-    [0.00020744, 0.00786156],
-    [0.00020788, 0.00786835],
-    [0.00020821, 0.00787827],
-    [0.00020847, 0.00789025],
-    [0.00020983, 0.00799644],
-    [0.00021001, 0.00801272],
-    [0.0002102,  0.00802903],
-    [0.00021038, 0.00804532],
-    [0.00021057, 0.00806158],
-    [0.00021076, 0.00807778]
+'''
+machine_name = "ibm_brisbane"
+data = [0.001, 0.002, 5, 3, 1, 2, 4, 0.01, 0.02]  # Ejemplo de datos de entrada
+prediction = predict(machine_name, data)
+print(prediction)
+'''
+'''
+machine_name = "ibm_brisbane"
+data = [
+    [0.001, 0.002, 5, 3, 1, 2, 4, 0.01, 0.02],
+    [0.003, 0.001, 10, 5, 2, 3, 6, 0.015, 0.025]
 ]
-
-for calibration in calibrations:
-    print(predict("ibm_brisbane", calibration))
+predictions = predict(machine_name, data)
+print(predictions)
+'''

@@ -68,8 +68,8 @@ def execute_qubit_circuit(backend_name):
         df_qubits.at[index, 'kullback_error'] = kullback_qubit_error
         df_qubits.at[index, 'jensen-error'] = jensen_qubit_error
 
-    df_qubits.to_csv(qubits_csv_file, index=False)
-    print("Error saved")
+        df_qubits.to_csv(qubits_csv_file, index=False)
+        print(f"Row {index} saved")
 
 
 def execute_gate_circuit(backend_name):
@@ -118,6 +118,6 @@ def execute_gate_circuit(backend_name):
         df_gates.at[index, 'jensen-error'] = jensen_gate_error
 
         df_gates.to_csv(gates_csv_file, index=False)
-        print("Error saved")
+        print(f"Row {index} saved")
 
 

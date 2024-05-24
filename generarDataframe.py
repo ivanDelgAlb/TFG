@@ -1,7 +1,6 @@
 import pandas as pd
 import json
 import os
-from itertools import repeat
 
 
 def extract_dataframe(backend_name):

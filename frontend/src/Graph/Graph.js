@@ -4,11 +4,15 @@ import './Graph.css'
 
 const Graph = ({ predictions, type, historical }) => {
   const getRandomColor = () => {
+    /*
     const letters = '0123456789ABCDEF';
     let color = '#';
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
+    */
+    const colors = ['#1f77b4', '#006699', '#e60000', '#006600', '#ff0000']
+    const color = colors[Math.floor(Math.random() * colors.length)]
     return color;
   };
 
@@ -26,7 +30,7 @@ const Graph = ({ predictions, type, historical }) => {
     const maxY = Math.max(...typeData) + margin;
 
     const cursorColor = getRandomColor();
-
+    
     const chartData = {
       labels: dates,
       datasets: [

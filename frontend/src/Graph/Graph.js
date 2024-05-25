@@ -1,21 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import './Graph.css'
 
-const Graph = ({ predictions, type, historical }) => {
+const Graph = ({ predictions, type, historical, color }) => {
+  /*
   const getRandomColor = () => {
-    /*
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    */
     const colors = ['#1f77b4', '#006699', '#e60000', '#006600', '#ff0000']
     const color = colors[Math.floor(Math.random() * colors.length)]
     return color;
   };
-
+  */
   
   const chartRef = useRef(null);
 
@@ -29,7 +23,7 @@ const Graph = ({ predictions, type, historical }) => {
     const minY = Math.min(...typeData) - margin;
     const maxY = Math.max(...typeData) + margin;
 
-    const cursorColor = getRandomColor();
+    const cursorColor = color;
     
     const chartData = {
       labels: dates,
@@ -37,9 +31,9 @@ const Graph = ({ predictions, type, historical }) => {
         {
           label: type,
           data: typeData,
-          borderColor: cursorColor, // Color aleatorio para el borde
-          backgroundColor: cursorColor, // Color aleatorio para el fondo
-          pointBackgroundColor: cursorColor, // Usar el mismo color aleatorio para los puntos
+          borderColor: cursorColor,
+          backgroundColor: cursorColor,
+          pointBackgroundColor: cursorColor,
           pointRadius: 3,
         }
       ],
@@ -92,7 +86,7 @@ const Graph = ({ predictions, type, historical }) => {
       myChart.destroy();
       window.removeEventListener('resize', resizeChart);
     };
-  }, [predictions, type]);
+  }, [predictions, type, color]);
 
   return (
     <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>

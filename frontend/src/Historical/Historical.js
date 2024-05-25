@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
 import './Historical.css'; // Asegúrate de crear este archivo CSS para los estilos
 
@@ -95,23 +95,23 @@ function Historical() {
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'T1'} historical={true} />
+                                <Graph predictions={calibration[0].qubits} type={'T1'} historical={true} color={'#1f77b4'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T2:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'T2'} historical={true} />
+                                <Graph predictions={calibration[0].qubits} type={'T2'} historical={true} color={'#660066'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
-                                <h2>Historical Prob0:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'probMeas0Prep1'} historical={true} />
+                                <h2>Historical Prob_Meas0_Prep1:</h2>
+                                <Graph predictions={calibration[0].qubits} type={'Prob_Meas0_Prep1'} historical={true} color={'#006600'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
-                                <h2>Historical Prob1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'probMeas1Prep0'} historical={true} />
+                                <h2>Historical Prob_Meas1_Prep0:</h2>
+                                <Graph predictions={calibration[0].qubits} type={'Prob_Meas0_Prep1'} historical={true} color={'#000099'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
-                                <h2>Historical readout_error:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'readout_error'} historical={true} />
+                                <h2>Historical Readout_error:</h2>
+                                <Graph predictions={calibration[0].qubits} type={'Readout_error'} historical={true} color={'#ff6600'}/>
                             </div>
                         </div>
                     )}
@@ -120,11 +120,11 @@ function Historical() {
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of one-qubit input:</h2>
-                                <Graph predictions={calibration[1].gates} type={'gate_error_1'} historical={true} />
+                                <Graph predictions={calibration[1].gates} type={'gate_error_1'} historical={true} color={'#e6e600'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of two-qubit input:</h2>
-                                <Graph predictions={calibration[1].gates} type={'gate_error_2'} historical={true} />
+                                <Graph predictions={calibration[1].gates} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
                             </div>
                         </div>
                     )}

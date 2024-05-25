@@ -217,7 +217,7 @@ function Calibration() {
       {prediction.length !== 0  && !loading &&
         (
           <div>
-            <h1>Quantum Prediction</h1>
+            <h1>Quantum Noise Prediction</h1>
             <p>Prediction: {prediction}</p>
           </div>
         )

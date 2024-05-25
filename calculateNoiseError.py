@@ -256,19 +256,15 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
     """
 
     mixture_distribution = {}
-    for status in probabilities_real_machine:
-        mixture_distribution.update(
-            {status: (probabilities_real_machine[status] * 0.5 + probabilities_ideal_machine.get(status, 0) * 0.5)})
-
-    for status in probabilities_ideal_machine:
-        if mixture_distribution.get(status, 0) == 0:
-            mixture_distribution.update(
-                {status: (probabilities_real_machine.get(status, 0) * 0.5 + probabilities_ideal_machine[status] * 0.5)})
-
-    divergence = 0.5 * calculate_kullback_divergence(probabilities_ideal_machine,
-                                                     mixture_distribution) + 0.5 * calculate_kullback_divergence(
-        probabilities_real_machine, mixture_distribution)
-
+    
+    for status in set(probabilities_real_machine.keys()).union(set(probabilities_ideal_machine.keys())):
+        prob_real = probabilities_real_machine.get(status, 0)
+        prob_ideal = probabilities_ideal_machine.get(status, 0)
+        mixture_distribution[status] = 0.5 * prob_real + 0.5 * prob_ideal
+    
+    divergence = 0.5 * calculate_kullback_divergence(probabilities_ideal_machine, mixture_distribution) + \
+                 0.5 * calculate_kullback_divergence(probabilities_real_machine, mixture_distribution)
+    
     return divergence
 
 

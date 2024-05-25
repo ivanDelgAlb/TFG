@@ -176,29 +176,29 @@ function Error() {
           {showCalibrationGraphs && prediction && (
             <div className="graph-container">
               <h2>Error Predictions:</h2>
-              <Graph predictions={prediction} type={'divergence'} />
+              <Graph predictions={prediction} type={'divergence'} color={'#ff0000'}/>
 
               {selection === "Qubits" && showCalibrationGraphs && (
                 <div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical T1:</h2>
-                    <Graph predictions={prediction} type={'T1'} historical={true}/>
+                    <Graph predictions={prediction} type={'T1'} historical={true} color={'#1f77b4'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical T2:</h2>
-                    <Graph predictions={prediction} type={'T2'} historical={true}/>
+                    <Graph predictions={prediction} type={'T2'} historical={true} color={'#660066'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
-                    <h2>Historical probMeas0Prep1:</h2>
-                    <Graph predictions={prediction} type={'Prob0'} historical={true}/>
+                    <h2>Historical Prob_Meas0_Prep1:</h2>
+                    <Graph predictions={prediction} type={'Prob_Meas0_Prep1'} historical={true} color={'#006600'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
-                    <h2>Historical probMeas1Prep0:</h2>
-                    <Graph predictions={prediction} type={'Prob1'} historical={true}/>
+                    <h2>Historical Prob_Meas1_Prep0:</h2>
+                    <Graph predictions={prediction} type={'Prob_Meas1_Prep0'} historical={true} color={'#000099'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
-                    <h2>Historical readout_error:</h2>
-                    <Graph predictions={prediction} type={'Error'} historical={true}/>
+                    <h2>Historical Readout_error:</h2>
+                    <Graph predictions={prediction} type={'Readout_error'} historical={true} color={'#ff6600'}/>
                   </div>
                 </div>
               )}
@@ -207,11 +207,11 @@ function Error() {
                 <div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Gate error of one-qubit input:</h2>
-                    <Graph predictions={prediction} type={'gate_error_1'} historical={true} />
+                    <Graph predictions={prediction} type={'gate_error_1'} historical={true} color={'#e6e600'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Gate error of two-qubit input:</h2>
-                    <Graph predictions={prediction} type={'gate_error_2'} historical={true} />
+                    <Graph predictions={prediction} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
                   </div>
                   {/* Rest of historical graphs */}
                 </div>

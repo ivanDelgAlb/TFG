@@ -5,8 +5,8 @@ import pandas as pd
 def predict_qubits_error(predictions, machine_name, depth):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
-        model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '_' + depth +'.h5')
-        normalized_data = normalized(predictions)  # Llama a la función normalized con la fecha
+        model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '_' + str(depth) + '.h5')
+        normalized_data = normalized(predictions)  
         errors = model.predict(normalized_data)
         errors = add_date_and_calibration(errors, predictions)
         return errors

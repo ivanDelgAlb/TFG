@@ -1,9 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, FastAPI, File, Form, UploadFile
 from pydantic import BaseModel
 from appWeb import predictQubitsError
 from appWeb import predictGatesError
+from appWeb import processFile
 from typing import List, Dict, Union
 from typing import Optional
+import json
 
 router = APIRouter()
 
@@ -46,4 +48,62 @@ async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union
         prediction = predictGatesError.predict(data.machine, predictions)
 
     # Devolver la predicción
+    return {"prediction": prediction}
+
+@router.post("/file")
+async def get_prediction(
+    selection: str = Form(...),
+    depth: Optional[int] = Form(...),
+    file: UploadFile = File(...),
+    nQubits: int = Form(...),
+    tGates: int = Form(...),
+    phaseGates: int = Form(...),
+    hGates: int = Form(...),
+    cNotGates: int = Form(...)
+) -> Dict[str, List[Dict[str, Union[float, str]]]]:
+    
+    try:
+
+        content = await file.read()
+        file_data = json.loads(content)
+    except Exception as e:
+        return{"error": f"Error reading file: {e}"}
+    
+    name, qubits, gates = processFile.processFile(file_data)
+
+    if(selection == 'Qubits'):
+        prediction = {
+            "T1": qubits[0]['mediana'],
+            "T2": qubits[1]['mediana'],
+            "Prob0": qubits[2]['mediana'],
+            "Prob1": qubits[3]['mediana'],
+            "Error": qubits[4]['mediana'],
+            "nQubits": nQubits,
+            "tGates": tGates,
+            "phaseGates": phaseGates,
+            "hGates": hGates,
+            "cnotGates": cNotGates
+        }
+    else: 
+        prediction = []
+        prediction.append([
+            gates[0]['mediana'], 
+            gates[1]['mediana'], 
+            nQubits,
+            tGates,
+            phaseGates,
+            hGates,
+            cNotGates
+        ])
+
+    predictions = []
+    predictions.append(prediction)
+
+    name = name.replace("_", " ")
+    
+    if(selection == 'Qubits'):
+        prediction = predictQubitsError.predict_qubits_error(predictions, name, depth)
+    else: 
+        prediction = predictGatesError.predict(name, predictions)
+    
     return {"prediction": prediction}

@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Error from '../Error/Error';
-import Calibration from '../Calibration/Calibration';
+//import Calibration from '../Calibration/Calibration';
+import Calibration from '../Calibration/Calibration2';
 import Principal from '../Principal/Principal';
 import Historical from '../Historical/Historical';
 import reportWebVitals from '../Default/reportWebVitals';

@@ -44,7 +44,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin: 20px 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .machine-selector,
@@ -137,9 +138,8 @@ h2{
   color:#ccc
 }
 
-/* Elimina las flechas de los input numéricos */
-.input-container input[type=number]::-webkit-inner-spin-button,
-.input-container input[type=number]::-webkit-outer-spin-button {
+.input-gates::-webkit-inner-spin-button,
+.input-gates::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }

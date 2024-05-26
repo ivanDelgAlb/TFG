@@ -45,6 +45,22 @@ function Calibration() {
   }
 
   const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if(file){
+      const fileExtension = file.name.split('.').pop()
+      if(fileExtension !== 'json'){
+
+        setError("The configuration file must be a JSON")
+        setSelectedFile(null)
+
+        if(fileInputRef.current){
+          fileInputRef.current.value = null;
+        }
+      }else{
+        setError("")
+        setSelectedFile(file);
+      }
+    }
     setSelectedFile(event.target.files[0]);
   }
 
@@ -136,31 +152,34 @@ function Calibration() {
             </div>
           </>
         }
-        
+
+        <h5>Introduce the number of gates of the circuit to be executed:</h5>
+
         <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px'}}>
           <tr>
-            <td><label>Nº Qubits: </label></td>
+            <td><label>Number of qubits:</label></td>
             <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeQubits} /></td>
           </tr>
           <tr>
-            <td><label>Nº T gates: </label></td>
+            <td><label>Number of T gates:</label></td>
             <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} /></td>
           </tr>
           <tr>
-            <td><label>Nº Phase gates: </label></td>
+            <td><label>Number of Phase gates:</label></td>
             <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} /></td>
           </tr>
           <tr>
-            <td><label>Nº Hadamard gates: </label></td>
+            <td><label>Number of Hadamard gates:</label></td>
             <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} /></td>
           </tr>
           <tr>
-            <td><label>Nº C-Not gates: </label></td>
+            <td><label>Number of C-Not gates:</label></td>
             <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} /></td>
           </tr>
         </table>
 
-        <input type="file" onChange={handleFileChange} ref={fileInputRef}/>
+        <h5>Introduce a json file with the configuration of the machine (qiskit properties format):</h5>
+        <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}}/>
         {selectedFile && (
             <div>
                 <button onClick={handleFileRemove} style={{marginTop: '10px'}}>Remove file</button>

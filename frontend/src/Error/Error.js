@@ -184,37 +184,30 @@ function Error() {
             </select>
           </div>
           </div>
-
         } 
 
-        <div className="input-container" >
-          <label>Nº qubits:</label>
-          <input type="number" value={nQubits || ""} onChange={handleChangeNQubits} />
-        </div>
-
-        <div className="input-container">
-          <label>Nº of T gates:</label>
-          <input type="number" value={tGates || ""} onChange={handleChangeTGates} />
-        </div>
-
-        <div className="input-container">
-          <label>Nº of Phase gates:</label>
-          <input type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} />
-        </div>
-
-        <div className="input-container">
-          <label>Nº of H gates:</label>
-          <input type="number" value={hGates || ""} onChange={handleChangeHGates} />
-        </div>
-
-        <div className="input-container">
-          <label>Nº of Cnot gates:</label>
-          <input type="number" value={cnotGates || ""} onChange={handleChangeCnotGates} />
-        </div>
-          
-
-        
-      
+        <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
+          <tr>
+            <td><label>Number of nQubitsubits:</label></td>
+            <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} /></td>
+          </tr>
+          <tr>
+            <td><label>Number of T gates:</label></td>
+            <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} /></td>
+          </tr>
+          <tr>
+            <td><label>Number of Phase gates:</label></td>
+            <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} /></td>
+          </tr>
+          <tr>
+            <td><label>Number of Hadamard gates:</label></td>
+            <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} /></td>
+          </tr>
+          <tr>
+            <td><label>Number of C-Not gates:</label></td>
+            <td><input className='input-gates' type="number" value={cnotGates || ""} onChange={handleChangeCnotGates} /></td>
+          </tr>
+        </table>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -222,8 +215,6 @@ function Error() {
         <button onClick={handleButtonClick} className="button">Submit</button>
       </div>
 
-      
-      
       {loading && (
         <div className="loading">
           <h2>Loading...</h2>
@@ -232,6 +223,7 @@ function Error() {
           </div>
         </div>
       )}
+      
       {prediction.length !== 0 && !loading && (
         <>
         <div className="container-button">

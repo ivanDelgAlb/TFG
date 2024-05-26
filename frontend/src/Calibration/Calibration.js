@@ -139,7 +139,7 @@ function Calibration() {
           </select>
         </div>
 
-        </div>
+      </div>
 
         
         {selection === 'Qubits' && 

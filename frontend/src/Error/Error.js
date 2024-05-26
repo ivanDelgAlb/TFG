@@ -35,6 +35,33 @@ function Error() {
   const [error, setError] = useState(null);
   const [showCalibrationGraphs, setShowCalibrationGraphs] = useState(false);
 
+  const [nQubits, setNQubits] = useState(null); 
+  const [tGates, setTGates] = useState(null); 
+  const [phaseGates, setPhaseGates] = useState(null); 
+  const [hGates, setHGates] = useState(null); 
+  const [cnotGates, setCnotGates] = useState(null); 
+
+  const handleChangeNQubits = (event) => {
+    setNQubits(event.target.value);
+  };
+
+  const handleChangeTGates = (event) => {
+    setTGates(event.target.value);
+  };
+
+  const handleChangePhaseGates = (event) => {
+    setPhaseGates(event.target.value);
+  };
+
+  const handleChangeHGates = (event) => {
+    setHGates(event.target.value);
+  };
+
+  const handleChangeCnotGates = (event) => {
+    setCnotGates(event.target.value);
+  };
+
+
   const handleButtonCalibration = () => {
     setShowCalibrationGraphs(!showCalibrationGraphs);
   };
@@ -63,7 +90,7 @@ function Error() {
       return;
     }
 
-    if (selection === 'Qubits' && !depth) {
+    if (selection === 'Qubits' && (depth === '' || !nQubits || !tGates || !hGates || !phaseGates || !cnotGates)) {
       setError("All fields are required");
       setLoading(false);
       return;
@@ -89,7 +116,12 @@ function Error() {
           machine: machine,
           date: isoDate,
           selection: selection,
-          depth: depth
+          depth: depth,
+          nQubits: nQubits,
+          tGates: tGates,
+          hGates: hGates,
+          phaseGates: phaseGates,
+          cnotGates: cnotGates
         })
       });
       const data = await response.json();
@@ -134,7 +166,15 @@ function Error() {
           </select>
         </div>
 
+        <div className="date-selector">
+          <DateTimePicker selectedDateTime={date} onChange={setDate} />
+        </div>
+
+      </div>
+
        {selection === 'Qubits' && 
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="depth-selector">
             <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
               <option value="">Select a depth</option>
@@ -143,12 +183,38 @@ function Error() {
               <option value="15">15</option>
             </select>
           </div>
+          </div>
+
         } 
 
-        <div className="date-selector">
-          <DateTimePicker selectedDateTime={date} onChange={setDate} />
+        <div className="input-container" >
+          <label>Nº qubits:</label>
+          <input type="number" value={nQubits || ""} onChange={handleChangeNQubits} />
         </div>
-      </div>
+
+        <div className="input-container">
+          <label>Nº of T gates:</label>
+          <input type="number" value={tGates || ""} onChange={handleChangeTGates} />
+        </div>
+
+        <div className="input-container">
+          <label>Nº of Phase gates:</label>
+          <input type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} />
+        </div>
+
+        <div className="input-container">
+          <label>Nº of H gates:</label>
+          <input type="number" value={hGates || ""} onChange={handleChangeHGates} />
+        </div>
+
+        <div className="input-container">
+          <label>Nº of Cnot gates:</label>
+          <input type="number" value={cnotGates || ""} onChange={handleChangeCnotGates} />
+        </div>
+          
+
+        
+      
 
       {error && <p className="error-message">{error}</p>}
 
@@ -190,15 +256,15 @@ function Error() {
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Prob_Meas0_Prep1:</h2>
-                    <Graph predictions={prediction} type={'Prob_Meas0_Prep1'} historical={true} color={'#006600'}/>
+                    <Graph predictions={prediction} type={'Prob0'} historical={true} color={'#006600'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Prob_Meas1_Prep0:</h2>
-                    <Graph predictions={prediction} type={'Prob_Meas1_Prep0'} historical={true} color={'#000099'}/>
+                    <Graph predictions={prediction} type={'Prob1'} historical={true} color={'#000099'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Readout_error:</h2>
-                    <Graph predictions={prediction} type={'Readout_error'} historical={true} color={'#ff6600'}/>
+                    <Graph predictions={prediction} type={'Error'} historical={true} color={'#ff6600'}/>
                   </div>
                 </div>
               )}

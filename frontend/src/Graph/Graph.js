@@ -1,40 +1,39 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-import './Graph.css'
+import './Graph.css';
 
 const Graph = ({ predictions, type, historical, color }) => {
-  /*
-  const getRandomColor = () => {
-    const colors = ['#1f77b4', '#006699', '#e60000', '#006600', '#ff0000']
-    const color = colors[Math.floor(Math.random() * colors.length)]
-    return color;
-  };
-  */
-  
   const chartRef = useRef(null);
 
   useEffect(() => {
-    if (predictions.length === 0) return;
+    if (predictions.length === 0) {
+      console.log("No predictions provided.");
+      return;
+    }
 
     const dates = predictions.map(prediction => prediction.Date);
     const typeData = predictions.map(prediction => prediction[type]);
 
-    const margin = (Math.max(...typeData) - Math.min(...typeData)) * 0.1; // Margen del 10%
-    const minY = Math.min(...typeData) - margin;
-    const maxY = Math.max(...typeData) + margin;
+    console.log("Dates:", dates);
+    console.log(`${type} Data:`, typeData);
 
+    const allEqual = typeData.every(val => val === typeData[0]);
     const cursorColor = color;
-    
+
+    const margin = (Math.max(...typeData) - Math.min(...typeData)) * 0.1;
+    const minY = allEqual ? typeData[0] - 1 : Math.min(...typeData) - margin;
+    const maxY = allEqual ? typeData[0] + 1 : Math.max(...typeData) + margin;
+
     const chartData = {
       labels: dates,
       datasets: [
         {
-          label: type,
+          label: historical ? type : getBestResultLabel(predictions, type),
           data: typeData,
           borderColor: cursorColor,
           backgroundColor: cursorColor,
           pointBackgroundColor: cursorColor,
-          pointRadius: 3,
+          pointRadius: historical ? 3 : 6, // Tamaño del punto más grande si no es historical
         }
       ],
     };
@@ -42,13 +41,13 @@ const Graph = ({ predictions, type, historical, color }) => {
     const chartOptions = {
       scales: {
         y: {
-          beginAtZero: false,
+          beginAtZero: !allEqual,
           min: minY,
           max: maxY,
         },
         x: {
           ticks: {
-            maxTicksLimit: 5, // Limitar el número máximo de etiquetas del eje X
+            maxTicksLimit: 5,
           }
         }
       },
@@ -63,30 +62,40 @@ const Graph = ({ predictions, type, historical, color }) => {
         }
       },
       legend: {
-        position: 'right', // Ajusta la posición de la leyenda a la derecha
+        position: 'right',
       }
     };
 
     const canvas = chartRef.current;
-    const myChart = new Chart(canvas, {
-      type: 'line',
-      data: chartData,
-      options: chartOptions,
-    });
+    if (canvas) {
+      const myChart = new Chart(canvas, {
+        type: 'line',
+        data: chartData,
+        options: chartOptions,
+      });
 
-    const resizeChart = () => {
-      myChart.resize();
-    };
+      const resizeChart = () => {
+        myChart.resize();
+      };
 
-    resizeChart();
+      resizeChart();
 
-    window.addEventListener('resize', resizeChart);
+      window.addEventListener('resize', resizeChart);
 
-    return () => {
-      myChart.destroy();
-      window.removeEventListener('resize', resizeChart);
-    };
-  }, [predictions, type, color]);
+      return () => {
+        myChart.destroy();
+        window.removeEventListener('resize', resizeChart);
+      };
+    } else {
+      console.log("Canvas element is not found.");
+    }
+  }, [predictions, type, color, historical]);
+
+  // Función para obtener la etiqueta del mejor resultado
+  const getBestResultLabel = (predictions, type) => {
+    const bestResult = Math.min(...predictions.map(prediction => prediction[type]));
+    return `${type} (Best Result: ${bestResult})`;
+  };
 
   return (
     <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>

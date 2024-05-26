@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from keras.models import load_model
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
 def predict_qubits_error(predictions, machine_name, depth):
     try:
@@ -44,6 +43,14 @@ def normalized(predictions):
     df = pd.DataFrame(predictions)
     print(df)
     # Normalizar cada columna usando los valores mínimos y máximos de cada columna
-    df_normalizado = df.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    X = df.drop(['nQubits', 'tGates', 'phaseGates', 'hGates', 'cnotGates'], axis=1)
+
+    df_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+
+    df_normalizado['nQubits'] = df['nQubits']
+    df_normalizado['tGates'] = df['tGates']
+    df_normalizado['phaseGates'] = df['phaseGates']
+    df_normalizado['hGates'] = df['hGates']
+    df_normalizado['cnotGates'] = df['cnotGates']
     print(df_normalizado)
     return df_normalizado

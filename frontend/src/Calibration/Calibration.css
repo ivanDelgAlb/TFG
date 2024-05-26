@@ -6,17 +6,8 @@
 
 .input-container label {
   margin-right: 10px;
-  font-weight: bold;
 }
 
-
-.machine-selector,
-.option-selector,
-.depth-selector,
-.date-selector {
-  flex: 1;
-  min-width: 200px;
-}
 
 select {
   width: 100%;

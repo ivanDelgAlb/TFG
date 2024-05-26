@@ -80,35 +80,31 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
 
 
 
-# Cargar el dataframe desde el archivo CSV
-def create_model(machine, depth):
-    # Construir el modelo de perceptrón multicapa
+# Crear el modelo del perceptrón multicapa
+def create_model(machine, depth, X_train, X_test, y_train, y_test):
     model = Sequential()
     model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(1, activation='linear'))
 
-    # Compilar el modelo
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
-    # Entrenar el modelo
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
 
-    # Evaluar el rendimiento del modelo en el conjunto de prueba
     mse, mae = model.evaluate(X_test, y_test)
-    print("Error cuadrático medio:", mse)
-    print("Error absoluto medio:", mae)
+    print(f"Error cuadrático medio ({machine}, depth {depth}):", mse)
+    print(f"Error absoluto medio ({machine}, depth {depth}):", mae)
 
-    # Guardar el modelo
-    directory = 'backend/models_perceptron/model_qubits_' + machine + '_' + str(depth) + '.h5'
+    directory = f'backend/models_perceptron/model_qubits_{machine}_{depth}.h5'
     model.save(directory)
 
 
 
-def predict():
+def predict(machine, depth, X_test, y_test):
     # Reconstrucción de datos de prueba
     # Cargar el modelo
-    model = load_model('backend/models_perceptron/model_qubits_Brisbane_5.h5')
+    directory = 'backend/models_perceptron/model_qubits_' + machine + '_' + str(depth) + '.h5'
+    model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
     # Comparación entre datos originales y datos reconstruidos
@@ -128,26 +124,40 @@ extraer_dataframe_normalizado(circuit, fake_backend)
 
 '''
 
-machines = ["Brisbane", "Kyoto","Osaka"]
+machines = ["Brisbane", "Kyoto", "Osaka"]
+depths = [5, 10, 15]
 
 for machine in machines:
     directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
-    X = dataFrame.drop(['kullback_error', 'jensen-error', 'n_qubits', 'depth'], axis=1)
+    for depth in depths:
+        filas_filtradas = dataFrame[(dataFrame['depth'] == depth) & (dataFrame['jensen-error'].notna())]
 
-    X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
-    
-    y = dataFrame['jensen-error']  # Etiqueta (divergencia)
+        X = filas_filtradas.drop(['date', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
 
+        X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
 
-    depth = dataFrame['depth'][1]
+        print(X_normalizado)
 
-    # Dividir los datos en conjuntos de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
+        
+        X_normalizado['n_qubits'] = filas_filtradas['n_qubits']
+        X_normalizado['t_gates'] = filas_filtradas['t_gates']
+        X_normalizado['phase_gates'] = filas_filtradas['phase_gates']
+        X_normalizado['h_gates'] = filas_filtradas['h_gates']
+        X_normalizado['cnot_gates'] = filas_filtradas['cnot_gates']
 
-    create_model(machine, depth)
-    #predict()
+        y = filas_filtradas['jensen-error']  # Etiqueta (divergencia)
+
+        # Dividir los datos en conjuntos de entrenamiento y prueba
+        X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
+
+        # Crear y entrenar el modelo
+        create_model(machine, depth, X_train, X_test, y_train, y_test)
+
+        # Realizar predicciones y evaluarlas
+        predict(machine, depth, X_test, y_test)
+
 print("Models created")
 
 #predict()

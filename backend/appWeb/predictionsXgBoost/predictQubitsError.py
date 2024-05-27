@@ -1,8 +1,6 @@
 import numpy as np
-import joblib
+import xgboost as xgb
 from datetime import datetime, timedelta
-import gc
-import os
 
 def predict(machine_name, data, depth):
     """
@@ -16,40 +14,23 @@ def predict(machine_name, data, depth):
     :return: The predicted values
     :rtype: list of floats
     """
-    print(data)
-    print("---------------------------")
-    formated_name = machine_name.split(" ")[1].capitalize()
-    file = f'backend/models_xgboost_qubits/xgboost_qubit_model_{formated_name}_{depth}.joblib'
 
-    if not os.path.exists(file):
-        raise FileNotFoundError(f"Model file {file} not found")
+    formated_name = machine_name.split("_")[1].capitalize()
 
-    try:
-        # Liberar memoria antes de cargar el modelo
-        gc.collect()
-        final_model = joblib.load(file)
-    except Exception as e:
-        print(f"Error loading the model: {e}")
-        return None
+    file = 'backend/models_xgboost/xgboost_qubit_model_' + formated_name + '.model'
+    xgb_model = xgb.Booster()
+    xgb_model.load_model(file)
 
-    # Convertir data a un array numpy y ajustar las dimensiones
-    data_np = np.array(data).reshape(len(data), -1)
+    data_np = np.array(data)
 
-    try:
-        # Dividir los datos en partes más pequeñas si es necesario
-        chunk_size = 1000  # Ajusta el tamaño del chunk según la memoria disponible
-        predictions = []
-        for i in range(0, len(data_np), chunk_size):
-            chunk_data = data_np[i:i + chunk_size]
-            chunk_predictions = final_model.predict(chunk_data)
-            predictions.extend(chunk_predictions)
-    except Exception as e:
-        print(f"Error making predictions: {e}")
-        return None
-    
-    
+    if data_np.ndim == 1:
+        data_np = data_np.reshape(1, -1)
 
-    predictions = add_date_and_calibration(predictions, data)
+    matrix_data = xgb.DMatrix(data_np)
+
+    prediction = xgb_model.predict(matrix_data)
+
+    predictions = add_date_and_calibration(prediction, data)
 
     return predictions
 

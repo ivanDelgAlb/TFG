@@ -12,19 +12,19 @@ def predict(machine_name, data):
     :return: The predicted values
     :rtype: list of floats
     """
-    formated_name = machine_name.split(" ")[1].capitalize()
+    formated_name = machine_name.split("_")[1].capitalize()
 
     file = 'backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
-    # Convertir data a un array numpy y ajustar las dimensiones
-    data_np = np.array(data).reshape(len(data), -1)
-    
-    # Crear la matriz de datos para XGBoost
+    data_np = np.array(data)
+
+    if data_np.ndim == 1:
+        data_np = data_np.reshape(1, -1)
+
     matrix_data = xgb.DMatrix(data_np)
 
-    # Realizar las predicciones
     errors = xgb_model.predict(matrix_data)
 
     predictions = add_date_and_calibration(errors, data)

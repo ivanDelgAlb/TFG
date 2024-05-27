@@ -13,6 +13,9 @@ def preprocess_data(file_path, window_size):
     # Cargar el DataFrame
     df = pd.read_csv(file_path)
 
+    # Cambiar el nombre de las columnas
+    df = df.rename(columns={'y': 'T1', 'ds': 'date'})
+
     # Convertir la columna de fecha a tipo datetime y ordenar por fecha
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
@@ -31,7 +34,7 @@ def preprocess_data(file_path, window_size):
             y.append(data[i + window_size])
         return np.array(X), np.array(y)
 
-    X, y = create_sequences(df_normalizado[['gate_error_1', 'gate_error_2']].values, window_size)
+    X, y = create_sequences(df_normalizado[['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']].values, window_size)
 
     return X, y
 
@@ -40,7 +43,7 @@ def preprocess_data(file_path, window_size):
 def create_model(X_train, y_train, X_test, y_test, model_path):
     model = Sequential([
         LSTM(100, input_shape=(X_train.shape[1], X_train.shape[2])),
-        Dense(2)  # 2 salidas para las columnas gate_error_1 y gate_error_2
+        Dense(5)  # 2 salidas para las columnas gate_error_1 y gate_error_2
     ])
     model.compile(loss='mse', optimizer='adam')
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
@@ -71,6 +74,11 @@ def predict_future(model_path, data_file, window_size, future_date):
 
     # Cargar el DataFrame y normalizar los datos
     df = pd.read_csv(data_file)
+
+    # Cambiar el nombre de las columnas
+    df = df.rename(columns={'y': 'T1', 'ds': 'date'})
+
+
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
@@ -111,7 +119,7 @@ def predict_future(model_path, data_file, window_size, future_date):
     predictions_reshaped = predictions_inverted.reshape(predictions.shape)
 
     # Obtener solo los valores de error de puerta de las predicciones invertidas
-    gate_errors_predictions = predictions_reshaped[:, :, :2]
+    gate_errors_predictions = predictions_reshaped[:, :, :5]
 
     return gate_errors_predictions
 
@@ -125,14 +133,14 @@ def plot_predictions(predictions, future_date):
     fig, ax1 = plt.subplots(figsize=(10, 6))
 
     # Graficar las predicciones para gate_error_1
-    ax1.plot(x_dates[:-1], predictions[:, :, 0].flatten(), label='Predicción gate_error_1', color='blue')
+    ax1.plot(x_dates[:-1], predictions[:, :, 0].flatten(), label='T1', color='blue')
 
     # Formatear las fechas en el eje x
     date_format = mdates.DateFormatter('%d-%m-%y %H:%M:%S')
     ax1.xaxis.set_major_formatter(date_format)
 
     # Configurar el título y las etiquetas de los ejes para gate_error_1
-    ax1.set_title('Predicción de gate_error_1')
+    ax1.set_title('Predicción de t1')
     ax1.set_xlabel('Fecha y Hora')
     ax1.set_ylabel('Valor de predicción')
 
@@ -149,13 +157,13 @@ def plot_predictions(predictions, future_date):
     fig, ax2 = plt.subplots(figsize=(10, 6))
 
     # Graficar las predicciones para gate_error_2
-    ax2.plot(x_dates[:-1], predictions[:, :, 1].flatten(), label='Predicción gate_error_2', color='red')
+    ax2.plot(x_dates[:-1], predictions[:, :, 1].flatten(), label='T2', color='red')
 
     # Formatear las fechas en el eje x
     ax2.xaxis.set_major_formatter(date_format)
 
     # Configurar el título y las etiquetas de los ejes para gate_error_2
-    ax2.set_title('Predicción de gate_error_2')
+    ax2.set_title('Predicción de T2')
     ax2.set_xlabel('Fecha y Hora')
     ax2.set_ylabel('Valor de predicción')
 
@@ -171,24 +179,25 @@ def plot_predictions(predictions, future_date):
 
 
 
-
-
-# Parámetros comunes
+machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
-data_file = "backend/dataframes_gates/dataframe_GatesBrisbane.csv"
-model_path = "backend/models_lstm/model_Brisbane.keras"
-future_date = '2024-05-24'  # La fecha que deseas predecir
+future_date = '2024-05-27' 
 
-# Preprocesar datos
-X, y = preprocess_data(data_file, window_size)
+for machine in machines:
+    print(machine)
+    data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
+    model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
 
-# Dividir los datos en conjunto de entrenamiento y prueba
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+    # Preprocesar datos
+    X, y = preprocess_data(data_file, window_size)
 
-# Crear y entrenar el modelo
-create_model(X_train, y_train, X_test, y_test, model_path)
+    # Dividir los datos en conjunto de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
-# Realizar la predicción para la fecha futura y graficar
-predictions = predict_future(model_path, data_file, window_size, future_date)
-print(predictions)
-plot_predictions(predictions, future_date)
+    # Crear y entrenar el modelo
+    create_model(X_train, y_train, X_test, y_test, model_path)
+
+    # Realizar la predicción para la fecha futura y graficar
+    predictions = predict_future(model_path, data_file, window_size, future_date)
+    print(predictions)
+    plot_predictions(predictions, future_date)

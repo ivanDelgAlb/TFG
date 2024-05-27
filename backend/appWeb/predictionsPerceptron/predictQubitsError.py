@@ -21,7 +21,6 @@ def add_date_and_calibration(errors, predictions):
     for i, error in enumerate(errors):
         error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
         date = date + timedelta(hours=2)
-        print(error[0])
         error_dict['divergence'] = error[0]
 
         # Añadir las predicciones correspondientes

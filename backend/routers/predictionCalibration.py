@@ -1,7 +1,7 @@
 from fastapi import APIRouter, FastAPI, File, Form, UploadFile
 from pydantic import BaseModel
-from appWeb import predictQubitsError
-from appWeb import predictGatesError
+from appWeb.predictionsPerceptron import predictQubitsError
+from appWeb.predictionsXgBoost import predictGatesError
 from appWeb import processFile
 from typing import List, Dict, Union
 from typing import Optional

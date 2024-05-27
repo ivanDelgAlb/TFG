@@ -28,7 +28,6 @@ def predict(machine_name, data):
     errors = xgb_model.predict(matrix_data)
 
     predictions = add_date_and_calibration(errors, data)
-    print(predictions)
 
     return predictions
 

@@ -40,6 +40,11 @@ function Error() {
   const [phaseGates, setPhaseGates] = useState(null); 
   const [hGates, setHGates] = useState(null); 
   const [cnotGates, setCnotGates] = useState(null); 
+  const [model, setModel] = useState("");
+
+  const handleChangeModel = (event) => {
+    setModel(event.target.value);
+  };
 
   const handleChangeNQubits = (event) => {
     setNQubits(event.target.value);
@@ -121,7 +126,8 @@ function Error() {
           tGates: tGates,
           hGates: hGates,
           phaseGates: phaseGates,
-          cnotGates: cnotGates
+          cnotGates: cnotGates,
+          model: model
         })
       });
       const data = await response.json();
@@ -169,6 +175,15 @@ function Error() {
         <div className="date-selector">
           <DateTimePicker selectedDateTime={date} onChange={setDate} />
         </div>
+          <div className="model-selector">
+            <select value={model} onChange={handleChangeModel} className="option-selector-select">
+              <option value="">Select a model</option>
+              <option value="Perceptron">Perceptron</option>
+              <option value="XgBoost">XgBoost</option>
+              <option value="Perceptron-XgBoost">Both</option>
+            </select>
+          </div>
+        
 
       </div>
 
@@ -188,7 +203,7 @@ function Error() {
 
         <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
           <tr>
-            <td><label>Number of nQubitsubits:</label></td>
+            <td><label>Number of nQubits:</label></td>
             <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} /></td>
           </tr>
           <tr>

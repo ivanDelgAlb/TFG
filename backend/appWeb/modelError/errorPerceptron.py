@@ -22,31 +22,42 @@ class PredictionData(BaseModel):
 
 
 def predict_qubits(data: PredictionData):
+    machines = []
+    if data.machine == "All":
+        machines = ["ibm brisbane", "ibm kyoto", "ibm osaka"]  # Lista de nombres de las máquinas
+    else:
+        machines = [data.machine]
 
-    n_steps = calculate_time_difference(data.date) 
-    future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, data.machine)
-    
-    predictions = []
-    for i in range(n_steps):
-        prediction = {
-            "T1": future_T1.iloc[i, future_T1.columns.get_loc('y')],
-            "T2": future_T2.iloc[i, future_T2.columns.get_loc('y')],
-            "Prob0": future_Prob0.iloc[i, future_Prob0.columns.get_loc('y')],
-            "Prob1": future_Prob1.iloc[i, future_Prob1.columns.get_loc('y')],
-            "Error": future_error.iloc[i, future_error.columns.get_loc('y')],
-            "nQubits": data.nQubits,
-            "tGates": data.tGates,
-            "hGates": data.hGates,
-            "phaseGates": data.phaseGates,
-            "cnotGates": data.cnotGates
+    all_predictions = {}
+    n_steps = calculate_time_difference(data.date)
 
-        }
-        predictions.append(prediction)
+    for machine in machines:
+        
+        future_T1, future_T2, future_Prob0, future_Prob1, future_error = predictQubitsCalibration.predict_qubits_calibration(n_steps, machine)
 
-    predictions = predictQubitsError.predict_qubits_error(predictions, data.machine, data.depth)
+        predictions = []
+        for i in range(n_steps):
+            prediction = {
+                "T1": future_T1.iloc[i, future_T1.columns.get_loc('y')],
+                "T2": future_T2.iloc[i, future_T2.columns.get_loc('y')],
+                "Prob0": future_Prob0.iloc[i, future_Prob0.columns.get_loc('y')],
+                "Prob1": future_Prob1.iloc[i, future_Prob1.columns.get_loc('y')],
+                "Error": future_error.iloc[i, future_error.columns.get_loc('y')],
+                "nQubits": data.nQubits,
+                "tGates": data.tGates,
+                "hGates": data.hGates,
+                "phaseGates": data.phaseGates,
+                "cnotGates": data.cnotGates
+            }
+            predictions.append(prediction)
+
+        predictions = predictQubitsError.predict_qubits_error(predictions, machine, data.depth)
+        all_predictions[machine] = predictions
+
     print("Diccionario")
-    print(predictions)
-    return predictions
+    print(all_predictions)
+    return all_predictions
+
 
 
 def predict_puertas(data: PredictionData):

@@ -6,8 +6,9 @@ from keras.layers import LSTM, Dense
 from keras.models import load_model
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime, timedelta
-
+from datetime import datetime
+import pytz
+import matplotlib.dates as mdates
 
 def preprocess_data(file_path, window_size):
     # Cargar el DataFrame
@@ -23,8 +24,11 @@ def preprocess_data(file_path, window_size):
     # Normalizar datos (excepto la columna de fecha)
     fechas = df['date']
     df_sin_fechas = df.drop(columns=['date'])
+    scaler = MinMaxScaler()
     df_normalizado = df_sin_fechas.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
     df_normalizado['date'] = fechas
+
+    print(df_normalizado)
 
     # Crear secuencias para entrenamiento y prueba
     def create_sequences(data, window_size):
@@ -36,25 +40,21 @@ def preprocess_data(file_path, window_size):
 
     X, y = create_sequences(df_normalizado[['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']].values, window_size)
 
-    return X, y
-
-
+    return X, y, scaler
 
 def create_model(X_train, y_train, X_test, y_test, model_path):
     model = Sequential([
         LSTM(100, input_shape=(X_train.shape[1], X_train.shape[2])),
-        Dense(5)  # 2 salidas para las columnas gate_error_1 y gate_error_2
+        Dense(5)  
     ])
     model.compile(loss='mse', optimizer='adam')
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
     model.save(model_path)
 
-
-
 def get_sequence_for_date(df, df_normalized, date, window_size):
     # Obtener el índice del DataFrame correspondiente a la fecha proporcionada
     index_of_date = df.index[df['date'] == date].tolist()
-    
+
     # Si la fecha no está presente, se crea una secuencia basada en los últimos datos disponibles en el DataFrame
     if not index_of_date:
         # Obtener la secuencia de los últimos "window_size" datos disponibles en el DataFrame
@@ -67,7 +67,6 @@ def get_sequence_for_date(df, df_normalized, date, window_size):
 
     return sequence
 
-
 def predict_future(model_path, data_file, window_size, future_date):
     # Cargar el modelo entrenado
     model = load_model(model_path)
@@ -77,7 +76,6 @@ def predict_future(model_path, data_file, window_size, future_date):
 
     # Cambiar el nombre de las columnas
     df = df.rename(columns={'y': 'T1', 'ds': 'date'})
-
 
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
@@ -101,12 +99,15 @@ def predict_future(model_path, data_file, window_size, future_date):
     for _ in range(num_steps):
         # Hacer la predicción para el siguiente paso de tiempo
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
+        print(prediction)
         predictions.append(prediction)
 
         # Actualizar la secuencia de entrada con la predicción más reciente
         current_input_sequence = np.concatenate([current_input_sequence[1:], prediction], axis=0)
 
     # Convertir las predicciones en un arreglo numpy
+    if len(predictions) == 0:
+        raise ValueError("No predictions were generated.")
     predictions = np.array(predictions)
 
     # Aplanar el arreglo predictions
@@ -119,11 +120,10 @@ def predict_future(model_path, data_file, window_size, future_date):
     predictions_reshaped = predictions_inverted.reshape(predictions.shape)
 
     # Obtener solo los valores de error de puerta de las predicciones invertidas
-    gate_errors_predictions = predictions_reshaped[:, :, :5]
+    qubits_errors_predictions = predictions_reshaped[:, :, :5]
 
-    return gate_errors_predictions
+    return qubits_errors_predictions
 
-import matplotlib.dates as mdates
 def plot_predictions(predictions, future_date):
     current_date = datetime.now()
     future_date = pd.to_datetime(future_date)
@@ -140,7 +140,7 @@ def plot_predictions(predictions, future_date):
     ax1.xaxis.set_major_formatter(date_format)
 
     # Configurar el título y las etiquetas de los ejes para gate_error_1
-    ax1.set_title('Predicción de t1')
+    ax1.set_title('Predicción de T1')
     ax1.set_xlabel('Fecha y Hora')
     ax1.set_ylabel('Valor de predicción')
 
@@ -176,12 +176,9 @@ def plot_predictions(predictions, future_date):
     # Mostrar la segunda gráfica
     plt.show()
 
-
-
-
 machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
-future_date = '2024-05-27' 
+future_date = '2024-05-30' 
 
 for machine in machines:
     print(machine)
@@ -189,12 +186,12 @@ for machine in machines:
     model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
 
     # Preprocesar datos
-    X, y = preprocess_data(data_file, window_size)
+    X, y, scaler = preprocess_data(data_file, window_size)
 
     # Dividir los datos en conjunto de entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
-    # Crear y entrenar el modelo
+    # Crear y entrenar
     create_model(X_train, y_train, X_test, y_test, model_path)
 
     # Realizar la predicción para la fecha futura y graficar

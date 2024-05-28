@@ -132,7 +132,10 @@ function Error() {
       });
       const data = await response.json();
       console.log(data.prediction);
-      if (data.prediction && data.prediction.length > 0) {
+      const hasValidPredictions = Object.values(data.prediction).some(arr => Array.isArray(arr) && arr.length > 0);
+
+      if (hasValidPredictions) {
+        console.log("ENTRO");
         setPrediction(data.prediction);
         setError(null);
         setShowCalibrationGraphs(true);
@@ -161,6 +164,7 @@ function Error() {
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
             <option value="ibm Osaka">ibm Osaka</option>
+            <option value="All">All of them</option>
           </select>
         </div>
         
@@ -175,14 +179,14 @@ function Error() {
         <div className="date-selector">
           <DateTimePicker selectedDateTime={date} onChange={setDate} />
         </div>
-          <div className="model-selector">
-            <select value={model} onChange={handleChangeModel} className="option-selector-select">
-              <option value="">Select a model</option>
-              <option value="Perceptron">Perceptron</option>
-              <option value="XgBoost">XgBoost</option>
-              <option value="Perceptron-XgBoost">Both</option>
-            </select>
-          </div>
+        <div className="model-selector">
+          <select value={model} onChange={handleChangeModel} className="option-selector-select">
+            <option value="">Select a model</option>
+            <option value="Perceptron">Perceptron</option>
+            <option value="XgBoost">XgBoost</option>
+            <option value="Perceptron-XgBoost">Both</option>
+          </select>
+        </div>
         
 
       </div>

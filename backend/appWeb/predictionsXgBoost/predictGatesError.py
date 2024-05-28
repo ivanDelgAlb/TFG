@@ -12,7 +12,7 @@ def predict(machine_name, data):
     :return: The predicted values
     :rtype: list of floats
     """
-    formated_name = machine_name.split("_")[1].capitalize()
+    formated_name = machine_name.split(" ")[1].capitalize()
 
     file = 'backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
     xgb_model = xgb.Booster()

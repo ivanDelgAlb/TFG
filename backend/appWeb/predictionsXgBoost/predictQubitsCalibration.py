@@ -32,7 +32,10 @@ def predict_future(machine, n_steps):
 
     # Cargar el DataFrame y normalizar los datos
     df = pd.read_csv(data_directory + "dataframeT1" + machine_name + ".csv")
+
+    # Cambiar el nombre de las columnas
     df = df.rename(columns={'y': 'T1', 'ds': 'date'})
+
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
@@ -43,31 +46,31 @@ def predict_future(machine, n_steps):
     # Obtener el punto de datos más reciente en el conjunto de datos
     current_date = datetime.now()
 
-    
-
-    # Convertir la fecha futura a un objeto datetime
-
-    current_date_aware = current_date.replace(tzinfo=pytz.UTC)
-
     # Generar las predicciones paso a paso
-    current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date_aware, window_size)
+    current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date, window_size)
     predictions = []
     for _ in range(n_steps):
-        
-        
         # Hacer la predicción para el siguiente paso de tiempo
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
-
         predictions.append(prediction)
 
         # Actualizar la secuencia de entrada con la predicción más reciente
         current_input_sequence = np.concatenate([current_input_sequence[1:], prediction], axis=0)
 
-    
     # Convertir las predicciones en un arreglo numpy
+    if len(predictions) == 0:
+        raise ValueError("No predictions were generated.")
     predictions = np.array(predictions)
-    
+
     # Aplanar el arreglo predictions
-    qubits_errors_predictions = predictions.reshape(-1, predictions.shape[-1])
+    predictions_flat = predictions.reshape(-1, predictions.shape[-1])
+
+    # Invertir la normalización de las predicciones aplanadas
+    predictions_inverted = scaler.inverse_transform(predictions_flat)
+    # Reestructurar las predicciones invertidas a su forma original
+    predictions_reshaped = predictions_inverted.reshape(predictions.shape)
+
+    # Obtener solo los valores de error de puerta de las predicciones invertidas
+    qubits_errors_predictions = predictions_reshaped[:, :, :5]
 
     return qubits_errors_predictions

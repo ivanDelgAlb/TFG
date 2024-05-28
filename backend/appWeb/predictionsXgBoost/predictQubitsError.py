@@ -15,7 +15,7 @@ def predict(machine_name, data, depth):
     :rtype: list of floats
     """
 
-    formated_name = machine_name.split("_")[1].capitalize()
+    formated_name = machine_name.split(" ")[1].capitalize()
 
     file = 'backend/models_xgboost/xgboost_qubit_model_' + formated_name + '.model'
     xgb_model = xgb.Booster()
@@ -43,15 +43,15 @@ def add_date_and_calibration(errors, predictions):
         date += timedelta(hours=2)
         error_dict['divergence'] = error
 
-        print(errors)
+        
 
         # Añadir las predicciones correspondientes
         if i < len(predictions):
-            error_dict['t1'] = predictions[i][0]
-            error_dict['t2'] = predictions[i][1]
-            error_dict['prob0'] = predictions[i][2]
-            error_dict['prob1'] = predictions[i][3]
-            error_dict['error'] = predictions[i][4]
+            error_dict['T1'] = predictions[i][0]
+            error_dict['T2'] = predictions[i][1]
+            error_dict['Prob0'] = predictions[i][2]
+            error_dict['Prob1'] = predictions[i][3]
+            error_dict['Error'] = predictions[i][4]
 
         data_list.append(error_dict)
 

@@ -52,7 +52,8 @@ body {
 .option-selector,
 .depth-selector,
 .date-selector,
-.input-container {
+.input-container,
+.model-selector {
   flex: 1;
   min-width: 200px;
 }

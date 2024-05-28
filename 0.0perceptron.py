@@ -81,7 +81,7 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
 
 
 # Crear el modelo del perceptrón multicapa
-def create_model(machine, depth, X_train, X_test, y_train, y_test):
+def create_model(machine, X_train, X_test, y_train, y_test):
     model = Sequential()
     model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
     model.add(Dense(32, activation='relu'))
@@ -92,18 +92,18 @@ def create_model(machine, depth, X_train, X_test, y_train, y_test):
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
 
     mse, mae = model.evaluate(X_test, y_test)
-    print(f"Error cuadrático medio ({machine}, depth {depth}):", mse)
-    print(f"Error absoluto medio ({machine}, depth {depth}):", mae)
+    print(f"Error cuadrático medio ({machine}):", mse)
+    print(f"Error absoluto medio ({machine}):", mae)
 
-    directory = f'backend/models_perceptron/model_qubits_{machine}_{depth}.h5'
+    directory = f'backend/models_perceptron/model_qubits_{machine}.h5'
     model.save(directory)
 
 
 
-def predict(machine, depth, X_test, y_test):
+def predict(machine, X_test, y_test):
     # Reconstrucción de datos de prueba
     # Cargar el modelo
-    directory = 'backend/models_perceptron/model_qubits_' + machine + '_' + str(depth) + '.h5'
+    directory = 'backend/models_perceptron/model_qubits_' + machine + '.h5'
     model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
@@ -125,38 +125,36 @@ extraer_dataframe_normalizado(circuit, fake_backend)
 '''
 
 machines = ["Brisbane", "Kyoto", "Osaka"]
-depths = [5, 10, 15]
-
 for machine in machines:
     directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
-    for depth in depths:
-        filas_filtradas = dataFrame[(dataFrame['depth'] == depth) & (dataFrame['jensen-error'].notna())]
+    filas_filtradas = dataFrame[(dataFrame['jensen-error'].notna())]
 
-        X = filas_filtradas.drop(['date', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
+    X = filas_filtradas.drop(['date', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
 
-        X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
 
-        print(X_normalizado)
+    print(X_normalizado)
 
-        
-        X_normalizado['n_qubits'] = filas_filtradas['n_qubits']
-        X_normalizado['t_gates'] = filas_filtradas['t_gates']
-        X_normalizado['phase_gates'] = filas_filtradas['phase_gates']
-        X_normalizado['h_gates'] = filas_filtradas['h_gates']
-        X_normalizado['cnot_gates'] = filas_filtradas['cnot_gates']
+    
+    X_normalizado['n_qubits'] = filas_filtradas['n_qubits']
+    X_normalizado['depth'] = filas_filtradas['depth']
+    X_normalizado['t_gates'] = filas_filtradas['t_gates']
+    X_normalizado['phase_gates'] = filas_filtradas['phase_gates']
+    X_normalizado['h_gates'] = filas_filtradas['h_gates']
+    X_normalizado['cnot_gates'] = filas_filtradas['cnot_gates']
 
-        y = filas_filtradas['jensen-error']  # Etiqueta (divergencia)
+    y = filas_filtradas['jensen-error']  # Etiqueta (divergencia)
 
-        # Dividir los datos en conjuntos de entrenamiento y prueba
-        X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
+    # Dividir los datos en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X_normalizado, y, test_size=0.2, random_state=42)
 
-        # Crear y entrenar el modelo
-        create_model(machine, depth, X_train, X_test, y_train, y_test)
+    # Crear y entrenar el modelo
+    create_model(machine, X_train, X_test, y_train, y_test)
 
-        # Realizar predicciones y evaluarlas
-        predict(machine, depth, X_test, y_test)
+    # Realizar predicciones y evaluarlas
+    #predict(machine, X_test, y_test)
 
 print("Models created")
 

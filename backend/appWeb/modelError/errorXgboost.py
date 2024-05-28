@@ -112,7 +112,7 @@ def predict_puertas(data: PredictionData):
     cnot_gates = np.array(cnot_gates)
 
     # Combinar todas las matrices NumPy en una sola matriz de características
-    data_np = np.column_stack((gate_errors_1, gate_errors_2, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
+    predictions = np.column_stack((gate_errors_1, gate_errors_2, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
 
     print(predictions)
     predictions = predictGatesError.predict(data.machine, predictions)

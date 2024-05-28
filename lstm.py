@@ -175,8 +175,8 @@ def plot_predictions(predictions, future_date):
 
 # Parámetros comunes
 window_size = 10
-data_file = "backend/dataframes_gates/dataframe_GatesBrisbane.csv"
-model_path = "backend/models_lstm/model_Brisbane.keras"
+data_file = "backend/dataframes_gates/dataframe_GatesOsaka.csv"
+model_path = "backend/models_lstm/model_Osaka.keras"
 future_date = '2024-05-24'  # La fecha que deseas predecir
 
 # Preprocesar datos
@@ -188,7 +188,3 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle
 # Crear y entrenar el modelo
 create_model(X_train, y_train, X_test, y_test, model_path)
 
-# Realizar la predicción para la fecha futura y graficar
-predictions = predict_future(model_path, data_file, window_size, future_date)
-print(predictions)
-plot_predictions(predictions, future_date)

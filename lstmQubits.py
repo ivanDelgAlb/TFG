@@ -193,8 +193,3 @@ for machine in machines:
 
     # Crear y entrenar
     create_model(X_train, y_train, X_test, y_test, model_path)
-
-    # Realizar la predicción para la fecha futura y graficar
-    predictions = predict_future(model_path, data_file, window_size, future_date)
-    print(predictions)
-    plot_predictions(predictions, future_date)

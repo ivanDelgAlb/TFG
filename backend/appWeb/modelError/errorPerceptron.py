@@ -47,11 +47,12 @@ def predict_qubits(data: PredictionData):
                 "tGates": data.tGates,
                 "hGates": data.hGates,
                 "phaseGates": data.phaseGates,
-                "cnotGates": data.cnotGates
+                "cnotGates": data.cnotGates,
+                "depth": data.depth
             }
             predictions.append(prediction)
 
-        predictions = predictQubitsError.predict_qubits_error(predictions, machine, data.depth)
+        predictions = predictQubitsError.predict_qubits_error(predictions, machine)
         all_predictions[machine] = predictions
 
     print("Diccionario")

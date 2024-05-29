@@ -24,21 +24,23 @@ class PredictionData(BaseModel):
 async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Union[float, str]]]]]:
     # Aquí realizas la predicción con los datos recibidos
     print("Datos recibidos predict error:", data)
-    prediction = None
+    all_predictions = {}
     
     if data.model.startswith("Perceptron") or data.model == "Perceptron":
         if data.selection == "Qubits":
             prediction = errorPerceptron.predict_qubits(data)
-            print(prediction)
         elif data.selection == 'Gates': 
             prediction = errorPerceptron.predict_puertas(data)
 
+        all_predictions["Perceptron"] = prediction
+
     if data.model.endswith("XgBoost") or data.model == "XgBoost":
-        print("ENTRO")
         if data.selection == "Qubits":
             prediction = errorXgboost.predict_qubits(data)
         else:
             prediction = errorXgboost.predict_puertas(data)
 
-    return {"prediction": prediction}
+        all_predictions["XgBoost"] = prediction    
+
+    return all_predictions
 

@@ -46,8 +46,9 @@ function Historical() {
                   })
               })
             const data = await response.json();
+            console.log(data)
             setCalibration(data.historical);
-            console.log(data.historical);
+            console.log(data.historical[0].qubits);
 
         } catch (error) {
             console.error("Error fetching calibration data:", error);
@@ -79,7 +80,8 @@ function Historical() {
                             <option value="">Choose an option</option>
                             <option value="Qubits">Qubits</option>
                             <option value="Gates">Gates</option>
-                            <option value="Error">Error</option>
+                            <option value="ErrorQubits">Error Qubits</option>
+                            <option value="ErrorGates">Error Gates</option>
                         </select>
                     </div>
 
@@ -103,15 +105,15 @@ function Historical() {
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas0_Prep1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Prob_Meas0_Prep1'} historical={true} color={'#006600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'probMeas0Prep1'} historical={true} color={'#006600'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas1_Prep0:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Prob_Meas0_Prep1'} historical={true} color={'#000099'}/>
+                                <Graph predictions={calibration[0].qubits} type={'probMeas1Prep0'} historical={true} color={'#000099'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Readout_error:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Readout_error'} historical={true} color={'#ff6600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'readout_error'} historical={true} color={'#ff6600'}/>
                             </div>
                         </div>
                     )}
@@ -125,6 +127,26 @@ function Historical() {
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of two-qubit input:</h2>
                                 <Graph predictions={calibration[1].gates} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
+                            </div>
+                        </div>
+                    )}
+
+                    {option === "ErrorQubits" && calibration && showCalibrationGraphs &&(
+                        <div>
+                            <div style={{ marginBottom: '40px' }}>
+                                <h2>Historical error Jensen of qubits:</h2>
+                                <Graph predictions={calibration[2].errorQubits} type={'jensen-error'} historical={false} color={'#e6e600'}/>
+                            </div>
+                        </div>
+                    )}
+
+                    {option === "ErrorGates" && calibration && showCalibrationGraphs &&(
+                        <div>
+                            <div style={{ marginBottom: '40px' }}>
+                                <h2>Historical error Jensen of gates:</h2>
+                                <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
+                                    <Graph predictions={calibration[3].errorGates} type={'jensen-error'} historical={false} color={'#e6e600'} />
+                                </div>
                             </div>
                         </div>
                     )}

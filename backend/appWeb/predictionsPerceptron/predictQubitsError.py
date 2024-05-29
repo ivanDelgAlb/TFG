@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 from keras.models import load_model
 import pandas as pd
 
-def predict_qubits_error(predictions, machine_name, depth):
+def predict_qubits_error(predictions, machine_name):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
-        model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '_' + str(depth) + '.h5')
+        model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '.h5')
         normalized_data = normalized(predictions)  
         errors = model.predict(normalized_data)
         errors = add_date_and_calibration(errors, predictions)
@@ -42,7 +42,7 @@ def normalized(predictions):
     df = pd.DataFrame(predictions)
     print(df)
     # Normalizar cada columna usando los valores mínimos y máximos de cada columna
-    X = df.drop(['nQubits', 'tGates', 'phaseGates', 'hGates', 'cnotGates'], axis=1)
+    X = df.drop(['nQubits', 'tGates', 'phaseGates', 'hGates', 'cnotGates', 'depth'], axis=1)
 
     df_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
 
@@ -51,5 +51,6 @@ def normalized(predictions):
     df_normalizado['phaseGates'] = df['phaseGates']
     df_normalizado['hGates'] = df['hGates']
     df_normalizado['cnotGates'] = df['cnotGates']
+    df_normalizado['depth'] = df['depth']
     print(df_normalizado)
     return df_normalizado

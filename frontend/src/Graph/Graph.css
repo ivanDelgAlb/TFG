@@ -1,13 +1,13 @@
 * Graph Container */
 .graph-container {
   margin-top: 20px;
-  margin-right: 200px;
+  margin-right: 20px;
 }
 
 .graph-container h2 {
   text-align: left;
   font-size: 20px;
   color:#a4a0a0;
-  margin-left: 20px
+  margin-left: 2px
 }
 

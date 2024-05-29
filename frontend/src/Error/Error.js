@@ -131,12 +131,12 @@ function Error() {
         })
       });
       const data = await response.json();
-      console.log(data.prediction);
-      const hasValidPredictions = Object.values(data.prediction).some(arr => Array.isArray(arr) && arr.length > 0);
+      console.log(data);
+      const hasValidPredictions = Object.values(data).some(arr => Array.isArray(arr) && arr.length > 0);
 
-      if (hasValidPredictions) {
+      if (data) {
         console.log("ENTRO");
-        setPrediction(data.prediction);
+        setPrediction(data);
         setError(null);
         setShowCalibrationGraphs(true);
       } else {
@@ -164,7 +164,7 @@ function Error() {
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
             <option value="ibm Osaka">ibm Osaka</option>
-            <option value="All">All of them</option>
+            {model !== "Perceptron-XgBoost" && <option value="All">All of them</option>}
           </select>
         </div>
         
@@ -184,7 +184,7 @@ function Error() {
             <option value="">Select a model</option>
             <option value="Perceptron">Perceptron</option>
             <option value="XgBoost">XgBoost</option>
-            <option value="Perceptron-XgBoost">Both</option>
+            {machine !== "All" && <option value="Perceptron-XgBoost">Both</option>}
           </select>
         </div>
         

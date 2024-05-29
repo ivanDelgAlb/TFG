@@ -12,41 +12,48 @@ const Graph = ({ predictions, type, historical }) => {
     }
 
     const datasets = [];
-    const palette = ['#FF6B6B', '#78c2ad', '#FFE66D', '#7A92FF', '#FF9F80']; // Paleta de colores más bonitos
-
+    const palette = ['#FF6B6B', '#78c2ad', '#FFE66D', '#7A92FF', '#FF9F80'];
     let index = 0;
-    for (const machine in predictions) {
-      if (predictions.hasOwnProperty(machine)) {
-        const machinePredictions = predictions[machine];
 
-        if (machinePredictions.length === 0) {
-          console.log(`No prediction data found for ${machine}.`);
-          continue;
+    const processPredictions = (model, machine, machinePredictions) => {
+      if (machinePredictions.length === 0) {
+        console.log(`No prediction data found for ${machine}.`);
+        return;
+      }
+
+      const dates = machinePredictions.map(prediction => prediction.Date);
+      const typeData = machinePredictions.map(prediction => prediction[type]);
+
+      const bestResultIndex = typeData.indexOf(Math.min(...typeData));
+
+      datasets.push({
+        label: historical ? `${model ? model + ' ' : ''}${machine} ${type}` : `${model ? model + ' ' : ''}${machine} (${type} Best Result: ${Math.min(...typeData)})`,
+        data: typeData,
+        borderColor: palette[index % palette.length],
+        backgroundColor: palette[index % palette.length],
+        pointBackgroundColor: palette[index % palette.length],
+        pointRadius: !historical ? typeData.map((_, i) => (i === bestResultIndex ? 6 : 2)) : 3,
+      });
+
+      index++;
+    };
+
+    if (Array.isArray(predictions)) {
+      processPredictions(null, "Data", predictions);
+    } else {
+      for (const model in predictions) {
+        if (predictions.hasOwnProperty(model)) {
+          for (const machine in predictions[model]) {
+            if (predictions[model].hasOwnProperty(machine)) {
+              processPredictions(model, machine, predictions[model][machine]);
+            }
+          }
         }
-
-        const dates = machinePredictions.map(prediction => prediction.Date);
-        const typeData = machinePredictions.map(prediction => prediction[type]);
-
-        console.log(`Dates for ${machine}:`, dates);
-        console.log(`${type} Data for ${machine}:`, typeData);
-
-        const allEqual = typeData.every(val => val === typeData[0]);
-
-        datasets.push({
-          label: historical ? `${machine} ${type}` : `${machine} (${type} Best Result: ${Math.min(...typeData)})`,
-          data: typeData,
-          borderColor: palette[index % palette.length], // Asignar un color único para cada máquina
-          backgroundColor: palette[index % palette.length],
-          pointBackgroundColor: palette[index % palette.length],
-          pointRadius: historical ? 3 : 6,
-        });
-
-        index++;
       }
     }
 
     const chartData = {
-      labels: Object.values(predictions)[0].map(prediction => prediction.Date),
+      labels: Array.isArray(predictions) ? predictions.map(prediction => prediction.Date) : Object.values(predictions)[0][Object.keys(predictions[Object.keys(predictions)[0]])[0]].map(prediction => prediction.Date),
       datasets: datasets,
     };
 
@@ -102,8 +109,10 @@ const Graph = ({ predictions, type, historical }) => {
   }, [predictions, type, historical]);
 
   return (
-    <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '70%', margin: 'auto' }}>
-      <canvas ref={chartRef} width={400} height={200}></canvas>
+    <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: '1200px', margin: 'auto' }}>
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+        <canvas ref={chartRef} width={2000} height={400}></canvas>
+      </div>
     </div>
   );
 };

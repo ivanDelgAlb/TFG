@@ -1,13 +1,19 @@
 from pymongo import MongoClient
 import statistics
 
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
+
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-#mongo_uri_Origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
-mongo_uri_Origen = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
+#mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART1")
+mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART2")
 client_Origen = MongoClient(mongo_uri_Origen)
 
-mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.7yqvagt.mongodb.net/"
-#mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART2")
+#mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART1")
 client_Destino = MongoClient(mongo_uri_Destino)
 
 # Nombre de la colección en MongoDB Compass

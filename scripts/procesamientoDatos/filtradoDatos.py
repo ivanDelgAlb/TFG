@@ -1,8 +1,13 @@
 from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri_origen = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
-mongo_uri_destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+mongo_uri_origen = os.getenv("MONGO_URI_MARINA_PART1")
+mongo_uri_destino = os.getenv("MONGO_URI_IVAN_PART1")
 client_origen = MongoClient(mongo_uri_origen)
 client_destino = MongoClient(mongo_uri_destino)
 

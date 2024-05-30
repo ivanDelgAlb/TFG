@@ -1,23 +1,28 @@
 import requests
 from pymongo import MongoClient
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri_part1 = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+mongo_uri_part1 = os.getenv("MONGO_URI_MARINA_PART1")
 client_part1 = MongoClient(mongo_uri_part1)
 
-mongo_uri_part2 = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
+mongo_uri_part2 = os.getenv("MONGO_URI_MARINA_PART2")
 client_part2 = MongoClient(mongo_uri_part2)
 
 # Ruta al directorio que contiene los archivos JSON en el repositorio de GitHub
-github_repo_url = "https://github.com/Zakaria-Dahi/TFG_UMA_2023_2204"
+github_repo_url = os.getenv("GITHUB_REPO")
 data_directory = "data"
 
 # Nombre de la colección en MongoDB Compass
 collection_name = "data"
 
-github_username = "marinasayago"
-github_token = "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"
+github_username = os.getenv("GITHUB_USERNAME")
+github_token = os.getenv("GITHUB_TOKEN")
 
 # Conectarse a la base de datos en MongoDB Atlas
 db_part1 = client_part1["TFG"]
@@ -30,7 +35,7 @@ auth_response.raise_for_status()
 print("Autenticación exitosa")
 
 # Obtener la lista de archivos JSON en la carpeta del repositorio de GitHub
-repo_contents_url = f"https://api.github.com/repos/Zakaria-Dahi/TFG_UMA_2023_2204/contents/{data_directory}"
+repo_contents_url = github_repo_url + {data_directory}
 contents_response = requests.get(repo_contents_url, auth=(github_username, github_token))
 contents_response.raise_for_status()
 
@@ -43,7 +48,7 @@ for file in files:
 
     try:
         # Modifica la URL para apuntar a la versión RAW del archivo en GitHub
-        raw_url = f"https://raw.githubusercontent.com/Zakaria-Dahi/TFG_UMA_2023_2204/main/data/{file}"
+        raw_url = os.getenv("GITHUB_RAW") + {file}
 
         response = requests.get(raw_url, auth=(github_username, github_token))
         response.raise_for_status()  # Verificar si hay errores en la respuesta HTTP

@@ -6,7 +6,7 @@ import os
 
 def dataFrame(nombre_maquina):
     formatearNombre = nombre_maquina.split("_")[1].capitalize()
-    mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+    mongo_uri = os.getenv("MONGO_URI_IVAN_PART1")
     client = MongoClient(mongo_uri)
     collection_name_Origen = "derivado"
     db = client["TFG"]

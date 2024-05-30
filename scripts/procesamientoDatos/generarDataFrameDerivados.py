@@ -1,7 +1,12 @@
 from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+mongo_uri = os.getenv("MONGO_URI_MARINA_PART1")
 client = MongoClient(mongo_uri)
 
 # Nombre de la colección en MongoDB Compass

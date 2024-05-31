@@ -63,7 +63,7 @@ def generate_dataframe_gates(nombre_maquina):
 
     nombre_archivo = 'backend/dataframes_gates/'
     scaler = MinMaxScaler()
-
+    
     df_gates.iloc[:, 1:] = scaler.fit_transform(df_gates.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_gates/scalerGates' + formatearNombre + '.pkl')
 

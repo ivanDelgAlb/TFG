@@ -162,7 +162,7 @@ for machine in machines:
         create_model(csv)
 print("Models created")
 '''
-from sklearn.preprocessing import MinMaxScaler
+
 import joblib
 
 future_T1 = predict(4, "ibm_Brisbane")
@@ -173,6 +173,7 @@ scaler = joblib.load(path)
 
 dates = future_T1['ds']
 df_values = future_T1.drop(columns=['ds'])
+print(df_values)
 
 inverted_df = scaler.inverse_transform(df_values)
 

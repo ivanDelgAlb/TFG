@@ -1,9 +1,8 @@
 from keras.models import load_model
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from datetime import datetime
-import pytz
+import joblib
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
     # Obtener el índice del DataFrame correspondiente a la fecha proporcionada
@@ -27,6 +26,7 @@ def predict_future(machine, n_steps):
     window_size = 10
     models_directory = "backend/models_lstm_qubits/"
     data_directory = "backend/dataframes_neuralProphet/"
+    
     # Cargar el modelo entrenado
     model = load_model(models_directory + "model_" + machine_name + ".keras")
 
@@ -34,15 +34,17 @@ def predict_future(machine, n_steps):
     df = pd.read_csv(data_directory + "dataframeT1" + machine_name + ".csv")
 
     # Cambiar el nombre de las columnas
-    df = df.rename(columns={'y': 'T1', 'ds': 'date'})
+    df = df.rename(columns={'ds': 'date'})
 
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
     df_sin_fechas = df.drop(columns=['date'])
-    scaler = MinMaxScaler()
-    df_normalizado = pd.DataFrame(scaler.fit_transform(df_sin_fechas), columns=df_sin_fechas.columns)
-
+    columns = ['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
+    df_numeric = pd.DataFrame(df_sin_fechas, columns=columns)
+    scaler = joblib.load(f"{data_directory}scalerT1{machine_name}.pkl")
+    df_normalizado = pd.DataFrame(scaler.transform(df_numeric), columns=df_sin_fechas.columns)
+    df_normalizado = df_normalizado.rename(columns={'y': 'T1'})
     # Obtener el punto de datos más reciente en el conjunto de datos
     current_date = datetime.now()
 
@@ -64,9 +66,12 @@ def predict_future(machine, n_steps):
 
     # Aplanar el arreglo predictions
     predictions_flat = predictions.reshape(-1, predictions.shape[-1])
+    df = pd.DataFrame(predictions_flat, columns=['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error'])
 
     # Invertir la normalización de las predicciones aplanadas
-    predictions_inverted = scaler.inverse_transform(predictions_flat)
+    predictions_inverted = scaler.inverse_transform(df)
+    print(predictions_inverted)
+    
     # Reestructurar las predicciones invertidas a su forma original
     predictions_reshaped = predictions_inverted.reshape(predictions.shape)
 

@@ -51,14 +51,13 @@ def predict_qubits(data: PredictionData):
                 "depth": data.depth
             }
             predictions.append(prediction)
-
+        
         predictions = predictQubitsError.predict_qubits_error(predictions, machine)
         all_predictions[machine] = predictions
 
     print("Diccionario")
     print(all_predictions)
     return all_predictions
-
 
 
 def predict_puertas(data: PredictionData):

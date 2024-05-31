@@ -151,6 +151,7 @@ def predict(n_steps, machine_name):
         raise FileNotFoundError("One of the models is missing")
 
 
+'''
 machines = ["Brisbane", "Kyoto", "Osaka"]
 files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
 
@@ -160,11 +161,25 @@ for machine in machines:
         csv = file + machine + '.csv'
         create_model(csv)
 print("Models created")
+'''
+from sklearn.preprocessing import MinMaxScaler
+import joblib
 
-'''
 future_T1 = predict(4, "ibm_Brisbane")
-print(type(future_T1))
-'''
+
+path = "backend/dataframes_neuralProphet/scalerT1Brisbane.pkl"
+
+scaler = joblib.load(path)
+
+dates = future_T1['ds']
+df_values = future_T1.drop(columns=['ds'])
+
+inverted_df = scaler.inverse_transform(df_values)
+
+df = pd.DataFrame(inverted_df, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
+df['ds'] = dates
+
+print(df)
 
 
 

@@ -1,6 +1,4 @@
-
 from pymongo import MongoClient
-import csv
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import joblib

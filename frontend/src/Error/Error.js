@@ -89,7 +89,7 @@ function Error() {
     setError(null);
     setLoading(true);
 
-    if (!machine || !selection || !date) {
+    if (!machine || !selection || !date || !model) {
       setError("All fields are required");
       setLoading(false);
       return;
@@ -164,7 +164,7 @@ function Error() {
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
             <option value="ibm Osaka">ibm Osaka</option>
-            {model !== "Perceptron-XgBoost" && <option value="All">All of them</option>}
+            <option value="All">All of the options</option>
           </select>
         </div>
         
@@ -184,7 +184,7 @@ function Error() {
             <option value="">Select a model</option>
             <option value="Perceptron">Perceptron</option>
             <option value="XgBoost">XgBoost</option>
-            {machine !== "All" && <option value="Perceptron-XgBoost">Both</option>}
+            <option value="Perceptron-XgBoost">Both</option>
           </select>
         </div>
         

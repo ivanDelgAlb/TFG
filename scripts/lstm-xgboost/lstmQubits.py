@@ -7,10 +7,10 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime
-import pytz
 import matplotlib.dates as mdates
+import joblib
 
-def preprocess_data(file_path, window_size):
+def preprocess_data(scaler_path, file_path, window_size):
     # Cargar el DataFrame
     df = pd.read_csv(file_path)
 
@@ -24,8 +24,10 @@ def preprocess_data(file_path, window_size):
     # Normalizar datos (excepto la columna de fecha)
     fechas = df['date']
     df_sin_fechas = df.drop(columns=['date'])
-    scaler = MinMaxScaler()
-    df_normalizado = df_sin_fechas.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    scaler = joblib.load(scaler_path)
+    df_normalizado = scaler.fit_transform(df_sin_fechas)
+
+    df_normalizado = pd.DataFrame(df_normalizado, columns=df_sin_fechas.columns)
     df_normalizado['date'] = fechas
 
     print(df_normalizado)
@@ -67,7 +69,7 @@ def get_sequence_for_date(df, df_normalized, date, window_size):
 
     return sequence
 
-def predict_future(model_path, data_file, window_size, future_date):
+def predict_future(scaler_path, model_path, data_file, window_size, future_date):
     # Cargar el modelo entrenado
     model = load_model(model_path)
 
@@ -81,7 +83,7 @@ def predict_future(model_path, data_file, window_size, future_date):
     df = df.sort_values(by='date')
 
     df_sin_fechas = df.drop(columns=['date'])
-    scaler = MinMaxScaler()
+    scaler = joblib.load(scaler_path)
     df_normalizado = pd.DataFrame(scaler.fit_transform(df_sin_fechas), columns=df_sin_fechas.columns)
 
     # Obtener el punto de datos más reciente en el conjunto de datos
@@ -184,9 +186,9 @@ for machine in machines:
     print(machine)
     data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
     model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
-
+    scaler_path = 'backend/dataframes_neuralProphet/scalerT1Osaka.pkl'
     # Preprocesar datos
-    X, y, scaler = preprocess_data(data_file, window_size)
+    X, y, scaler = preprocess_data(scaler_path, data_file, window_size)
 
     # Dividir los datos en conjunto de entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)

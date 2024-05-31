@@ -31,7 +31,7 @@ async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Un
             prediction = errorPerceptron.predict_qubits(data)
         elif data.selection == 'Gates': 
             prediction = errorPerceptron.predict_puertas(data)
-
+            
         all_predictions["Perceptron"] = prediction
 
     if data.model.endswith("XgBoost") or data.model == "XgBoost":

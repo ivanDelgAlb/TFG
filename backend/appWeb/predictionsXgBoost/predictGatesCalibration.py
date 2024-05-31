@@ -4,6 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from datetime import datetime
 import pytz
+import joblib
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
     # Obtener el índice del DataFrame correspondiente a la fecha proporcionada
@@ -27,6 +28,7 @@ def predict_future(machine, n_steps):
     window_size = 10
     models_directory = "backend/models_lstm/"
     data_directory = "backend/dataframes_gates/"
+
     # Cargar el modelo entrenado
     model = load_model(models_directory + "model_" + machine_name + ".keras")
 
@@ -36,13 +38,11 @@ def predict_future(machine, n_steps):
     df = df.sort_values(by='date')
 
     df_sin_fechas = df.drop(columns=['date'])
-    scaler = MinMaxScaler()
+    scaler = joblib.load(f'{data_directory}scalerGates{machine_name}.pkl')
     df_normalizado = pd.DataFrame(scaler.fit_transform(df_sin_fechas), columns=df_sin_fechas.columns)
 
     # Obtener el punto de datos más reciente en el conjunto de datos
     current_date = datetime.now()
-
-    
 
     # Convertir la fecha futura a un objeto datetime
 

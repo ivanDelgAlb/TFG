@@ -7,9 +7,10 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
+import joblib
 
 
-def preprocess_data(file_path, window_size):
+def preprocess_data(scaler_path, file_path, window_size):
     # Cargar el DataFrame
     df = pd.read_csv(file_path)
 
@@ -20,7 +21,11 @@ def preprocess_data(file_path, window_size):
     # Normalizar datos (excepto la columna de fecha)
     fechas = df['date']
     df_sin_fechas = df.drop(columns=['date'])
-    df_normalizado = df_sin_fechas.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+
+    scaler = joblib.load(scaler_path)
+    df_normalizado = scaler.fit_transform(df_sin_fechas)
+
+    df_normalizado = pd.DataFrame(df_normalizado, columns=df_sin_fechas.columns)
     df_normalizado['date'] = fechas
 
     # Crear secuencias para entrenamiento y prueba
@@ -65,7 +70,7 @@ def get_sequence_for_date(df, df_normalized, date, window_size):
     return sequence
 
 
-def predict_future(model_path, data_file, window_size, future_date):
+def predict_future(scaler_path, model_path, data_file, window_size, future_date):
     # Cargar el modelo entrenado
     model = load_model(model_path)
 
@@ -75,7 +80,7 @@ def predict_future(model_path, data_file, window_size, future_date):
     df = df.sort_values(by='date')
 
     df_sin_fechas = df.drop(columns=['date'])
-    scaler = MinMaxScaler()
+    scaler = joblib.load(scaler_path)
     df_normalizado = pd.DataFrame(scaler.fit_transform(df_sin_fechas), columns=df_sin_fechas.columns)
 
     # Obtener el punto de datos más reciente en el conjunto de datos
@@ -170,21 +175,22 @@ def plot_predictions(predictions, future_date):
 
 
 
-
-
-
-# Parámetros comunes
+machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
-data_file = "backend/dataframes_gates/dataframe_GatesOsaka.csv"
-model_path = "backend/models_lstm/model_Osaka.keras"
 future_date = '2024-05-24'  # La fecha que deseas predecir
 
-# Preprocesar datos
-X, y = preprocess_data(data_file, window_size)
 
-# Dividir los datos en conjunto de entrenamiento y prueba
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+for machine in machines:
 
-# Crear y entrenar el modelo
-create_model(X_train, y_train, X_test, y_test, model_path)
+    data_file = f"backend/dataframes_gates/dataframe_Gates{machine}.csv"
+    model_path = f"backend/models_lstm/model_{machine}.keras"
+    scaler_path = f'backend/dataframes_gates/scalerGates{machine}.pkl'
+    # Preprocesar datos
+    X, y = preprocess_data(scaler_path, data_file, window_size)
+
+    # Dividir los datos en conjunto de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+    # Crear y entrenar el modelo
+    create_model(X_train, y_train, X_test, y_test, model_path)
 

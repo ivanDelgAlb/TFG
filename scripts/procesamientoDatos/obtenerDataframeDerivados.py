@@ -6,11 +6,14 @@ import os
 
 def dataFrame(nombre_maquina):
     formatearNombre = nombre_maquina.split("_")[1].capitalize()
-    mongo_uri = os.getenv("MONGO_URI_IVAN_PART1")
-    client = MongoClient(mongo_uri)
+    mongo_uri_1 = os.getenv("MONGO_URI_IVAN_PART1")
+    mongo_uri_2 = os.getenv("MONGO_URI_IVAN_PART2")
+    client_1 = MongoClient(mongo_uri_1)
+    client_2 = MongoClient(mongo_uri_2)
     collection_name_Origen = "derivado"
-    db = client["TFG"]
-    datos = db[collection_name_Origen].find({"name": nombre_maquina})
+    db_1 = client_1["TFG"]
+    db_2 = client_2["TFG"]
+    datos = db_1[collection_name_Origen].find({"name": nombre_maquina})
 
     # Listas para almacenar los datos
     data_T1 = []
@@ -18,6 +21,22 @@ def dataFrame(nombre_maquina):
     data_Prob0 = []
     data_Prob1 = []
     data_error = []
+
+    for item in datos:
+        date = item['date']
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        readout_error = item['properties']['qubits'][4]['mediana']
+
+        data_T1.append([date, T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error])
+        data_T2.append([date, T2, T1, probMeas0Prep1, probMeas1Prep0, readout_error])
+        data_Prob0.append([date, probMeas0Prep1, T1, T2, probMeas1Prep0, readout_error])
+        data_Prob1.append([date, probMeas1Prep0, T1, T2, probMeas0Prep1, readout_error])
+        data_error.append([date, readout_error, T1, T2, probMeas0Prep1, probMeas1Prep0])
+    
+    datos = db_2[collection_name_Origen].find({"name": nombre_maquina})
 
     for item in datos:
         date = item['date']
@@ -42,15 +61,22 @@ def dataFrame(nombre_maquina):
 
     # Normalizar los DataFrames
     scaler = MinMaxScaler()
-
     df_T1.iloc[:, 1:] = scaler.fit_transform(df_T1.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerT1' + formatearNombre + '.pkl')
+
+    scaler = MinMaxScaler()
     df_T2.iloc[:, 1:] = scaler.fit_transform(df_T2.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerT2' + formatearNombre + '.pkl')
+
+    scaler = MinMaxScaler()
     df_Prob0.iloc[:, 1:] = scaler.fit_transform(df_Prob0.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerProb0' + formatearNombre + '.pkl')
+
+    scaler = MinMaxScaler()
     df_Prob1.iloc[:, 1:] = scaler.fit_transform(df_Prob1.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerProb1' + formatearNombre + '.pkl')
+
+    scaler = MinMaxScaler()    
     df_error.iloc[:, 1:] = scaler.fit_transform(df_error.iloc[:, 1:])
     joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerError' + formatearNombre + '.pkl')
 

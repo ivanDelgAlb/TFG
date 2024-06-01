@@ -7,7 +7,7 @@ import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import Graph from '../Graph/Graph';
 
 const CustomDateTimePickerInput = React.forwardRef(({ value, onClick }, ref) => (
-  <div className="custom-datepicker-input" onClick={onClick} ref={ref}>
+  <div className="custom-datepicker-input" onClick={onClick} ref={ref} aria-label='selected date'>
     <span>{value}</span>
     <FontAwesomeIcon icon={faCalendar} className="icono-calendario" />
   </div>
@@ -47,22 +47,42 @@ function Error() {
   };
 
   const handleChangeNQubits = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setNQubits(event.target.value);
   };
 
   const handleChangeTGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setTGates(event.target.value);
   };
 
   const handleChangePhaseGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setPhaseGates(event.target.value);
   };
 
   const handleChangeHGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setHGates(event.target.value);
   };
 
   const handleChangeCnotGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setCnotGates(event.target.value);
   };
 
@@ -131,11 +151,12 @@ function Error() {
         })
       });
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       const hasValidPredictions = Object.values(data).some(arr => Array.isArray(arr) && arr.length > 0);
 
       if (data) {
-        console.log("ENTRO");
+        //console.log("ENTRO");
+        console.log(data)
         setPrediction(data);
         setError(null);
         setShowCalibrationGraphs(true);
@@ -159,7 +180,7 @@ function Error() {
       
       <div className="selectors">
         <div className="machine-selector">
-          <select value={machine} onChange={handleChangeMachine}>
+          <select value={machine} onChange={handleChangeMachine} aria-label="Select a machine">
             <option value="">Select a machine</option>
             <option value="ibm Brisbane">ibm Brisbane</option>
             <option value="ibm Kyoto">ibm Kyoto</option>
@@ -169,7 +190,7 @@ function Error() {
         </div>
         
         <div className="option-selector">
-          <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
+          <select value={selection} onChange={handleChangeSelection} className="option-selector-select" aria-label="Select an option">
             <option value="">Select an option</option>
             <option value="Qubits">Qubits</option>
             <option value="Gates">Gates</option>
@@ -180,7 +201,7 @@ function Error() {
           <DateTimePicker selectedDateTime={date} onChange={setDate} />
         </div>
         <div className="model-selector">
-          <select value={model} onChange={handleChangeModel} className="option-selector-select">
+          <select value={model} onChange={handleChangeModel} className="option-selector-select" aria-label='Select a model'>
             <option value="">Select a model</option>
             <option value="Perceptron">Perceptron</option>
             <option value="XgBoost">XgBoost</option>
@@ -195,7 +216,7 @@ function Error() {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="depth-selector">
-            <select value={depth} onChange={handleChangeDepth} className="option-selector-select">
+            <select value={depth} onChange={handleChangeDepth} className="option-selector-select" aria-label='Select a depth'>
               <option value="">Select a depth</option>
               <option value="5">5</option>
               <option value="10">10</option>
@@ -206,26 +227,28 @@ function Error() {
         } 
 
         <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
-          <tr>
-            <td><label>Number of nQubits:</label></td>
-            <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of T gates:</label></td>
-            <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of Phase gates:</label></td>
-            <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of Hadamard gates:</label></td>
-            <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of C-Not gates:</label></td>
-            <td><input className='input-gates' type="number" value={cnotGates || ""} onChange={handleChangeCnotGates} /></td>
-          </tr>
+          <tbody>
+            <tr>
+              <td><label>Number of nQubits:</label></td>
+              <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} min={0} aria-label='nQubitsInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of T gates:</label></td>
+              <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Phase gates:</label></td>
+              <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Hadamard gates:</label></td>
+              <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} min={0} aria-label='hGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of C-Not gates:</label></td>
+              <td><input className='input-gates' type="number" value={cnotGates || ""} onChange={handleChangeCnotGates} min={0} aria-label='cGatesInput'/></td>
+            </tr>
+          </tbody>
         </table>
 
       {error && <p className="error-message">{error}</p>}
@@ -251,9 +274,9 @@ function Error() {
           </button>
         </div>
           {showCalibrationGraphs && prediction && (
-            <div className="graph-container">
+            <div className="graph-container" aria-label='graph-container'>
               <h2>Error Predictions:</h2>
-              <Graph predictions={prediction} type={'divergence'} color={'#ff0000'}/>
+              <Graph predictions={prediction} type={'divergence'} color={'#ff0000'} />
 
               {selection === "Qubits" && showCalibrationGraphs && (
                 <div>

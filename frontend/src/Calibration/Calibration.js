@@ -79,7 +79,7 @@ function Calibration() {
     }
 
     try {
-      const response = await fetch('https://tfg-backend-6ok1.onrender.com/predictCalibration', {
+      const response = await fetch('http://localhost:8000/predictCalibration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

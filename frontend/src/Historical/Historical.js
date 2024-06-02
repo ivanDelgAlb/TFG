@@ -33,7 +33,7 @@ function Historical() {
         setError(null);
 
         try {
-            const response = await fetch('https://tfg-backend-6ok1.onrender.com/historical', {
+            const response = await fetch('http://localhost:8000/historical', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'

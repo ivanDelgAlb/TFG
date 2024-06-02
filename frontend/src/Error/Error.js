@@ -132,7 +132,7 @@ function Error() {
     const isoDate = date.toISOString();
 
     try {
-      const response = await fetch('http://localhost:8000/predictError', {
+      const response = await fetch('https://tfg-backend-6ok1.onrender.com/predictError', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

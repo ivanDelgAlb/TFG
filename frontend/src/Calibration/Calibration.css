@@ -43,7 +43,7 @@ select {
 
 .input-container input[type=number] {
   appearance: textfield;
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield; 
   border-radius: 5px;
   border-color: #ebe8e8;
   border-top-color: #ffffff;

@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f7f7f7;
@@ -6,7 +6,7 @@ body {
   padding: 0;
 }
 
-/* Container */
+
 .container {
   width: 80%;
   margin: 0 auto;
@@ -16,9 +16,9 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Bar */
+
 .bar {
-  background-color: #64ace8; /* Azul UMA */
+  background-color: #64ace8; 
   border-radius: 8px;
   width: 100%;
   height: 50px;
@@ -26,20 +26,20 @@ body {
   justify-content: center;
   align-items: center;
   padding: 0 20px;
-  box-sizing: border-box; /* Considerar el padding en el ancho */
-  margin-bottom: 20px; /* Ajusta el margen inferior */
+  box-sizing: border-box; 
+  margin-bottom: 20px; 
 }
 
 
 
-/* Título */
+
 .title {
   font-size: 2rem;
   margin-bottom: 10px;
   color: #ffffff;
 }
 
-/* Selectors */
+
 .selectors {
   display: flex;
   flex-wrap: wrap;
@@ -66,7 +66,7 @@ select {
   font-size: 16px;
 }
 
-/* Custom Date Picker Input */
+
 .custom-datepicker-input {
   display: flex;
   align-items: center;
@@ -83,7 +83,7 @@ select {
   color: #64ace8;
 }
 
-/* Button */
+
 .container-button {
   text-align: center;
   margin: 20px 0;
@@ -106,7 +106,7 @@ select {
   background-color: #b0d7f7;;
 }
 
-/* Error Message */
+
 .error-message {
   color: red;
   text-align: center;
@@ -114,7 +114,7 @@ select {
   font-weight: bold;
 }
 
-/* Loading */
+
 .loading {
   text-align: center;
 }
@@ -147,7 +147,7 @@ h2{
 
 .input-container input[type=number] {
   appearance: textfield;
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield; 
   border-radius: 5px;
   border-color: #ebe8e8;
   border-top-color: #ffffff;

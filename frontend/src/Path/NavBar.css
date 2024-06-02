@@ -1,4 +1,4 @@
-/* src/components/Navbar.css */
+
 .navbar {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
@@ -14,17 +14,17 @@
   color: #007bff;
 }
 .img-small {
-  width: 50px; /* Define el ancho deseado */
-  height: auto; /* Ajusta automáticamente la altura para mantener la proporción */
+  width: 50px; 
+  height: auto;
   border-radius: 10%;
-  margin-left: 2000%; /* Alinea la imagen a la derecha */
+  margin-left: 2000%; 
 }
 
 li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Asegura que el li ocupe todo el ancho disponible */
+  width: 100%; 
 }
 
 

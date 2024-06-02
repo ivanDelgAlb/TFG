@@ -95,7 +95,7 @@ def create_model(machine_name, depth):
     print("RMSE:", rmse)
 
     # Save the model using joblib
-    model_path = f'backend/models_xgboost_qubits/xgboost_qubit_model_{formated_name}_{depth}.joblib'
+    model_path = f'backend/models_xgboost/xgboost_qubit_model_{formated_name}.'
     joblib.dump(final_model, model_path)
     print("Model saved at:", model_path)
     
@@ -124,7 +124,7 @@ def predict(machine_name, data):
     """
     formated_name = machine_name.split("_")[1].capitalize()
 
-    file = 'backend/models_xgboost_qubits/xgboost_gate_model_' + formated_name + "_" + depth + '.model'
+    file = 'backend/models_xgboost/xgboost_qubit_model_' + formated_name + "_" + depth + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 

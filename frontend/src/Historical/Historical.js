@@ -16,9 +16,6 @@ function Historical() {
         if (!selectedMachine) {
             setError("You must select a machine");
             return;
-        } else if (!option) {
-            setError("You must select an option");
-            return;
         }else if(showCalibrationGraphs){
             setShowCalibrationGraphs(false);
         }else{
@@ -93,7 +90,7 @@ function Historical() {
                         </button>
                     </div>
 
-                    {option === "Qubits" && calibration && showCalibrationGraphs && (
+                    {(option === "" || option === "Qubits" )&& calibration && showCalibrationGraphs && (
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T1:</h2>
@@ -118,7 +115,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {option === "Gates" && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "Gates") && calibration && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of one-qubit input:</h2>
@@ -131,7 +128,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {option === "ErrorQubits" && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "ErrorQubits") && calibration && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of qubits:</h2>
@@ -140,7 +137,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {option === "ErrorGates" && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "ErrorGates") && calibration && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of gates:</h2>

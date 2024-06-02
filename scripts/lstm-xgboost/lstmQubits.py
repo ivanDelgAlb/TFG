@@ -186,7 +186,7 @@ for machine in machines:
     print(machine)
     data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
     model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
-    scaler_path = 'backend/dataframes_neuralProphet/scalerT1Osaka.pkl'
+    scaler_path = 'backend/dataframes_neuralProphet/scalerQubits' + machine + '.pkl'
     # Preprocesar datos
     X, y, scaler = preprocess_data(scaler_path, data_file, window_size)
 

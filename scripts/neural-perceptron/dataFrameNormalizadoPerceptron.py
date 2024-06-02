@@ -72,9 +72,9 @@ def generate_dataframe_gates(nombre_maquina):
     print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
 
 
-#normalised_qubits("ibm_brisbane")
-#normalised_qubits("ibm_kyoto")
-#normalised_qubits("ibm_osaka")
+normalised_qubits("ibm_brisbane")
+normalised_qubits("ibm_kyoto")
+normalised_qubits("ibm_osaka")
 generate_dataframe_gates("ibm_brisbane")
 generate_dataframe_gates("ibm_kyoto")
 generate_dataframe_gates("ibm_osaka")

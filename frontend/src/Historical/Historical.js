@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
 import './Historical.css'; // Asegúrate de crear este archivo CSS para los estilos
 
@@ -28,7 +28,6 @@ function Historical() {
     };
 
     const handleTabChange = async (machine) => {
-        console.log(machine)
         setSelectedMachine(machine);
         setError(null);
 
@@ -43,14 +42,17 @@ function Historical() {
                   })
               })
             const data = await response.json();
-            console.log(data)
+            console.log("Data received:", data);
             setCalibration(data.historical);
-            console.log(data.historical[0].qubits);
 
         } catch (error) {
             console.error("Error fetching calibration data:", error);
         }
     };
+
+    useEffect(() => {
+        console.log("Calibration state:", calibration);
+    }, [calibration]);
 
     return (
         <div className="container">
@@ -90,7 +92,7 @@ function Historical() {
                         </button>
                     </div>
 
-                    {(option === "" || option === "Qubits" )&& calibration && showCalibrationGraphs && (
+                    {(option === "" || option === "Qubits" ) && calibration.length > 0 && showCalibrationGraphs && (
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T1:</h2>
@@ -115,7 +117,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {(option === "" || option === "Gates") && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "Gates") && calibration.length > 0 && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of one-qubit input:</h2>
@@ -128,7 +130,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {(option === "" || option === "ErrorQubits") && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "ErrorQubits") && calibration.length > 0 && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of qubits:</h2>
@@ -137,7 +139,7 @@ function Historical() {
                         </div>
                     )}
 
-                    {(option === "" || option === "ErrorGates") && calibration && showCalibrationGraphs &&(
+                    {(option === "" || option === "ErrorGates") && calibration.length > 0 && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of gates:</h2>

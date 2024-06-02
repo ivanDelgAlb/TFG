@@ -21,8 +21,6 @@ async def historical(data: PredictionData):
     historical.append(gates)
     historical.append(qubitsError)
     historical.append(gatesError)
-
-    print(historical)
         
     return {"historical": historical}
 

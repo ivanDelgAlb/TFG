@@ -9,7 +9,7 @@ collection_name_Origen = "derivado"
 db = client["TFG"]
 
 def createDataFrame(machine):
-    formatearNombre = machine.split("_")[1].capitalize()
+    formated_name = machine.split("_")[1].capitalize()
     dataFrame_gates = [
         ['date', 'gate_error_1', 'gate_error_2']
     ]
@@ -17,20 +17,20 @@ def createDataFrame(machine):
     for item in items:
       dataFrame_gates.append([item['date'], item['properties']['gates'][0]['mediana'], item['properties']['gates'][1]['mediana']])
 
-    directorio = 'backend/dataframes_gates/'
-    nombre_archivo = directorio + 'dataframe_Gates' + formatearNombre + '.csv'
+    directory = 'backend/dataframes_gates/'
+    file_name = directory + 'dataframe_Gates' + formated_name + '.csv'
 
-    with open(nombre_archivo, 'w', newline='') as archivo_csv:
+    with open(file_name, 'w', newline='') as csv_file:
         
-        escritor_csv = csv.writer(archivo_csv)
+        csv_writer = csv.writer(csv_file)
         
-        for fila in dataFrame_gates:
-            escritor_csv.writerow(fila)
+        for row in dataFrame_gates:
+            csv_writer.writerow(row)
 
 
-maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"] 
+machines = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"] 
 
-for maquina in maquinas:
-    createDataFrame(maquina)
+for machine in machines:
+    createDataFrame(machine)
 
-print("Dataframes creados con exito")
+print("Dataframes created")

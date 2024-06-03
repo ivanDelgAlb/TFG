@@ -97,8 +97,8 @@ function Error() {
 
   const handleChangeSelection = (event) => {
     setSelection(event.target.value);
-    setShowCalibrationGraphs(false); // Ocultar la gráfica al cambiar la selección
-    setPrediction([]); // Borrar los datos de predicción al cambiar la selección
+    setShowCalibrationGraphs(false);
+    setPrediction([]);
   };
 
   const handleChangeDepth = (event) => {
@@ -109,19 +109,62 @@ function Error() {
     setError(null);
     setLoading(true);
 
-    if (!machine || !selection || !date || !model) {
-      setError("All fields are required");
+    if (!machine) {
+      setError("You must select a machine");
       setLoading(false);
       return;
     }
 
-    if (selection === 'Qubits' && (depth === '' || !nQubits || !tGates || !hGates || !phaseGates || !cnotGates)) {
-      setError("All fields are required");
+    if(!selection){
+      setError("You must select an option")
       setLoading(false);
+      return;
+    }
+
+    if(!model){
+      setError("You must select a model")
+      setLoading(false);
+      return;
+    }
+
+    if (selection === 'Qubits' && depth === '') {
+      setError("You must select a depth");
+      setLoading(false);
+      return;
+    }
+
+    if(!nQubits){
+      setError("You must select the number of qubits")
+      setLoading(false)
+      return;
+    }
+
+    if(!tGates){
+      setError("You must select the number of T gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!phaseGates){
+      setError("You must select the number of phase gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!hGates){
+      setError("You must select the number of Hadamard gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!cnotGates){
+      setError("You must select the number of C-Not gates")
+      setLoading(false)
       return;
     }
 
     const currentDate = new Date();
+    console.log(date < currentDate)
 
     if (date < currentDate) {
       setError("Selected date must be after the current date");
@@ -151,11 +194,9 @@ function Error() {
         })
       });
       const data = await response.json();
-      //console.log(data);
       const hasValidPredictions = Object.values(data).some(arr => Array.isArray(arr) && arr.length > 0);
 
       if (data) {
-        //console.log("ENTRO");
         console.log(data)
         setPrediction(data);
         setError(null);
@@ -203,7 +244,7 @@ function Error() {
         <div className="model-selector">
           <select value={model} onChange={handleChangeModel} className="option-selector-select" aria-label='Select a model'>
             <option value="">Select a model</option>
-            <option value="Perceptron">Perceptron</option>
+            <option value="Perceptron">Multilayer Perceptron</option>
             <option value="XgBoost">XgBoost</option>
             <option value="Perceptron-XgBoost">Both</option>
           </select>
@@ -229,7 +270,7 @@ function Error() {
         <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
           <tbody>
             <tr>
-              <td><label>Number of nQubits:</label></td>
+              <td><label>Number of qubits:</label></td>
               <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} min={0} aria-label='nQubitsInput'/></td>
             </tr>
             <tr>
@@ -237,7 +278,7 @@ function Error() {
               <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
             </tr>
             <tr>
-              <td><label>Number of Phase gates:</label></td>
+              <td><label>Number of phase gates:</label></td>
               <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput'/></td>
             </tr>
             <tr>

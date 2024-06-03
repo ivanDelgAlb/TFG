@@ -25,22 +25,42 @@ function Calibration() {
   };
 
   const handleChangeQubits = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setNQubits(event.target.value);
   };
 
   const handleChangeTGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setTGates(event.target.value);
   }
 
   const handleChangePhaseGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setPhaseGates(event.target.value);
   }
 
   const handleChangeHGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setHGates(event.target.value);
   }
 
   const handleChangeCNotGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
     setCNotGates(event.target.value);
   }
 
@@ -48,6 +68,7 @@ function Calibration() {
     const file = event.target.files[0];
     if(file){
       const fileExtension = file.name.split('.').pop()
+      console.log(fileExtension)
       if(fileExtension !== 'json'){
 
         setError("The configuration file must be a JSON")
@@ -60,8 +81,9 @@ function Calibration() {
         setError("")
         setSelectedFile(file);
       }
+    }else{
+      setSelectedFile(null)
     }
-    setSelectedFile(event.target.files[0]);
   }
 
   const handleFileRemove = () => {
@@ -75,7 +97,43 @@ function Calibration() {
     setError("")
     setLoading(true); 
     if (!selection) {
-      setError("All the field must be filled");
+      setError("You must select an option");
+      setLoading(false)
+      return;
+    }
+
+    if(selection === 'Qubits' && !depth){
+      setError("You must select a depth")
+      setLoading(false)
+      return;
+    }
+
+    if(!nQubits){
+      setError("You must select the number of qubits")
+      setLoading(false)
+      return;
+    }
+
+    if(!tGates){
+      setError("You must select the number of T gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!phaseGates){
+      setError("You must select the number of phase gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!hGates){
+      setError("You must select the number of Hadamard gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!cNotGates){
+      setError("You must select the number of C-Not gates")
       setLoading(false)
       return;
     }
@@ -109,12 +167,12 @@ function Calibration() {
             setPrediction(data.prediction[0].divergence);
             setError(null);
         } else {
-            setError('No se encontraron predicciones válidas');
+            setError('There was not any valid prediction');
         }
     } catch (error) {
       console.error('Error fetching prediction:', error);
     }finally {
-      setLoading(false); // Ocultar el spinner al finalizar
+      setLoading(false);
     }
   };
 
@@ -129,7 +187,7 @@ function Calibration() {
       <div className="selectors-row">
 
         <div className="option-selector">
-          <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
+          <select value={selection} onChange={handleChangeSelection} className="option-selector-select" aria-label='optionSelector'>
             <option value="">Select an option</option>
             <option value="Qubits">Qubits</option>
             <option value="Gates">Gates</option>
@@ -142,7 +200,7 @@ function Calibration() {
           <>
             <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
               <div className="depth-selector">
-                <select value={depth} onChange={handleChangeDepth} className="selector-option-select">
+                <select value={depth} onChange={handleChangeDepth} className="selector-option-select" aria-label='depthSelector'>
                   <option value="">Choose a depth</option>
                   <option value="5">5</option>
                   <option value="10">10</option>
@@ -155,31 +213,33 @@ function Calibration() {
 
         <h5>Introduce the number of gates of the circuit to be executed:</h5>
 
-        <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px'}}>
-          <tr>
-            <td><label>Number of qubits:</label></td>
-            <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeQubits} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of T gates:</label></td>
-            <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of Phase gates:</label></td>
-            <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of Hadamard gates:</label></td>
-            <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} /></td>
-          </tr>
-          <tr>
-            <td><label>Number of C-Not gates:</label></td>
-            <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} /></td>
-          </tr>
+        <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
+          <tbody>
+            <tr>
+              <td><label>Number of qubits:</label></td>
+              <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeQubits} min={0} aria-label='nQubitsInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of T gates:</label></td>
+              <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Phase gates:</label></td>
+              <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Hadamard gates:</label></td>
+              <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} min={0} aria-label='hGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of C-Not gates:</label></td>
+              <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} min={0} aria-label='cGatesInput'/></td>
+            </tr>
+          </tbody>
         </table>
 
         <h5>Introduce a json file with the configuration of the machine (qiskit properties format):</h5>
-        <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}}/>
+        <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}} aria-label='fileInput' />
         {selectedFile && (
             <div>
                 <button onClick={handleFileRemove} style={{marginTop: '10px'}}>Remove file</button>
@@ -194,9 +254,9 @@ function Calibration() {
         <button onClick={handleButtonClick} className="button" >Submit</button>
       </div>
 
-      {loading && ( // Mostrar el spinner si está cargando
+      {loading && (
         <div className="loading">
-          <h2>Cargando...</h2>
+          <h2>Loading...</h2>
           <div>
             <div className="spinner"></div>
           </div>

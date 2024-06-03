@@ -19,12 +19,12 @@ dataframe_gates = [
     ['date', 'gate_error_one_qubit', 'gate_error_two_qubit']
 ]
 
-def normalised_qubits(nombre_maquina):
-    formatearNombre = nombre_maquina.split("_")[1].capitalize()
+def normalised_qubits(machine_name):
+    formated_name = machine_name.split("_")[1].capitalize()
     data_qubits = []
-    datos = db[collection_name_Origen].find({"name": nombre_maquina})
+    data = db[collection_name_Origen].find({"name": machine_name})
 
-    for item in datos:
+    for item in data:
         T1 = item['properties']['qubits'][0]['mediana']
         T2 = item['properties']['qubits'][1]['mediana']
         probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
@@ -35,24 +35,24 @@ def normalised_qubits(nombre_maquina):
         
     df_qubits = pd.DataFrame(data_qubits, columns=['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error'])
 
-    nombre_archivo = 'dataframes_qubits/'
+    file_name = 'dataframes_qubits/'
 
     scaler = MinMaxScaler()
 
     df_qubits.iloc[:, 1:] = scaler.fit_transform(df_qubits.iloc[:, 1:])
-    joblib.dump(scaler, 'dataframes_qubits/scalerQubits' + formatearNombre + '.pkl')
+    joblib.dump(scaler, 'dataframes_qubits/scalerQubits' + formated_name + '.pkl')
 
-    df_qubits.to_csv(os.path.join(nombre_archivo, f'dataframeQubits{formatearNombre}.csv'), index=False)
+    df_qubits.to_csv(os.path.join(file_name, f'dataframeQubits{formated_name}.csv'), index=False)
 
-    print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
+    print("The file {} has been created.".format(file_name))
 
 
-def generate_dataframe_gates(nombre_maquina):
-    formatearNombre = nombre_maquina.split("_")[1].capitalize()
+def generate_dataframe_gates(machine_name):
+    formated_name = machine_name.split("_")[1].capitalize()
     data_gates = []
-    datos = db[collection_name_Origen].find({"name": nombre_maquina})
+    data = db[collection_name_Origen].find({"name": machine_name})
 
-    for item in datos:
+    for item in data:
         date = item['date']
         gate_error_one_qubit = item['properties']['gates'][0]['mediana']
         gate_error_two_qubit = item['properties']['gates'][1]['mediana']
@@ -61,15 +61,15 @@ def generate_dataframe_gates(nombre_maquina):
 
     df_gates = pd.DataFrame(data_gates, columns=['date', 'gate_error_1', 'gate_error_2'])
 
-    nombre_archivo = 'backend/dataframes_gates/'
+    file_name = 'backend/dataframes_gates/'
     scaler = MinMaxScaler()
     
     df_gates.iloc[:, 1:] = scaler.fit_transform(df_gates.iloc[:, 1:])
-    joblib.dump(scaler, 'backend/dataframes_gates/scalerGates' + formatearNombre + '.pkl')
+    joblib.dump(scaler, 'backend/dataframes_gates/scalerGates' + formated_name + '.pkl')
 
-    df_gates.to_csv(os.path.join(nombre_archivo, f'dataframe_Gates{formatearNombre}.csv'), index=False)
+    df_gates.to_csv(os.path.join(file_name, f'dataframe_Gates{formated_name}.csv'), index=False)
 
-    print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
+    print("The file {} has been created.".format(file_name))
 
 
 normalised_qubits("ibm_brisbane")

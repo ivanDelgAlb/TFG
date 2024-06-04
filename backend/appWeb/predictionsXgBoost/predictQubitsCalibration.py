@@ -5,17 +5,14 @@ from datetime import datetime
 import joblib
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
-    # Obtener el índice del DataFrame correspondiente a la fecha proporcionada
     index_of_date = df.index[df['date'] == date].tolist()
     
-    # Si la fecha no está presente, se crea una secuencia basada en los últimos datos disponibles en el DataFrame
     if not index_of_date:
-        # Obtener la secuencia de los últimos "window_size" datos disponibles en el DataFrame
+
         sequence = df_normalized.iloc[-window_size:, :].values
     else:
-        # Si la fecha está presente, obtener la secuencia de datos para la ventana de tiempo especificada
-        index_of_date = index_of_date[0]  # Usar el primer índice si hay duplicados
-        start_index = max(0, index_of_date - window_size + 1)  # Asegurar que el índice de inicio no sea negativo
+        index_of_date = index_of_date[0] 
+        start_index = max(0, index_of_date - window_size + 1) 
         sequence = df_normalized.iloc[start_index:index_of_date + 1, :].values
 
     return sequence
@@ -27,13 +24,10 @@ def predict_future(machine, n_steps):
     models_directory = "backend/models_lstm_qubits/"
     data_directory = "backend/dataframes_neuralProphet/"
     
-    # Cargar el modelo entrenado
     model = load_model(models_directory + "model_" + machine_name + ".keras")
 
-    # Cargar el DataFrame y normalizar los datos
     df = pd.read_csv(data_directory + "dataframeT1" + machine_name + ".csv")
 
-    # Cambiar el nombre de las columnas
     df = df.rename(columns={'ds': 'date'})
 
     df['date'] = pd.to_datetime(df['date'])
@@ -45,37 +39,30 @@ def predict_future(machine, n_steps):
     scaler = joblib.load(f"{data_directory}scalerT1{machine_name}.pkl")
     df_normalizado = pd.DataFrame(scaler.transform(df_numeric), columns=df_sin_fechas.columns)
     df_normalizado = df_normalizado.rename(columns={'y': 'T1'})
-    # Obtener el punto de datos más reciente en el conjunto de datos
+    
     current_date = datetime.now()
 
-    # Generar las predicciones paso a paso
     current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date, window_size)
     predictions = []
     for _ in range(n_steps):
-        # Hacer la predicción para el siguiente paso de tiempo
+        
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
         predictions.append(prediction)
 
-        # Actualizar la secuencia de entrada con la predicción más reciente
         current_input_sequence = np.concatenate([current_input_sequence[1:], prediction], axis=0)
 
-    # Convertir las predicciones en un arreglo numpy
     if len(predictions) == 0:
         raise ValueError("No predictions were generated.")
     predictions = np.array(predictions)
 
-    # Aplanar el arreglo predictions
     predictions_flat = predictions.reshape(-1, predictions.shape[-1])
     df = pd.DataFrame(predictions_flat, columns=['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error'])
 
-    # Invertir la normalización de las predicciones aplanadas
     predictions_inverted = scaler.inverse_transform(df)
     print(predictions_inverted)
     
-    # Reestructurar las predicciones invertidas a su forma original
     predictions_reshaped = predictions_inverted.reshape(predictions.shape)
 
-    # Obtener solo los valores de error de puerta de las predicciones invertidas
     qubits_errors_predictions = predictions_reshaped[:, :, :5]
 
     return qubits_errors_predictions

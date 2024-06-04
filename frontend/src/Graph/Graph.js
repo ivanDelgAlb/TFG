@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import './Graph.css';
 
 const Graph = ({ predictions, type, historical }) => {
   const chartRef = useRef(null);
-  const [startIdx, setStartIdx] = useState(0);
-  const [endIdx, setEndIdx] = useState(200); // Mostrar los primeros 200 datos inicialmente
 
   useEffect(() => {
-    if (!predictions || predictions.length === 0) {
+    if (!predictions || Object.keys(predictions).length === 0) {
       console.log("No predictions provided.");
       return;
     }
@@ -55,7 +53,7 @@ const Graph = ({ predictions, type, historical }) => {
     }
 
     const chartData = {
-      labels: predictions.map(prediction => prediction.Date).slice(startIdx, endIdx),
+      labels: Array.isArray(predictions) ? predictions.map(prediction => prediction.Date) : Object.values(predictions)[0][Object.keys(predictions[Object.keys(predictions)[0]])[0]].map(prediction => prediction.Date),
       datasets: datasets,
     };
 
@@ -66,7 +64,7 @@ const Graph = ({ predictions, type, historical }) => {
         },
         x: {
           ticks: {
-            maxTicksLimit: 10,
+            maxTicksLimit: 5,
           }
         }
       },
@@ -108,25 +106,13 @@ const Graph = ({ predictions, type, historical }) => {
     } else {
       console.log("Canvas element is not found.");
     }
-  }, [predictions, type, historical, startIdx, endIdx]);
-
-  const handleScroll = (e) => {
-    const container = e.target;
-    const scrollLeft = container.scrollLeft;
-    const scrollWidth = container.scrollWidth;
-    const clientWidth = container.clientWidth;
-
-    // Verificar si estamos cerca del final y hay más datos para mostrar
-    if (scrollLeft + clientWidth >= scrollWidth && endIdx < predictions.length) {
-      const newStartIdx = Math.max(startIdx - 50, 0);
-      setStartIdx(newStartIdx);
-      setEndIdx(Math.min(newStartIdx + 200, predictions.length));
-    }
-  };
+  }, [predictions, type, historical]);
 
   return (
-    <div className='graph-container' style={{ overflowX: 'auto' }} onScroll={handleScroll}>
-      <canvas ref={chartRef}></canvas>
+    <div className='graph' style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: '1200px', margin: 'auto' }}>
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+        <canvas ref={chartRef} width={2000} height={400}></canvas>
+      </div>
     </div>
   );
 };

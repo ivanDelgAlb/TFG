@@ -57,9 +57,9 @@ def add_date_and_calibration(errors, predictions, machine_name):
 
 def normalized(predictions):
     print(predictions)
-    # Crear un DataFrame de Pandas
+
     df = pd.DataFrame(predictions)
-    # Normalizar cada columna usando los valores mínimos y máximos de cada columna
+
     X = df.drop(['nQubits', 'tGates', 'phaseGates', 'hGates', 'cnotGates', 'depth'], axis=1)
 
     df_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)

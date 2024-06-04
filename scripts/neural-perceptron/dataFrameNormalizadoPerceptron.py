@@ -4,12 +4,13 @@ from sklearn.preprocessing import MinMaxScaler
 import joblib
 import os
 
-mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
-client = MongoClient(mongo_uri)
-
+mongo_uri_1 = os.getenv("MONGO_URI_IVAN_PART1")
+mongo_uri_2 = os.getenv("MONGO_URI_IVAN_PART2")
+client_1 = MongoClient(mongo_uri_1)
+client_2 = MongoClient(mongo_uri_2)
 collection_name_Origen = "derivado"
-
-db = client["TFG"]
+db_1 = client_1["TFG"]
+db_2 = client_2["TFG"]
 
 dataframe_qubits = [
     ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
@@ -22,7 +23,7 @@ dataframe_gates = [
 def normalised_qubits(machine_name):
     formated_name = machine_name.split("_")[1].capitalize()
     data_qubits = []
-    data = db[collection_name_Origen].find({"name": machine_name})
+    data = db_1[collection_name_Origen].find({"name": machine_name})
 
     for item in data:
         T1 = item['properties']['qubits'][0]['mediana']
@@ -32,14 +33,24 @@ def normalised_qubits(machine_name):
         readout_error = item['properties']['qubits'][4]['mediana']
 
         data_qubits.append([T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error])
-        
+
+    data = db_2[collection_name_Origen].find({"name": machine_name})
+
+    for item in data:
+        T1 = item['properties']['qubits'][0]['mediana']
+        T2 = item['properties']['qubits'][1]['mediana']
+        probMeas0Prep1 = item['properties']['qubits'][2]['mediana']
+        probMeas1Prep0 = item['properties']['qubits'][3]['mediana']
+        readout_error = item['properties']['qubits'][4]['mediana']
+
+        data_qubits.append([T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error])
+
     df_qubits = pd.DataFrame(data_qubits, columns=['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error'])
 
     file_name = 'dataframes_qubits/'
-
     scaler = MinMaxScaler()
 
-    df_qubits.iloc[:, 1:] = scaler.fit_transform(df_qubits.iloc[:, 1:])
+    df_qubits.iloc[:, :] = scaler.fit_transform(df_qubits)
     joblib.dump(scaler, 'dataframes_qubits/scalerQubits' + formated_name + '.pkl')
 
     df_qubits.to_csv(os.path.join(file_name, f'dataframeQubits{formated_name}.csv'), index=False)
@@ -50,7 +61,16 @@ def normalised_qubits(machine_name):
 def generate_dataframe_gates(machine_name):
     formated_name = machine_name.split("_")[1].capitalize()
     data_gates = []
-    data = db[collection_name_Origen].find({"name": machine_name})
+    data = db_1[collection_name_Origen].find({"name": machine_name})
+
+    for item in data:
+        date = item['date']
+        gate_error_one_qubit = item['properties']['gates'][0]['mediana']
+        gate_error_two_qubit = item['properties']['gates'][1]['mediana']
+
+        data_gates.append([date, gate_error_one_qubit, gate_error_two_qubit])
+
+    data = db_2[collection_name_Origen].find({"name": machine_name})
 
     for item in data:
         date = item['date']
@@ -62,10 +82,6 @@ def generate_dataframe_gates(machine_name):
     df_gates = pd.DataFrame(data_gates, columns=['date', 'gate_error_1', 'gate_error_2'])
 
     file_name = 'backend/dataframes_gates/'
-    scaler = MinMaxScaler()
-    
-    df_gates.iloc[:, 1:] = scaler.fit_transform(df_gates.iloc[:, 1:])
-    joblib.dump(scaler, 'backend/dataframes_gates/scalerGates' + formated_name + '.pkl')
 
     df_gates.to_csv(os.path.join(file_name, f'dataframe_Gates{formated_name}.csv'), index=False)
 

@@ -43,9 +43,6 @@ def add_date_and_calibration(errors, predictions):
         date += timedelta(hours=2)
         error_dict['divergence'] = error
 
-        
-
-        # Añadir las predicciones correspondientes
         if i < len(predictions):
             error_dict['T1'] = predictions[i][0]
             error_dict['T2'] = predictions[i][1]

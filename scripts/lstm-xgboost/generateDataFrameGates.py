@@ -18,6 +18,7 @@ def createDataFrame(machine):
       dataFrame_gates.append([item['date'], item['properties']['gates'][0]['mediana'], item['properties']['gates'][1]['mediana']])
 
     directory = 'backend/dataframes_gates/'
+
     file_name = directory + 'dataframe_Gates' + formated_name + '.csv'
 
     with open(file_name, 'w', newline='') as csv_file:

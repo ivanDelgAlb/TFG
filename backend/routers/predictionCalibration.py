@@ -9,7 +9,6 @@ import json
 
 router = APIRouter()
 
-# Clase para definir la estructura de los datos enviados desde el frontend
 class PredictionData(BaseModel):
     machine: str
     selection: str
@@ -23,7 +22,6 @@ class PredictionData(BaseModel):
     gate_error_2: Optional[float] = None
 
 
-# Define la ruta para /predict como POST y recibe los datos del cuerpo de la solicitud
 @router.post("/")
 async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
     if(data.selection == 'Qubits'):
@@ -47,7 +45,6 @@ async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union
     else: 
         prediction = predictGatesError.predict(data.machine, predictions)
 
-    # Devolver la predicción
     return {"prediction": prediction}
 
 @router.post("/file")
@@ -82,7 +79,8 @@ async def get_prediction(
             "tGates": tGates,
             "phaseGates": phaseGates,
             "hGates": hGates,
-            "cnotGates": cNotGates
+            "cnotGates": cNotGates,
+            "depth": depth
         }
     else: 
         prediction = []
@@ -101,8 +99,10 @@ async def get_prediction(
 
     name = name.replace("_", " ")
     
+    print(predictions)
+    
     if(selection == 'Qubits'):
-        prediction = predictQubitsError.predict_qubits_error(predictions, name, depth)
+        prediction = predictQubitsError.predict_qubits_error(predictions, name)
     else: 
         prediction = predictGatesError.predict(name, predictions)
     

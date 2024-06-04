@@ -8,7 +8,6 @@ from routers import historical
 
 app = FastAPI()
 
-# Permite el acceso de cualquier origen (CORS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,7 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Cargamos las rutas desde el archivo routers/prediction.py
 app.include_router(predictionError.router, prefix="/predictError")
 app.include_router(predictionCalibration.router, prefix="/predictCalibration")
 app.include_router(historical.router, prefix="/historical")

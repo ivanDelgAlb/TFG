@@ -22,7 +22,6 @@ class PredictionData(BaseModel):
 
 @router.post("/")
 async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Union[float, str]]]]]:
-    # Aquí realizas la predicción con los datos recibidos
     print("Datos recibidos predict error:", data)
     all_predictions = {}
     

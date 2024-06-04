@@ -2,21 +2,16 @@ from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 
-# Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
-# Configuración de MongoDB Atlas (reemplaza con tus propios valores)
 mongo_uri = os.getenv("MONGO_URI_MARINA_PART1")
 client = MongoClient(mongo_uri)
 
-# Nombre de la colección en MongoDB Compass
 collection_name_Destino = "dataFrame"
 collection_name_Origen = "derivado"
 
-# Conectarse a la base de datos en MongoDB Atlas
 db = client["TFG"]
 
-# Borro la colección por si tenía algún dato
 db[collection_name_Destino].drop()
 print("Colección borrada con éxito")
 
@@ -25,11 +20,8 @@ datos = db[collection_name_Origen].find()
 
 for documento in datos:
     nombre_maquina = documento['name']
-    # Verificar si el nombre de la máquina ya existe en la base de datos
     documento_existente = db[collection_name_Destino].find_one({"name": nombre_maquina})
     if documento_existente:
-        # Si el documento ya existe, actualiza los datos
-        # Supongamos que tus nuevos datos están en un diccionario llamado 'nuevos_datos'
         nuevos_datos = {
             "date": documento['date'],
             "T1": documento['properties']['qubits'][0],

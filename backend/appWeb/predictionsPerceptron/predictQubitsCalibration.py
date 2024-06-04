@@ -27,21 +27,18 @@ def predict_qubits_calibration(n_steps, machine_name):
         
         dataframes_directory = 'backend/dataframes_neuralProphet/'
 
-        # Take the dataframes_neuralProphet
         df_T1 = pd.read_csv(dataframes_directory + 'dataframeT1' + machine_name + '.csv', encoding="latin1")
         df_T2 = pd.read_csv(dataframes_directory + 'dataframeT2' + machine_name + '.csv', encoding="latin1")
         df_Prob0 = pd.read_csv(dataframes_directory + 'dataframeProb0' + machine_name + '.csv', encoding="latin1")
         df_Prob1 = pd.read_csv(dataframes_directory + 'dataframeProb1' + machine_name + '.csv', encoding="latin1")
         df_error = pd.read_csv(dataframes_directory + 'dataframeError' + machine_name + '.csv', encoding='latin1')
 
-        # Restore the trainers of the models
         model_T1.restore_trainer()
         model_T2.restore_trainer()
         model_Prob0.restore_trainer()
         model_Prob1.restore_trainer()
         model_error.restore_trainer()
 
-        # Create a future dataframe to predict the next step
         future_T1 = model_T1.make_future_dataframe(df=df_T1, n_historic_predictions=True, periods=n_steps)
         future_T2 = model_T2.make_future_dataframe(df=df_T2, n_historic_predictions=True, periods=n_steps)
         future_Prob0 = model_Prob0.make_future_dataframe(df=df_Prob0, n_historic_predictions=True, periods=n_steps)

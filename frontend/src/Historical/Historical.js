@@ -38,7 +38,7 @@ function Historical() {
         setCalibration([]); // Clear calibration data
 
         try {
-            const response = await fetch('https://tfgprueba-1.onrender.com/historical', {
+            const response = await fetch('http://localhost:8000/historical', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'

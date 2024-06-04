@@ -5,8 +5,6 @@ from pydantic import BaseModel
 import joblib
 
 router = APIRouter()
-
-# Clase para definir la estructura de los datos enviados desde el frontend
 class PredictionData(BaseModel):
     machine: str
 
@@ -29,27 +27,20 @@ def qubitsCalibration(machine):
     dataframes_directory = 'backend/dataframes_neuralProphet/'
     machine = machine.split(" ")[1].capitalize()
 
-    # Leer el archivo CSV
     qubits = pd.read_csv(dataframes_directory + 'dataframeT1' + machine + '.csv', encoding="latin1")
 
-    # Cambiar el nombre de las columnas
     qubits = qubits.rename(columns={'y': 'T1', 'ds': 'Date'})
     fechas = qubits['Date']
 
-    # Seleccionar solo las columnas a desnormalizar
     columns_to_inverse = ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
     qubits_to_inverse = qubits[columns_to_inverse]
 
-    # Cargar el scaler
     scaler = joblib.load(f"{dataframes_directory}scalerT1{machine}.pkl")
 
-    # Desnormalizar los datos
     qubits_desnormalized = scaler.inverse_transform(qubits_to_inverse)
 
-    # Convertir el array desnormalizado a un DataFrame
     qubits_desnormalized = pd.DataFrame(qubits_desnormalized, columns=columns_to_inverse)
 
-    # Agregar la columna 'Date'
     qubits_desnormalized['Date'] = fechas
 
     qubits_desnormalized = qubits_desnormalized.rename(columns={'probMeas0Prep1': 'Prob0', 'probMeas1Prep0': 'Prob1', 'readout_error': 'Error'})
@@ -62,31 +53,14 @@ def gatesCalibration(machine) -> Dict[str, Union[str, str]]:
     dataframes_directory = 'backend/dataframes_gates/'
     machine = machine.split(" ")[1].capitalize()
 
-    # Leer el archivo CSV
     gates = pd.read_csv(dataframes_directory + 'dataframe_Gates' + machine + '.csv', encoding="latin1")
 
     fechas = gates['date']
 
-    # Seleccionar solo las columnas a desnormalizar
     columns_to_inverse = ['gate_error_1','gate_error_2']
     gates_to_inverse = gates[columns_to_inverse]
-
-    # Cargar el scaler
-    scaler = joblib.load(f"{dataframes_directory}scalerGates{machine}.pkl")
-
-    # Desnormalizar los datos
-    gates_desnormalized = scaler.inverse_transform(gates_to_inverse)
-
-    # Convertir el array desnormalizado a un DataFrame
-    gates_desnormalized = pd.DataFrame(gates_desnormalized, columns=columns_to_inverse)
-
-    # Agregar la columna 'Date'
-    gates_desnormalized['Date'] = fechas
-
-
-    print(gates_desnormalized)
     
-    return {'gates': gates_desnormalized.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
+    return {'gates': gates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 
 def errorQubits(machine) -> Dict[str, Union[str, str]]:
     dataframes_directory = 'backend/dataframes_perceptron/'

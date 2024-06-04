@@ -164,7 +164,6 @@ function Error() {
     }
 
     const currentDate = new Date();
-    console.log(date < currentDate)
 
     if (date < currentDate) {
       setError("Selected date must be after the current date");

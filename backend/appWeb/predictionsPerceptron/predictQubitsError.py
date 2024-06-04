@@ -42,15 +42,17 @@ def add_date_and_calibration(errors, predictions, machine_name):
             df = pd.DataFrame([data], columns=columns)
             
             inverted_data = scaler.inverse_transform(df.values)
+            print(inverted_data)
             df_inverted = pd.DataFrame(inverted_data, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
-
+            
             error_dict['T1'] = df_inverted.iloc[0]['T1']
             error_dict['T2'] = df_inverted.iloc[0]['T2']
             error_dict['Prob0'] = df_inverted.iloc[0]['prob0']
             error_dict['Prob1'] = df_inverted.iloc[0]['prob1']
             error_dict['Error'] = df_inverted.iloc[0]['error']
 
-        data_list.append(error_dict)
+            
+            data_list.append(error_dict)
 
     return data_list
 

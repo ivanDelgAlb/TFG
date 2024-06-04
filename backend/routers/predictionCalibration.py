@@ -99,8 +99,6 @@ async def get_prediction(
 
     name = name.replace("_", " ")
     
-    print(predictions)
-    
     if(selection == 'Qubits'):
         prediction = predictQubitsError.predict_qubits_error(predictions, name)
     else: 

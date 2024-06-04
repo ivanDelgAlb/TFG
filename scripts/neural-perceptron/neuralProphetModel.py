@@ -18,12 +18,10 @@ def create_model(file):
     end = file.find(".csv")
     substring = file[start:end]
 
-    # Divide the dataframe in training and test
     train_index = int(len(df) * 0.8)
     df_train = df.iloc[:train_index]
     df_test = df.iloc[train_index:]
 
-    # Creating the NeuralProphet model
     model = NeuralProphet(
         n_forecasts=1,
         learning_rate=0.1
@@ -31,7 +29,6 @@ def create_model(file):
 
     set_log_level("ERROR")
 
-    # Adding the other values as lagged regressors
     model.add_lagged_regressor(columns[2])
     model.add_lagged_regressor(columns[3])
     model.add_lagged_regressor(columns[4])
@@ -42,7 +39,6 @@ def create_model(file):
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
     #print(metrics)
 
-    # Saving the model
     file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
         pickle.dump(model, file)
@@ -74,27 +70,23 @@ def predict(n_steps, machine_name):
         
         dataframes_directory = 'backend/dataframes_neuralProphet/'
 
-        # Take the dataframes_neuralProphet
         df_T1 = pd.read_csv(dataframes_directory + 'dataframeT1' + machine_name + '.csv', encoding="latin1")
         df_T2 = pd.read_csv(dataframes_directory + 'dataframeT2' + machine_name + '.csv', encoding="latin1")
         df_Prob0 = pd.read_csv(dataframes_directory + 'dataframeProb0' + machine_name + '.csv', encoding="latin1")
         df_Prob1 = pd.read_csv(dataframes_directory + 'dataframeProb1' + machine_name + '.csv', encoding="latin1")
         df_error = pd.read_csv(dataframes_directory + 'dataframeError' + machine_name + '.csv', encoding='latin1')
 
-        # Restore the trainers of the models
         model_T1.restore_trainer()
         model_T2.restore_trainer()
         model_Prob0.restore_trainer()
         model_Prob1.restore_trainer()
         model_error.restore_trainer()
 
-        # Create a future dataframe to predict the next step
         future_T1 = model_T1.make_future_dataframe(df=df_T1, n_historic_predictions=True, periods=n_steps)
         future_T2 = model_T2.make_future_dataframe(df=df_T2, n_historic_predictions=True, periods=n_steps)
         future_Prob0 = model_Prob0.make_future_dataframe(df=df_Prob0, n_historic_predictions=True, periods=n_steps)
         future_Prob1 = model_Prob1.make_future_dataframe(df=df_Prob1, n_historic_predictions=True, periods=n_steps)
         future_error = model_error.make_future_dataframe(df=df_error, n_historic_predictions=True, periods=n_steps)
-
 
         for i in range(n_steps):
 

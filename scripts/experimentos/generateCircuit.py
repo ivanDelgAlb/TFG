@@ -14,7 +14,7 @@ def generate_circuit(n_qubits, depth, probability_one_qubit_gate):
     :param probability_one_qubit_gate probability to generate gates with one qubit input (between 0 and 1).
     :type n_qubits: int
     :type depth: int
-    :type probability_one_qubit_gate: double
+    :type probability_one_qubit_gate: float
     :return: A quantum circuit from qiskit library.
     :rtype: QuantumCircuit
     """

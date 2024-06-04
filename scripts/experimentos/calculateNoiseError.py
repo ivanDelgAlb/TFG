@@ -193,7 +193,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
 
     noise_model = NoiseModel.from_backend(backend)
 
-    transpiled_circuit = transpile(circuit, backend=backend) # Reducir tiempo de ejecución poniendo heuristica a 1
+    transpiled_circuit = transpile(circuit, backend=backend)
     real_backend = generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_gates, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)

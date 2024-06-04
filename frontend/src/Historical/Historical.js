@@ -8,45 +8,54 @@ function Historical() {
     const [option, setOption] = useState("");
     const [error, setError] = useState(null);
     const [showCalibrationGraphs, setShowCalibrationGraphs] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const machines = ["ibm Brisbane", "ibm Kyoto", "ibm Osaka"];
 
     const handleButtonCalibration = () => {
         setError(null);
+        
         if (!selectedMachine) {
             setError("You must select a machine");
+            setLoading(false);
             return;
-        }else if(showCalibrationGraphs){
-            setShowCalibrationGraphs(false);
-        }else{
-            setShowCalibrationGraphs(true);
+        } else {
+            setShowCalibrationGraphs(prev => !prev);
         }
     };
 
     const handleChangeOption = (event) => {
+        setLoading(true);
         setOption(event.target.value);
     };
 
     const handleTabChange = async (machine) => {
+        console.log(machine);
         setSelectedMachine(machine);
+        setOption(""); // Reset the selected option
+        setShowCalibrationGraphs(false); // Hide graphs
         setError(null);
+        setCalibration([]); // Clear calibration data
 
         try {
-            const response = await fetch('http://localhost:8000/historical', {
+            const response = await fetch('https://tfgprueba-1.onrender.com/historical', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ 
                     machine: machine
-                  })
-              })
-            const data = await response.json();
-            console.log("Data received:", data);
-            setCalibration(data.historical);
+                })
+            });
 
+            const data = await response.json();
+            console.log(data);
+            setCalibration(data.historical);
+            console.log(data.historical[0].qubits);
         } catch (error) {
             console.error("Error fetching calibration data:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -72,7 +81,7 @@ function Historical() {
                 ))}
             </div>
 
-            {selectedMachine && (
+            {selectedMachine && calibration.length > 0 &&(
                 <div>
                     <div className="option-selector">
                         <select value={option} onChange={handleChangeOption} className="selector-option-select">
@@ -104,15 +113,15 @@ function Historical() {
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas0_Prep1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'probMeas0Prep1'} historical={true} color={'#006600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Prob0'} historical={true} color={'#006600'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas1_Prep0:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'probMeas1Prep0'} historical={true} color={'#000099'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Prob1'} historical={true} color={'#000099'}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Readout_error:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'readout_error'} historical={true} color={'#ff6600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Error'} historical={true} color={'#ff6600'}/>
                             </div>
                         </div>
                     )}
@@ -134,7 +143,7 @@ function Historical() {
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of qubits:</h2>
-                                <Graph predictions={calibration[2].errorQubits} type={'jensen-error'} historical={false} color={'#e6e600'}/>
+                                <Graph predictions={calibration[2].errorQubits} type={'jensen_error'} historical={false} color={'#e6e600'}/>
                             </div>
                         </div>
                     )}
@@ -144,7 +153,7 @@ function Historical() {
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of gates:</h2>
                                 <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
-                                    <Graph predictions={calibration[3].errorGates} type={'jensen-error'} historical={false} color={'#e6e600'} />
+                                    <Graph predictions={calibration[3].errorGates} type={'jensen_error'} historical={false} color={'#e6e600'} />
                                 </div>
                             </div>
                         </div>
@@ -156,5 +165,3 @@ function Historical() {
 }
 
 export default Historical;
-
-

@@ -1,13 +1,18 @@
-
 .graph-container {
-  margin-top: 20px;
-  margin-right: 20px;
+  width: 100%;
+  max-width: 100%; /* Utiliza el 100% del ancho disponible */
+  overflow-x: auto; /* Habilita el desplazamiento horizontal */
 }
 
-.graph-container h2 {
-  text-align: left;
-  font-size: 20px;
-  color:#a4a0a0;
-  margin-left: 2px
+.graph-container::-webkit-scrollbar {
+  height: 12px; /* Ajusta la altura del scrollbar */
 }
 
+.graph-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* Color del scrollbar */
+  border-radius: 6px; /* Borde redondeado del scrollbar */
+}
+
+.graph-canvas {
+  min-width: 1200px; /* Ancho mínimo para asegurar que se pueda desplazar horizontalmente */
+}

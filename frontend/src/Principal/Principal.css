@@ -1,8 +1,170 @@
-.container {
-    width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+/* General Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+/* Header and Navigation */
+.header {
+  background-color: #282c34;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #64ace8;
+}
+
+/* Main Content */
+.main-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.intro {
+  background-color: #64ace8;
+  color: white;
+  padding: 50px 20px;
+}
+
+.intro h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.intro p {
+  font-size: 1.2em;
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.explore-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #282c34;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.explore-button:hover {
+  background-color: #333;
+}
+
+/* Features Section */
+.features {
+  padding: 50px 20px;
+  background-color: white;
+}
+
+.features h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.feature-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.feature-item {
+  background-color: #f5f5f5;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 5px;
+  width: calc(50% - 40px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.feature-item:hover {
+  background-color: #e0e0e0;
+}
+
+.feature-item h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.feature-item p {
+  font-size: 1em;
+}
+
+/* About Section */
+.about {
+  padding: 50px 20px;
+  background-color: #64ace8;
+  color: white;
+}
+
+.about h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.about p {
+  font-size: 1.2em;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Contact Section */
+.contact {
+  padding: 50px 20px;
+  background-color: white;
+}
+
+.contact h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.contact p {
+  font-size: 1.2em;
+}
+
+/* Footer */
+.footer {
+  background-color: #282c34;
+  color: white;
+  text-align: center;
+  padding: 10px 20px;
+}

@@ -2,7 +2,7 @@ from calculateNoiseError import calculate_configuration_qubit_error, calculate_c
 from generateCircuit import generate_circuit
 from qiskit_ibm_runtime import QiskitRuntimeService
 import pandas as pd
-import random
+import time
 from qiskit.converters import circuit_to_dag
 
 
@@ -56,11 +56,14 @@ def execute_qubit_circuit(backend_name):
 
         results_kullback = []
         results_jensen = []
+        times = []
 
         for i in range(0, 5):
             fake_backend = service.get_backend(backend_name)
 
             circuit_copy = circuit.copy()
+
+            start_time = time.time()
 
             kullback_qubit_error, jensen_qubit_error = calculate_configuration_qubit_error(circuit_copy,
                                                                                            fake_backend, T1,
@@ -68,8 +71,14 @@ def execute_qubit_circuit(backend_name):
                                                                                            probMeas0Prep1,
                                                                                            probMeas1Prep0,
                                                                                            qubit_error)
+
+            end_time = time.time()
+
+            execution_time = end_time - start_time
+
             results_kullback.append(kullback_qubit_error)
             results_jensen.append(jensen_qubit_error)
+            times.append(execution_time)
 
         df_qubits.at[index, 't_gates'] = t_gates
         df_qubits.at[index, 'phase_gates'] = phase_gates
@@ -77,8 +86,10 @@ def execute_qubit_circuit(backend_name):
         df_qubits.at[index, 'cnot_gates'] = cnot_gates
         df_qubits.at[index, 'kullback_error'] = sum(results_kullback) / len(results_kullback)
         df_qubits.at[index, 'jensen-error'] = sum(results_jensen) / len(results_jensen)
+        df_qubits.at[index, 'time'] = sum(times) / len(times)
 
         df_qubits.to_csv(qubits_csv_file, index=False)
         print(f"Row {index} saved")
 
-execute_qubit_circuit("ibm_Brisbane")
+
+execute_qubit_circuit("ibm_brisbane")

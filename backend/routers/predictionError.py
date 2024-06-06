@@ -29,7 +29,7 @@ async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Un
         if data.selection == "Qubits":
             prediction = errorPerceptron.predict_qubits(data)
         elif data.selection == 'Gates': 
-            prediction = errorPerceptron.predict_puertas(data)
+            prediction = errorPerceptron.predict_gates(data)
             
         all_predictions["Perceptron"] = prediction
 
@@ -37,7 +37,7 @@ async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Un
         if data.selection == "Qubits":
             prediction = errorXgboost.predict_qubits(data)
         else:
-            prediction = errorXgboost.predict_puertas(data)
+            prediction = errorXgboost.predict_gates(data)
 
         all_predictions["XgBoost"] = prediction    
 

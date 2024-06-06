@@ -1,18 +1,18 @@
 .graph-container {
   width: 100%;
-  max-width: 100%; /* Utiliza el 100% del ancho disponible */
-  overflow-x: auto; /* Habilita el desplazamiento horizontal */
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .graph-container::-webkit-scrollbar {
-  height: 12px; /* Ajusta la altura del scrollbar */
+  height: 12px;
 }
 
 .graph-container::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2); /* Color del scrollbar */
-  border-radius: 6px; /* Borde redondeado del scrollbar */
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
 }
 
 .graph-canvas {
-  min-width: 1200px; /* Ancho mínimo para asegurar que se pueda desplazar horizontalmente */
+  min-width: 1200px;
 }

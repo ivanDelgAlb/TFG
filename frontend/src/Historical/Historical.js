@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Graph from '../Graph/Graph'; // Importa el componente de la gráfica
-import './Historical.css'; // Asegúrate de crear este archivo CSS para los estilos
+import Graph from '../Graph/Graph';
+import './Historical.css';
 
 function Historical() {
     const [calibration, setCalibration] = useState([]);
@@ -32,10 +32,10 @@ function Historical() {
     const handleTabChange = async (machine) => {
         console.log(machine);
         setSelectedMachine(machine);
-        setOption(""); // Reset the selected option
-        setShowCalibrationGraphs(false); // Hide graphs
+        setOption("");
+        setShowCalibrationGraphs(false);
         setError(null);
-        setCalibration([]); // Clear calibration data
+        setCalibration([]);
 
         try {
             const response = await fetch('http://localhost:8000/historical', {

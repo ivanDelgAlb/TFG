@@ -353,7 +353,6 @@ function Error() {
                     <h2>Historical Gate error of two-qubit input:</h2>
                     <Graph predictions={prediction} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
                   </div>
-                  {/* Rest of historical graphs */}
                 </div>
               )}
 

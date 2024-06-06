@@ -91,7 +91,7 @@ def create_model_gates(machine_name):
 
     columns = ['gate_error_one_qubit', 'gate_error_two_qubit', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'jensen-error']
 
-    dataset = pd.read_csv('dataframes_xgboost/dataframe_perceptron_gates_' + formated_name + '.csv', names=columns)
+    dataset = pd.read_csv('backend/dataframes_xgboost/dataframe_perceptron_gates_' + formated_name + '.csv', names=columns)
     dataset = dataset[columns]
 
     for column in columns:
@@ -214,19 +214,6 @@ def predict_gate(machine_name, data):
 create_model_qubits("ibm_brisbane")
 create_model_qubits("ibm_osaka")
 create_model_qubits("ibm_kyoto")
-
-'''
-machine_name = "ibm_brisbane"
-data = [165.4125864953162,138.33769254466574,0.0145999999999999,0.0082,0.0113999999999999,15,15,12.0,13.0,13.0,61.0]
-prediction = predict_qubit(machine_name, data)
-print(prediction)
-'''
-'''
-machine_name = "ibm_brisbane"
-data = [
-    [0.001, 0.002, 5, 3, 1, 2, 4, 0.01, 0.02],
-    [0.003, 0.001, 10, 5, 2, 3, 6, 0.015, 0.025]
-]
-predictions = predict(machine_name, data)
-print(predictions)
-'''
+create_model_gates("ibm_brisbane")
+create_model_gates("ibm_osaka")
+create_model_gates("ibm_kyoto")

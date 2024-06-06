@@ -1,115 +1,178 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Calibration.css'
 
 function Calibration() {
-  const [machine, setMachine] = useState(""); 
-  const [t1, setT1] = useState(null); 
-  const [t2, setT2] = useState(null); 
-  const [prob0, setProb0] = useState(null); 
-  const [prob1, setProb1] = useState(null); 
-  const [readoutError, setReadoutError] = useState(null); 
   const [prediction, setPrediction] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [depth, setDepth] = useState("");
+  const [nQubits, setNQubits] = useState("");
+  const [tGates, setTGates] = useState("");
+  const [phaseGates, setPhaseGates] = useState("");
+  const [hGates, setHGates] = useState("");
+  const [cNotGates, setCNotGates] = useState("");
   const [selection, setSelection] = useState("");
-  const [gate_error_1, setgate1] = useState(null); 
-  const [gate_error_2, setgate2] = useState(null); 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
 
   const handleChangeSelection = (event) => {
     setSelection(event.target.value);
   };
 
-  const handleChangeGate1 = (event) => {
-    setgate1(event.target.value);
-  };
-
-  const handleChangeGate2 = (event) => {
-    setgate2(event.target.value);
-  };
-
-  const handleChangeOption = (event) => {
-    setMachine(event.target.value);
-  };
-
-  const handleChangeT1 = (event) => {
-    setT1(event.target.value);
-  };
-
-  const handleChangeT2 = (event) => {
-    setT2(event.target.value);
-  };
-
-  const handleChangeProb0 = (event) => {
-    setProb0(event.target.value);
-  };
-
-  const handleChangeProb1 = (event) => {
-    setProb1(event.target.value);
-  };
-
-  const handleChangeReadoutError = (event) => {
-    setReadoutError(event.target.value);
-  };
-
   const handleChangeDepth = (event) => {
     setDepth(event.target.value);
   };
 
+  const handleChangeQubits = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
+    setNQubits(event.target.value);
+  };
+
+  const handleChangeTGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
+    setTGates(event.target.value);
+  }
+
+  const handleChangePhaseGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
+    setPhaseGates(event.target.value);
+  }
+
+  const handleChangeHGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
+    setHGates(event.target.value);
+  }
+
+  const handleChangeCNotGates = (event) => {
+    const value = event.target.value;
+    if(value < 0){
+      return;
+    }
+    setCNotGates(event.target.value);
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if(file){
+      const fileExtension = file.name.split('.').pop()
+      console.log(fileExtension)
+      if(fileExtension !== 'json'){
+
+        setError("The configuration file must be a JSON")
+        setSelectedFile(null)
+
+        if(fileInputRef.current){
+          fileInputRef.current.value = null;
+        }
+      }else{
+        setError("")
+        setSelectedFile(file);
+      }
+    }else{
+      setSelectedFile(null)
+    }
+  }
+
+  const handleFileRemove = () => {
+    setSelectedFile(null);
+    if(fileInputRef.current){
+        fileInputRef.current.value = null
+    }
+  }
+
   const handleButtonClick = async () => {
     setError("")
     setLoading(true); 
-    if (!machine || !selection) {
-      setError("All the field must be filled");
+    if (!selection) {
+      setError("You must select an option");
       setLoading(false)
       return;
     }
 
-    if(selection === 'Qubits' && (!t1 || !t2 || !prob0 || !prob1 || !readoutError || !depth)){
-      setError("All the field must be filled");
+    if(selection === 'Qubits' && !depth){
+      setError("You must select a depth")
       setLoading(false)
       return;
     }
 
-    if(selection === 'Gates' && (!gate_error_1 || !gate_error_2)){
-      setError("All the field must be filled");
+    if(!nQubits){
+      setError("You must select the number of qubits")
       setLoading(false)
       return;
+    }
+
+    if(!tGates){
+      setError("You must select the number of T gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!phaseGates){
+      setError("You must select the number of phase gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!hGates){
+      setError("You must select the number of Hadamard gates")
+      setLoading(false)
+      return;
+    }
+
+    if(!cNotGates){
+      setError("You must select the number of C-Not gates")
+      setLoading(false)
+      return;
+    }
+
+    if(selectedFile === null){
+        setError("You must submit a configuration file")
+        setLoading(false)
+        return;
     }
 
     try {
-      const response = await fetch('http://localhost:8000/predictCalibration', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          machine: machine, 
-          selection: selection,
-          t1: t1,
-          t2: t2,
-          prob0: prob0,
-          prob1: prob1,
-          readout_error: readoutError,
-          depth: depth,
-          gate_error_1: gate_error_1,
-          gate_error_2: gate_error_2
+        const formData = new FormData()
+        formData.append('selection', selection)
+        formData.append('depth', depth)
+        formData.append('file', selectedFile)
+        formData.append('nQubits', nQubits)
+        formData.append('tGates', tGates)
+        formData.append('phaseGates', phaseGates)
+        formData.append('hGates', hGates)
+        formData.append('cNotGates', cNotGates)
+
+        const response = await fetch('http://localhost:8000/predictCalibration/file', {
+            method: 'POST',
+            body: formData
         })
-      });
-      const data = await response.json();
-      console.log(data.prediction[0].divergence)
-      if (data.prediction && data.prediction.length > 0) {
-        console.log(data)
-        setPrediction(data.prediction[0].divergence);
-        setError(null);
-      } else {
-        setError('No se encontraron predicciones válidas');
-      }
+
+        const data = await response.json();
+        console.log(data.prediction[0].divergence)
+        if (data.prediction && data.prediction.length > 0) {
+            console.log(data)
+            setPrediction(data.prediction[0].divergence);
+            setError(null);
+        } else {
+            setError('There was not any valid prediction');
+        }
     } catch (error) {
       console.error('Error fetching prediction:', error);
     }finally {
-      setLoading(false); // Ocultar el spinner al finalizar
+      setLoading(false);
     }
   };
 
@@ -122,17 +185,9 @@ function Calibration() {
       </div>
 
       <div className="selectors-row">
-        <div className="selector-option">
-          <select value={machine} onChange={handleChangeOption} className="selector-option-select">
-            <option value="">Choose a machine</option>
-            <option value="ibm Brisbane">ibm Brisbane</option>
-            <option value="ibm Kyoto">ibm Kyoto</option>
-            <option value="ibm Osaka">ibm Osaka</option>
-          </select>
-        </div>
 
         <div className="option-selector">
-          <select value={selection} onChange={handleChangeSelection} className="option-selector-select">
+          <select value={selection} onChange={handleChangeSelection} className="option-selector-select" aria-label='optionSelector'>
             <option value="">Select an option</option>
             <option value="Qubits">Qubits</option>
             <option value="Gates">Gates</option>
@@ -141,73 +196,67 @@ function Calibration() {
 
       </div>
 
-        
         {selection === 'Qubits' && 
           <>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
               <div className="depth-selector">
-                <select value={depth} onChange={handleChangeDepth} className="selector-option-select">
+                <select value={depth} onChange={handleChangeDepth} className="selector-option-select" aria-label='depthSelector'>
                   <option value="">Choose a depth</option>
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="15">15</option>
                 </select>
               </div>
-              <div className="input-container" >
-                <label>T1:</label>
-                <input type="number" value={t1 || ""} onChange={handleChangeT1} />
-              </div>
-
-              <div className="input-container">
-                <label>T2:</label>
-                <input type="number" value={t2 || ""} onChange={handleChangeT2} />
-              </div>
-
-              <div className="input-container">
-                <label>Prob_meas0_prep1:</label>
-                <input type="number" value={prob0 || ""} onChange={handleChangeProb0} />
-              </div>
-
-              <div className="input-container">
-                <label>Prob_meas1_prep0:</label>
-                <input type="number" value={prob1 || ""} onChange={handleChangeProb1} />
-              </div>
-
-              <div className="input-container">
-                <label>Readout Error:</label>
-                <input type="number" value={readoutError || ""} onChange={handleChangeReadoutError} />
-              </div>
             </div>
           </>
         }
 
+        <h5>Introduce the number of gates of the circuit to be executed:</h5>
 
-        {selection === 'Gates' && 
-          <>
-              <div className="input-container">
-                <label>Gate error 1:</label>
-                <input type="number" value={gate_error_1 || ""} onChange={handleChangeGate1} />
-              </div>
+        <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
+          <tbody>
+            <tr>
+              <td><label>Number of qubits:</label></td>
+              <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeQubits} min={0} aria-label='nQubitsInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of T gates:</label></td>
+              <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Phase gates:</label></td>
+              <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of Hadamard gates:</label></td>
+              <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} min={0} aria-label='hGatesInput'/></td>
+            </tr>
+            <tr>
+              <td><label>Number of C-Not gates:</label></td>
+              <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} min={0} aria-label='cGatesInput'/></td>
+            </tr>
+          </tbody>
+        </table>
 
-              <div className="input-container">
-                <label>Gate error 2:</label>
-                <input type="number" value={gate_error_2 || ""} onChange={handleChangeGate2} />
-              </div>
-          </>
-        }
-      
+        <h5>Introduce a json file with the configuration of the machine (qiskit properties format):</h5>
+        <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}} aria-label='fileInput' />
+        {selectedFile && (
+            <div>
+                <button onClick={handleFileRemove} style={{marginTop: '10px'}}>Remove file</button>
+            </div>
+        )}
 
       {error && 
         <p className="error-message">{error}</p>
       }
 
       <div className="container-button">
-        <button onClick={handleButtonClick} className="button">Submit</button>
+        <button onClick={handleButtonClick} className="button" >Submit</button>
       </div>
 
-      {loading && ( // Mostrar el spinner si está cargando
+      {loading && (
         <div className="loading">
-          <h2>Cargando...</h2>
+          <h2>Loading...</h2>
           <div>
             <div className="spinner"></div>
           </div>

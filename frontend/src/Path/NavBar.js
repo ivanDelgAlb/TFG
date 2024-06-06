@@ -1,12 +1,11 @@
-// src/components/Navbar.js
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import './NavBar.css'; // Para tus estilos personalizados
+import './NavBar.css';
 import UMA from '../images/uma.jpg'
 
 const Navbar = () => {
     const location = useLocation();
-    const ubicacion = location.pathname.substring(1); // Para obtener la ruta actual sin el "/"
+    const ubicacion = location.pathname.substring(1);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">

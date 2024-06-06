@@ -26,13 +26,15 @@ def count_gates(op_nodes):
 
 def execute_qubit_circuit(backend_name):
     service = QiskitRuntimeService(channel='ibm_quantum',
-                                   token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
+                                   token='d3376e5cf0f14a564e1546bf94465aafdf92db3deb480f4a8b7fe0df18d31268316c34f361156029eff446c9c655b913da0952afa5edc921bd22898a886755bf')
+
     name = backend_name.split("_")[1].capitalize()
 
-    qubits_csv_file = 'dataframe_experiment' + name + '.csv'
+    qubits_csv_file = 'scripts/experimentos/dataframe_experiment' + name + '.csv'
 
     df_qubits = pd.read_csv(qubits_csv_file)
     print("Dataframe obtained")
+    print(df_qubits)
 
     for index, row in df_qubits.iterrows():
 
@@ -92,4 +94,4 @@ def execute_qubit_circuit(backend_name):
         print(f"Row {index} saved")
 
 
-execute_qubit_circuit("ibm_brisbane")
+execute_qubit_circuit("ibm_osaka")

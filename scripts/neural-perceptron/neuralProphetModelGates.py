@@ -34,7 +34,7 @@ def create_model_gates(file):
     model.set_plotting_backend("plotly-static")
 
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
-    print(metrics)
+    (metrics)
 
     file_name = '../../backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
@@ -99,11 +99,11 @@ files = ["dataframeError1", "dataframeError2"]
 
 for machine in machines:
     for file in files:
-        print("Maquina: " + machine + ", fichero: " + file)
+        ("Maquina: " + machine + ", fichero: " + file)
         csv = file + machine + '.csv'
         create_model_gates(csv)
-print("Models created")
+("Models created")
 '''
 
 future_Error_1 = predict_qubits(1, "ibm_Brisbane")
-print(future_Error_1)
+(future_Error_1)

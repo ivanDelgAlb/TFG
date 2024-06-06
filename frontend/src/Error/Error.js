@@ -347,11 +347,11 @@ function Error() {
                 <div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Gate error of one-qubit input:</h2>
-                    <Graph predictions={prediction} type={'gate_error_1'} historical={true} color={'#e6e600'}/>
+                    <Graph predictions={prediction} type={'error_gate_1_qubit'} historical={true} color={'#e6e600'}/>
                   </div>
                   <div style={{ marginBottom: '40px' }}>
                     <h2>Historical Gate error of two-qubit input:</h2>
-                    <Graph predictions={prediction} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
+                    <Graph predictions={prediction} type={'error_gate_2_qubit'} historical={true} color={'#2f4f4f'}/>
                   </div>
                 </div>
               )}

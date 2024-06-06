@@ -32,7 +32,7 @@ def execute_qubit_circuit(backend_name):
     qubits_csv_file = 'dataframe_perceptron_qubits_' + name + '.csv'
 
     df_qubits = pd.read_csv(qubits_csv_file)
-    print("Dataframe obtained")
+    ("Dataframe obtained")
 
     for index, row in df_qubits.iterrows():
         
@@ -46,7 +46,7 @@ def execute_qubit_circuit(backend_name):
         depth = int(row['depth'])
 
         circuit = generate_circuit(n_qubits, depth)
-        print("Circuit generated")
+        ("Circuit generated")
 
         dag = circuit_to_dag(circuit)
 
@@ -69,7 +69,7 @@ def execute_qubit_circuit(backend_name):
         df_qubits.at[index, 'jensen-error'] = jensen_qubit_error
 
         df_qubits.to_csv(qubits_csv_file, index=False)
-        print(f"Row {index} saved")
+        (f"Row {index} saved")
 
 
 def execute_gate_circuit(backend_name):
@@ -80,7 +80,7 @@ def execute_gate_circuit(backend_name):
     gates_csv_file = 'dataframe_perceptron_gates_' + name + '.csv'
 
     df_gates = pd.read_csv(gates_csv_file)
-    print("Dataframe obtained")
+    ("Dataframe obtained")
 
     qubits = [5, 10, 15]
     depths = [5, 10, 15]
@@ -91,7 +91,7 @@ def execute_gate_circuit(backend_name):
         depth = random.choice(depths)
 
         circuit = generate_circuit(n_qubits, depth)
-        print("Circuit generated")
+        ("Circuit generated")
 
         dag = circuit_to_dag(circuit)
 
@@ -118,6 +118,6 @@ def execute_gate_circuit(backend_name):
         df_gates.at[index, 'jensen-error'] = jensen_gate_error
 
         df_gates.to_csv(gates_csv_file, index=False)
-        print(f"Row {index} saved")
+        (f"Row {index} saved")
 
 

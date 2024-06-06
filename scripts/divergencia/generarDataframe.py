@@ -61,7 +61,7 @@ def extract_dataframe(backend_name):
     final_qubits_data.to_csv(qubits_csv_file, index=False)
     final_gates_data.to_csv(gates_csv_file, index=False)
 
-    print(f"Archivos CSV creados: {qubits_csv_file}, {gates_csv_file}")
+    (f"Archivos CSV creados: {qubits_csv_file}, {gates_csv_file}")
 
 
 extract_dataframe("ibm_brisbane")

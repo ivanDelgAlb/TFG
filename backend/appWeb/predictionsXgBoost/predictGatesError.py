@@ -19,6 +19,7 @@ def predict(machine_name, data):
     xgb_model.load_model(file)
 
     data_np = np.array(data)
+    (data_np)
 
     if data_np.ndim == 1:
         data_np = data_np.reshape(1, -1)
@@ -42,8 +43,8 @@ def add_date_and_calibration(errors, predictions):
         error_dict['divergence'] = error
 
         if i < len(predictions):
-            error_dict['gate_error_1'] = predictions[i][0][0]
-            error_dict['gate_error_2'] = predictions[i][0][1]
+            error_dict['error_gate_1_qubit'] = predictions[i][0]
+            error_dict['error_gate_2_qubit'] = predictions[i][1]
 
         data_list.append(error_dict)
 

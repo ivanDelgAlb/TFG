@@ -22,7 +22,6 @@ class PredictionData(BaseModel):
 
 @router.post("/")
 async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Union[float, str]]]]]:
-    print("Datos recibidos predict error:", data)
     all_predictions = {}
     
     if data.model.startswith("Perceptron") or data.model == "Perceptron":
@@ -40,6 +39,6 @@ async def predict(data: PredictionData) -> Dict[str, Dict[str, List[Dict[str, Un
             prediction = errorXgboost.predict_gates(data)
 
         all_predictions["XgBoost"] = prediction    
-
+    
     return all_predictions
 

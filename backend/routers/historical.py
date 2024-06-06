@@ -74,7 +74,7 @@ def errorQubits(machine) -> Dict[str, Union[str, str]]:
 
     errorQubits = errorQubits.drop(['T1','T2','probMeas0Prep1','probMeas1Prep0','readout_qubit_error','n_qubits','depth','t_gates','phase_gates','h_gates','cnot_gates','kullback_error'], axis=1)
 
-    print(errorQubits)
+    (errorQubits)
     
     return {'errorQubits': errorQubits.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 
@@ -91,7 +91,7 @@ def errorGates(machine) -> Dict[str, Union[str, str]]:
     errorGates = errorGates.drop(['gate_error_one_qubit','gate_error_two_qubit','n_qubits','t_gates','phase_gates','h_gates','cnot_gates','kullback_error'], axis=1)
     errorGates = errorGates.notna()
 
-    print(errorGates)
+    (errorGates)
     
     return {'errorGates': errorGates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 

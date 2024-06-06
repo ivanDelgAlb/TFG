@@ -32,7 +32,7 @@ db_part2 = client_part2["TFG"]
 auth_url = "https://api.github.com/user"
 auth_response = requests.get(auth_url, auth=(github_username, github_token))
 auth_response.raise_for_status()
-print("Autenticación exitosa")
+("Autenticación exitosa")
 
 # Obtener la lista de archivos JSON en la carpeta del repositorio de GitHub
 repo_contents_url = github_repo_url + {data_directory}
@@ -70,22 +70,22 @@ for file in files:
             collection = db_part1[collection_name]  
             if(collection.find_one({"date": fecha_formateada}) == None) :  
                 collection.insert_many(json_data)
-                print(f"Datos insertados con éxito para el archivo: {file}")
+                (f"Datos insertados con éxito para el archivo: {file}")
             else: 
-                print("Ya existe ese fichero")
+                ("Ya existe ese fichero")
         else : 
-            print("HOLA")
+            ("HOLA")
             collection = db_part2[collection_name]
             if(collection.find_one({"date": fecha_formateada}) == None) : 
                 collection.insert_many(json_data)
-                print(f"Datos insertados con éxito para el archivo: {file}")
+                (f"Datos insertados con éxito para el archivo: {file}")
             else: 
-                print("Ya existe ese fichero")
+                ("Ya existe ese fichero")
 
 
     except Exception as e:
-        print(f"Error: {e}")
+        (f"Error: {e}")
 
 
 
-print("Proceso completado.")
+("Proceso completado.")

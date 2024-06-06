@@ -135,7 +135,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-    print("Calculating qubit configuration error")
+    ("Calculating qubit configuration error")
     circuit.measure_all()
 
     shots = 1000
@@ -150,7 +150,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
-    print("Backend with noise executed")
+    ("Backend with noise executed")
 
     # ----------------------------------------------------------------------------------------
 
@@ -161,13 +161,13 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_ideal_machine = job_ideal_machine.result().get_counts()
 
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
-    print("Ideal backend executed")
+    ("Ideal backend executed")
 
     kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    print("Kullback-Leibler divergence calculated")
+    ("Kullback-Leibler divergence calculated")
 
     jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    print("Jensen-Shannon divergence calculated")
+    ("Jensen-Shannon divergence calculated")
 
     return kullback_divergence, jensen_divergence
 
@@ -186,7 +186,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-    print("Calculating gate configuration error")
+    ("Calculating gate configuration error")
     circuit.measure_all()
 
     shots = 1000
@@ -200,7 +200,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
-    print("Backend with noise executed")
+    ("Backend with noise executed")
 
     # ----------------------------------------------------------------------------------------
 
@@ -211,13 +211,13 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     counts_ideal_machine = job_ideal_machine.result().get_counts()
 
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
-    print("Ideal backend executed")
+    ("Ideal backend executed")
 
     kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    print("Kullback-Leibler divergence calculated")
+    ("Kullback-Leibler divergence calculated")
 
     jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    print("Jensen-Shannon divergence calculated")
+    ("Jensen-Shannon divergence calculated")
 
     return kullback_divergence, jensen_divergence
 
@@ -267,7 +267,7 @@ def calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_
 
 '''
 circuit = generate_circuit(25, 5)
-print("Circuit generated")
+("Circuit generated")
 
 service = QiskitRuntimeService(channel='ibm_quantum',
                                    token='8744729d1df2b54f6d544d5e4d49e3c1929372023734570e3db2f4a5568cf68ce8140213570c3a79c13548a13a0106bd3cd23c16578ef36b8e0139407b93d67a')
@@ -275,11 +275,11 @@ service = QiskitRuntimeService(channel='ibm_quantum',
 fake_backend_brisbane = service.get_backend('ibm_brisbane')
 fake_date = '2024-02-27T19:38:28'
 qubit_kullback_error, qubit_jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, 225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656, 0.024343307086614172)
-print("Kullback error on qubits: " + str(qubit_kullback_error))
-print("Jensen error on qubits: " + str(qubit_jensen_error))
+("Kullback error on qubits: " + str(qubit_kullback_error))
+("Jensen error on qubits: " + str(qubit_jensen_error))
 
 fake_backend_brisbane = service.get_backend('ibm_brisbane')
 gate_kullback_error, gate_jensen_error = calculate_configuration_gate_error(circuit, fake_backend_brisbane, 0.0000785365131764739, 0.007890508160354082)
-print("Kullback error on gates: " + str(gate_kullback_error))
-print("Jensen error on gates: " + str(gate_jensen_error))
+("Kullback error on gates: " + str(gate_kullback_error))
+("Jensen error on gates: " + str(gate_jensen_error))
 '''

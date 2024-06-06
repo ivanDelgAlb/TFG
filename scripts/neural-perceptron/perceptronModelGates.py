@@ -51,7 +51,7 @@ from keras.models import load_model
 #             readout_error = item['properties']['qubits'][4]['mediana']
 
 #             divergence = calculate_configuration_qubit_error(circuit, fake_backend, T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
-#             print("Divergencia calculada :)")
+#             ("Divergencia calculada :)")
 #             fila_min = min(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
 #             fila_max = max(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
 
@@ -72,7 +72,7 @@ from keras.models import load_model
 #             escritor_csv = csv.writer(archivo_csv)
 #             escritor_csv.writerows(dataFrame)
 
-#         print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
+#         ("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
 
 #     normalized("ibm_brisbane")
 
@@ -91,8 +91,8 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
 
     mse, mae = model.evaluate(X_test, y_test)
-    print(f"Error cuadrático medio ({machine}):", mse)
-    print(f"Error absoluto medio ({machine}):", mae)
+    (f"Error cuadrático medio ({machine}):", mse)
+    (f"Error absoluto medio ({machine}):", mae)
 
     directory = f'backend/models_perceptron/model_gates_{machine}.h5'
     model.save(directory)
@@ -110,9 +110,9 @@ def predict(machine, X_test, y_test):
     for i in range(len(X_test)):
         original_data_y = y_test.iloc[i]  # Accede al valor de la etiqueta i del DataFrame y_test
         reconstructed_sample_X = reconstructed_data_X[i]  # Predicción reconstruida para la muestra i de X
-        print("Original_Y:", original_data_y)
-        print("Reconstruido_X:", reconstructed_sample_X)
-        print("\n")
+        ("Original_Y:", original_data_y)
+        ("Reconstruido_X:", reconstructed_sample_X)
+        ("\n")
 '''
 circuit = generate_circuit(20, 5)
 service = QiskitRuntimeService(channel='ibm_quantum',
@@ -133,7 +133,7 @@ for machine in machines:
     X = filas_filtradas.drop(['date', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
 
 
-    print(X)
+    (X)
 
     
     X['n_qubits'] = filas_filtradas['n_qubits']
@@ -153,7 +153,7 @@ for machine in machines:
     # Realizar predicciones y evaluarlas
     #predict(machine, X_test, y_test)
 
-print("Models created")
+("Models created")
 
 #predict()
 

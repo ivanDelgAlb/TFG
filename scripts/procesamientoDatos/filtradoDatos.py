@@ -21,11 +21,11 @@ db_destino = client_destino["TFG"]
 
 # Borro la colección por si tenía algún dato
 db_destino[collection_name_Destino].drop()
-print("Colección borrada con éxito")
+("Colección borrada con éxito")
 
 datos = db_origen[collection_name_Origen].find()
 #numero_elementos = len(datos)
-#print(numero_elementos)
+#(numero_elementos)
 for dato in datos:
     # Eliminar atributos no deseados
     qubits = dato['properties']['qubits']
@@ -56,7 +56,7 @@ for dato in datos:
     collection = db_destino[collection_name_Destino]
     collection.insert_one(dato)
 
-print("Se han seleccionado los datos correctamente")
+("Se han seleccionado los datos correctamente")
 
 
 '''

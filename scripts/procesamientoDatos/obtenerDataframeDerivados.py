@@ -110,7 +110,7 @@ def dataFrame(nombre_maquina):
     df_error_1.to_csv(os.path.join(directory, f'dataframeError1{formated_name}.csv'), index=False)
     df_error_2.to_csv(os.path.join(directory, f'dataframeError2{formated_name}.csv'), index=False)
 
-    print("Extracción finalizada")
+    ("Extracción finalizada")
 
 
 maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"] 

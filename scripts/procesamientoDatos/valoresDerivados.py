@@ -25,7 +25,7 @@ db_Origen = client_Origen["TFG"]
 db_Destino = client_Destino["TFG"]
 
 db_Destino[collection_name_Destino].drop()
-print("Colección borrada con éxito")
+("Colección borrada con éxito")
 
 
 def calcMedia(datos, nqubit, atributo):
@@ -148,4 +148,4 @@ for dato in datos:
     collection = db_Destino[collection_name_Destino]
     collection.insert_one(dato)
 
-print("Se han insertado todos los valores derivados correctamente")
+("Se han insertado todos los valores derivados correctamente")

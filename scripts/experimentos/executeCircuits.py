@@ -33,8 +33,8 @@ def execute_qubit_circuit(backend_name):
     qubits_csv_file = 'scripts/experimentos/dataframe_experiment' + name + '.csv'
 
     df_qubits = pd.read_csv(qubits_csv_file)
-    print("Dataframe obtained")
-    print(df_qubits)
+    ("Dataframe obtained")
+    (df_qubits)
 
     for index, row in df_qubits.iterrows():
 
@@ -48,7 +48,7 @@ def execute_qubit_circuit(backend_name):
         probability = float(row['probability'])
 
         circuit = generate_circuit(n_qubits, depth, probability)
-        print("Circuit generated")
+        ("Circuit generated")
 
         dag = circuit_to_dag(circuit)
 
@@ -91,7 +91,7 @@ def execute_qubit_circuit(backend_name):
         df_qubits.at[index, 'time'] = sum(times) / len(times)
 
         df_qubits.to_csv(qubits_csv_file, index=False)
-        print(f"Row {index} saved")
+        (f"Row {index} saved")
 
 
 execute_qubit_circuit("ibm_osaka")

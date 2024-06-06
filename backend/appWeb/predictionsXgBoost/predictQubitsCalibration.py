@@ -59,7 +59,7 @@ def predict_future(machine, n_steps):
     df = pd.DataFrame(predictions_flat, columns=['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error'])
 
     predictions_inverted = scaler.inverse_transform(df)
-    print(predictions_inverted)
+    (predictions_inverted)
     
     predictions_reshaped = predictions_inverted.reshape(predictions.shape)
 

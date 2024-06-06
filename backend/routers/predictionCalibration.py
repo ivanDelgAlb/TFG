@@ -24,7 +24,6 @@ class PredictionData(BaseModel):
 
 @router.post("/")
 async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
-    print(data)
     if(data.selection == 'Qubits'):
         prediction = {
             "T1": data.t1,

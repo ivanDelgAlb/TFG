@@ -42,7 +42,6 @@ def add_date_and_calibration(errors, predictions, machine_name):
             df = pd.DataFrame([data], columns=columns)
             
             inverted_data = scaler.inverse_transform(df.values)
-            print(inverted_data)
             df_inverted = pd.DataFrame(inverted_data, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
             
             error_dict['T1'] = df_inverted.iloc[0]['T1']
@@ -55,22 +54,3 @@ def add_date_and_calibration(errors, predictions, machine_name):
             data_list.append(error_dict)
 
     return data_list
-
-
-def normalized(predictions):
-    print(predictions)
-
-    df = pd.DataFrame(predictions)
-
-    X = df.drop(['nQubits', 'tGates', 'phaseGates', 'hGates', 'cnotGates', 'depth'], axis=1)
-
-    df_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
-
-    df_normalizado['nQubits'] = df['nQubits']
-    df_normalizado['tGates'] = df['tGates']
-    df_normalizado['phaseGates'] = df['phaseGates']
-    df_normalizado['hGates'] = df['hGates']
-    df_normalizado['cnotGates'] = df['cnotGates']
-    df_normalizado['depth'] = df['depth']
-
-    return df_normalizado

@@ -26,7 +26,7 @@ def preprocess_data(scaler_path, file_path, window_size):
     df_normalizado = pd.DataFrame(df_normalizado, columns=df_sin_fechas.columns)
     df_normalizado['date'] = fechas
 
-    print(df_normalizado)
+    (df_normalizado)
 
     def create_sequences(data, window_size):
         X, y = [], []
@@ -84,7 +84,7 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
     predictions = []
     for _ in range(num_steps):
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
-        print(prediction)
+        (prediction)
         predictions.append(prediction)
 
         current_input_sequence = np.concatenate([current_input_sequence[1:], prediction], axis=0)
@@ -146,7 +146,7 @@ window_size = 10
 future_date = '2024-05-30' 
 
 for machine in machines:
-    print(machine)
+    (machine)
     data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
     model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
     scaler_path = 'backend/dataframes_neuralProphet/scalerT1' + machine + '.pkl'

@@ -52,7 +52,7 @@ def create_model_qubits(machine_name):
     grid_search.fit(x_train, y_train)
 
     best_params = grid_search.best_params_
-    print("Best parameters found: ", best_params)
+    ("Best parameters found: ", best_params)
 
     final_model = xgb.XGBRegressor(**best_params)
     final_model.fit(x_train, y_train)
@@ -60,11 +60,11 @@ def create_model_qubits(machine_name):
     predictions = final_model.predict(x_test)
 
     rmse = mean_squared_error(y_test, predictions, squared=False)
-    print("RMSE:", rmse)
+    ("RMSE:", rmse)
 
     file = f'backend/models_xgboost/xgboost_qubit_model_{formated_name}.model'
     final_model.save_model(file)
-    print("Model created")
+    ("Model created")
 
     '''
     import matplotlib.pyplot as plt
@@ -128,7 +128,7 @@ def create_model_gates(machine_name):
     grid_search.fit(x_train, y_train)
 
     best_params = grid_search.best_params_
-    print("Best parameters found: ", best_params)
+    ("Best parameters found: ", best_params)
 
     final_model = xgb.XGBRegressor(**best_params)
     final_model.fit(x_train, y_train)
@@ -136,11 +136,11 @@ def create_model_gates(machine_name):
     predictions = final_model.predict(x_test)
 
     rmse = mean_squared_error(y_test, predictions, squared=False)
-    print("RMSE:", rmse)
+    ("RMSE:", rmse)
 
     file = f'backend/models_xgboost/xgboost_gate_model_{formated_name}.model'
     final_model.save_model(file)
-    print("Model created")
+    ("Model created")
 
     '''
     import matplotlib.pyplot as plt

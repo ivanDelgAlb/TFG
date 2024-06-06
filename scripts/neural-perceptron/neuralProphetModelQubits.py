@@ -37,7 +37,7 @@ def create_model_qubits(file):
     model.set_plotting_backend("plotly-static")
 
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
-    #print(metrics)
+    #(metrics)
 
     file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
@@ -149,10 +149,10 @@ files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "data
 
 for machine in machines:
     for file in files:
-        print("Maquina: " + machine + ", fichero: " + file)
+        ("Maquina: " + machine + ", fichero: " + file)
         csv = file + machine + '.csv'
         create_model(csv)
-print("Models created")
+("Models created")
 '''
 
 import joblib
@@ -165,14 +165,14 @@ scaler = joblib.load(path)
 
 dates = future_T1['ds']
 df_values = future_T1.drop(columns=['ds'])
-print(df_values)
+(df_values)
 
 inverted_df = scaler.inverse_transform(df_values)
 
 df = pd.DataFrame(inverted_df, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
 df['ds'] = dates
 
-print(df)
+(df)
 
 
 

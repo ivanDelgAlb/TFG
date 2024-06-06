@@ -55,7 +55,7 @@ def normalised_qubits(machine_name):
 
     df_qubits.to_csv(os.path.join(file_name, f'dataframeQubits{formated_name}.csv'), index=False)
 
-    print("The file {} has been created.".format(file_name))
+    ("The file {} has been created.".format(file_name))
 
 
 def generate_dataframe_gates(machine_name):
@@ -85,7 +85,7 @@ def generate_dataframe_gates(machine_name):
 
     df_gates.to_csv(os.path.join(file_name, f'dataframe_Gates{formated_name}.csv'), index=False)
 
-    print("The file {} has been created.".format(file_name))
+    ("The file {} has been created.".format(file_name))
 
 
 normalised_qubits("ibm_brisbane")

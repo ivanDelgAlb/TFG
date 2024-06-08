@@ -143,17 +143,17 @@ def predict_qubits(n_steps, machine_name):
         raise FileNotFoundError("One of the models is missing")
 
 
-'''
-machines = ["Brisbane", "Kyoto", "Osaka"]
-files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
 
-for machine in machines:
-    for file in files:
-        ("Maquina: " + machine + ", fichero: " + file)
-        csv = file + machine + '.csv'
-        create_model(csv)
-("Models created")
-'''
+# machines = ["Brisbane", "Kyoto", "Osaka"]
+# files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
+
+# for machine in machines:
+#     for file in files:
+#         ("Maquina: " + machine + ", fichero: " + file)
+#         csv = file + machine + '.csv'
+#         create_model_qubits(csv)
+# ("Models created")
+
 
 import joblib
 
@@ -165,14 +165,19 @@ scaler = joblib.load(path)
 
 dates = future_T1['ds']
 df_values = future_T1.drop(columns=['ds'])
-(df_values)
 
 inverted_df = scaler.inverse_transform(df_values)
 
 df = pd.DataFrame(inverted_df, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
 df['ds'] = dates
 
-(df)
+# Seleccionar los últimos 4 datos del DataFrame
+last_4_data = df.iloc[-4:]
+
+last_4_data.to_csv('last_4_data.csv', index=False)
+
+print(last_4_data)
+
 
 
 

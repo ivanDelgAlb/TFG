@@ -8,8 +8,8 @@ def extract_dataframe(backend_name):
     with open(name + "Full.json", "r") as file:
         data = json.load(file)
 
-    with open(name + "2.json", "r") as file:
-        data.extend(json.load(file))
+    # with open(name + "2.json", "r") as file:
+    #     data.extend(json.load(file))
 
     qubits_columns = ['date', 'T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error']
     gates_columns = ['date', 'gate_error_one_qubit', 'gate_error_two_qubit', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error']

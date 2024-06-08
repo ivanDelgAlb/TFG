@@ -3,8 +3,17 @@ from datetime import datetime
 import schedule
 import time
 import json
+from git import Repo
+
 
 def obtener_informacion():
+    #-_-_-_-_-_-_-_ Almacenar Automaticamente en Git _-_-_-_-_-_-_-_-_-_-_-
+    repo = Repo.init('/home/zak-ubuntu/Desktop/TFG_UMA_2023_2024')
+    repo.git.add(all=True)
+    commit_name = "Commit done on: " + str(datetime.now())
+    repo.index.commit(commit_name)
+    origin = repo.remote('origin')
+    res = origin.push()
     # Cargar el proveedor de IBM Quantum
     provider = IBMProvider(token='4fdcd337fa47374d321d5f6d9fcd74c771cdc846e23e51f7d1256ce4839a44dfbc543b009a3fd6111ce286e9ec69b15e943a4a2f5b15291c98394127a22c82df')
 
@@ -14,6 +23,7 @@ def obtener_informacion():
     fecha_actual = datetime.now()
     # Crear el nombre del fichero con el timestamp
     nombre_archivo = fecha_actual.strftime("%Y-%m-%d_%H-%M-%S.json")
+    nombre_archivo = "data/" + nombre_archivo
 
     lista_backends = []
 
@@ -92,7 +102,7 @@ schedule.every(2).hours.do(obtener_informacion)
 # Bucle principal
 while True:
     with open(fichero_salidas, 'a') as fichero:
+        print(str(datetime.now()))
         fichero.write("Esperando proxima ejecucion.\n")
     schedule.run_pending()
     time.sleep(60)
-

@@ -8,13 +8,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-#mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART1")
-mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART2")
+mongo_uri_Origen = "mongodb+srv://marinasayago2002:clavetfg@tfg-part3.jphrtkl.mongodb.net/"
+#mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART2")
 client_Origen = MongoClient(mongo_uri_Origen)
 
-mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART2")
-#mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART1")
+#mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART2")
+mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
 client_Destino = MongoClient(mongo_uri_Destino)
+
+print(mongo_uri_Destino)
 
 # Nombre de la colección en MongoDB Compass
 collection_name_Destino = "derivado"
@@ -24,8 +26,10 @@ collection_name_Origen = "data"
 db_Origen = client_Origen["TFG"]
 db_Destino = client_Destino["TFG"]
 
-db_Destino[collection_name_Destino].drop()
-("Colección borrada con éxito")
+print("HOLA")
+
+# db_Destino[collection_name_Destino].drop()
+# print("Colección borrada con éxito")
 
 
 def calcMedia(datos, nqubit, atributo):
@@ -146,6 +150,9 @@ for dato in datos:
 
 
     collection = db_Destino[collection_name_Destino]
-    collection.insert_one(dato)
 
-("Se han insertado todos los valores derivados correctamente")
+    collection.insert_one(dato)
+    print(f"Datos insertados con éxito para el archivo: {dato['date']}, máquina: {dato['name']}")
+    
+
+print("Se han insertado todos los valores derivados correctamente")

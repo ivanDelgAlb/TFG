@@ -1,41 +1,40 @@
 import requests
 from pymongo import MongoClient
 from datetime import datetime
-import os
-from dotenv import load_dotenv
-
-# Cargar las variables de entorno desde el archivo .env
-load_dotenv()
 
 # Configuración de MongoDB Atlas (reemplaza con tus propios valores)
-mongo_uri_part1 = os.getenv("MONGO_URI_MARINA_PART1")
+mongo_uri_part1 = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
 client_part1 = MongoClient(mongo_uri_part1)
 
-mongo_uri_part2 = os.getenv("MONGO_URI_MARINA_PART2")
+mongo_uri_part2 = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
 client_part2 = MongoClient(mongo_uri_part2)
 
+mongo_uri_part3 = "mongodb+srv://marinasayago2002:clavetfg@tfg-part3.jphrtkl.mongodb.net/"
+client_part3 = MongoClient(mongo_uri_part3)
+
 # Ruta al directorio que contiene los archivos JSON en el repositorio de GitHub
-github_repo_url = os.getenv("GITHUB_REPO")
+github_repo_url = "https://github.com/Zakaria-Dahi/TFG_UMA_2023_2204"
 data_directory = "data"
 
 # Nombre de la colección en MongoDB Compass
 collection_name = "data"
 
-github_username = os.getenv("GITHUB_USERNAME")
-github_token = os.getenv("GITHUB_TOKEN")
+github_username = "marinasayago"
+github_token = "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"
 
 # Conectarse a la base de datos en MongoDB Atlas
 db_part1 = client_part1["TFG"]
 db_part2 = client_part2["TFG"]
+db_part3 = client_part3["TFG"]
 
 # Autenticación con la API de GitHub
 auth_url = "https://api.github.com/user"
 auth_response = requests.get(auth_url, auth=(github_username, github_token))
 auth_response.raise_for_status()
-("Autenticación exitosa")
+print("Autenticación exitosa")
 
 # Obtener la lista de archivos JSON en la carpeta del repositorio de GitHub
-repo_contents_url = github_repo_url + {data_directory}
+repo_contents_url = f"https://api.github.com/repos/Zakaria-Dahi/TFG_UMA_2023_2204/contents/{data_directory}"
 contents_response = requests.get(repo_contents_url, auth=(github_username, github_token))
 contents_response.raise_for_status()
 
@@ -48,7 +47,7 @@ for file in files:
 
     try:
         # Modifica la URL para apuntar a la versión RAW del archivo en GitHub
-        raw_url = os.getenv("GITHUB_RAW") + {file}
+        raw_url = f"https://raw.githubusercontent.com/Zakaria-Dahi/TFG_UMA_2023_2204/main/data/{file}"
 
         response = requests.get(raw_url, auth=(github_username, github_token))
         response.raise_for_status()  # Verificar si hay errores en la respuesta HTTP
@@ -70,22 +69,29 @@ for file in files:
             collection = db_part1[collection_name]  
             if(collection.find_one({"date": fecha_formateada}) == None) :  
                 collection.insert_many(json_data)
-                (f"Datos insertados con éxito para el archivo: {file}")
+                print(f"Datos insertados con éxito para el archivo: {file}")
             else: 
-                ("Ya existe ese fichero")
-        else : 
-            ("HOLA")
+                print("Ya existe ese fichero")
+        elif (fecha_objeto < datetime.strptime("2024-05-28 00-00-00", "%Y-%m-%d %H-%M-%S")) : 
+            print("HOLA")
             collection = db_part2[collection_name]
             if(collection.find_one({"date": fecha_formateada}) == None) : 
                 collection.insert_many(json_data)
-                (f"Datos insertados con éxito para el archivo: {file}")
+                print(f"Datos insertados con éxito para el archivo: {file}")
             else: 
-                ("Ya existe ese fichero")
-
+                print("Ya existe ese fichero")
+        else:
+            print("ADIOS")
+            collection = db_part3[collection_name]
+            if(collection.find_one({"date": fecha_formateada}) == None) : 
+                collection.insert_many(json_data)
+                print(f"Datos insertados con éxito para el archivo: {file}")
+            else: 
+                print("Ya existe ese fichero")
 
     except Exception as e:
-        (f"Error: {e}")
+        print(f"Error: {e}")
 
 
 
-("Proceso completado.")
+print("Proceso completado.")

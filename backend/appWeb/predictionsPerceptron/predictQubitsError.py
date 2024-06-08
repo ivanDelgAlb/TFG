@@ -3,18 +3,27 @@ from keras.models import load_model
 import pandas as pd
 import joblib
 
-def predict_qubits_error(predictions, machine_name):
+def predict_qubits_error(predictions, machine_name, type):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
         model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '.h5') 
         normalized_data = pd.DataFrame(predictions)
+        print(normalized_data)
+        if type == 'calibration': 
+            columns_to_normalize = ["T1", "T2", "Prob0", "Prob1", "Error"]
+
+            # Crear un DataFrame separado para las columnas normalizadas
+            normalized_df = normalized_data[columns_to_normalize].apply(lambda row: (row - row.min()) / (row.max() - row.min()), axis=1)
+
+            # Añadir las columnas normalizadas al DataFrame original
+            normalized_data[["T1", "T2", "Prob0", "Prob1", "Error"]] = normalized_df
         errors = model.predict(normalized_data)
-        errors = add_date_and_calibration(errors, predictions, machine_name)
+        errors = add_date_and_calibration(errors, predictions, machine_name, type)
         return errors
     except FileNotFoundError:
         raise FileNotFoundError("The model is missing")
     
-def add_date_and_calibration(errors, predictions, machine_name):
+def add_date_and_calibration(errors, predictions, machine_name, type):
     data_list = []
     scaler_path = f'backend/dataframes_neuralProphet/scalerT1{machine_name}.pkl'
 
@@ -29,7 +38,7 @@ def add_date_and_calibration(errors, predictions, machine_name):
         columns = ['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
 
         if i < len(predictions):
-            
+            print(predictions)
             prediction = predictions[i]
             data = {
                 'y': prediction.get('T1', None),
@@ -41,15 +50,21 @@ def add_date_and_calibration(errors, predictions, machine_name):
 
             df = pd.DataFrame([data], columns=columns)
             
-            inverted_data = scaler.inverse_transform(df.values)
-            df_inverted = pd.DataFrame(inverted_data, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
-            
-            error_dict['T1'] = df_inverted.iloc[0]['T1']
-            error_dict['T2'] = df_inverted.iloc[0]['T2']
-            error_dict['Prob0'] = df_inverted.iloc[0]['prob0']
-            error_dict['Prob1'] = df_inverted.iloc[0]['prob1']
-            error_dict['Error'] = df_inverted.iloc[0]['error']
-
+            if type == 'error':
+                inverted_data = scaler.inverse_transform(df.values)
+                df_inverted = pd.DataFrame(inverted_data, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
+                
+                error_dict['T1'] = df_inverted.iloc[0]['T1']
+                error_dict['T2'] = df_inverted.iloc[0]['T2']
+                error_dict['Prob0'] = df_inverted.iloc[0]['prob0']
+                error_dict['Prob1'] = df_inverted.iloc[0]['prob1']
+                error_dict['Error'] = df_inverted.iloc[0]['error']
+            else:
+                error_dict['T1'] = data['y']
+                error_dict['T2'] = data['T2']
+                error_dict['Prob0'] = data['probMeas0Prep1']
+                error_dict['Prob1'] = data['probMeas1Prep0']
+                error_dict['Error'] = data['readout_error']
             
             data_list.append(error_dict)
 

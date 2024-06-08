@@ -24,6 +24,7 @@ def predict(machine_name, data):
     if data_np.ndim == 1:
         data_np = data_np.reshape(1, -1)
 
+    print(data_np)
     matrix_data = xgb.DMatrix(data_np)
 
     errors = xgb_model.predict(matrix_data)

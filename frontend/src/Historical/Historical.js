@@ -56,6 +56,7 @@ function Historical() {
             console.error("Error fetching calibration data:", error);
         } finally {
             setLoading(false);
+            setShowCalibrationGraphs(true)
         }
     };
 
@@ -105,23 +106,23 @@ function Historical() {
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'T1'} historical={true} color={'#1f77b4'}/>
+                                <Graph predictions={calibration[0].qubits} type={'T1'} historical={true}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical T2:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'T2'} historical={true} color={'#660066'}/>
+                                <Graph predictions={calibration[0].qubits} type={'T2'} historical={true}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas0_Prep1:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Prob0'} historical={true} color={'#006600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Prob0'} historical={true}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Prob_Meas1_Prep0:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Prob1'} historical={true} color={'#000099'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Prob1'} historical={true}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Readout_error:</h2>
-                                <Graph predictions={calibration[0].qubits} type={'Error'} historical={true} color={'#ff6600'}/>
+                                <Graph predictions={calibration[0].qubits} type={'Error'} historical={true}/>
                             </div>
                         </div>
                     )}
@@ -130,11 +131,11 @@ function Historical() {
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of one-qubit input:</h2>
-                                <Graph predictions={calibration[1].gates} type={'gate_error_1'} historical={true} color={'#e6e600'}/>
+                                <Graph predictions={calibration[1].gates} type={'gate_error_1'} historical={true}/>
                             </div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical Gate error of two-qubit input:</h2>
-                                <Graph predictions={calibration[1].gates} type={'gate_error_2'} historical={true} color={'#2f4f4f'}/>
+                                <Graph predictions={calibration[1].gates} type={'gate_error_2'} historical={true} />
                             </div>
                         </div>
                     )}
@@ -160,6 +161,10 @@ function Historical() {
                     )}
                 </div>
             )}
+
+            <footer className="footer">
+                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
+            </footer>
         </div>
     );
 }

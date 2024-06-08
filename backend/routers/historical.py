@@ -55,10 +55,9 @@ def gatesCalibration(machine) -> Dict[str, Union[str, str]]:
 
     gates = pd.read_csv(dataframes_directory + 'dataframe_Gates' + machine + '.csv', encoding="latin1")
 
-    fechas = gates['date']
+    gates = gates.rename(columns={'date': 'Date'})
 
-    columns_to_inverse = ['gate_error_1','gate_error_2']
-    gates_to_inverse = gates[columns_to_inverse]
+    print(gates)
     
     return {'gates': gates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 
@@ -89,9 +88,6 @@ def errorGates(machine) -> Dict[str, Union[str, str]]:
     errorGates = errorGates.rename(columns={'date': 'Date', 'jensen-error': 'jensen_error'})
 
     errorGates = errorGates.drop(['gate_error_one_qubit','gate_error_two_qubit','n_qubits','t_gates','phase_gates','h_gates','cnot_gates','kullback_error'], axis=1)
-    errorGates = errorGates.notna()
-
-    (errorGates)
     
     return {'errorGates': errorGates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 

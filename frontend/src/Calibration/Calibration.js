@@ -251,17 +251,13 @@ function Calibration() {
       }
 
       <div className="container-button">
-        <button onClick={handleButtonClick} className="button" >Submit</button>
-      </div>
-
-      {loading && (
-        <div className="loading">
-          <h2>Loading...</h2>
-          <div>
-            <div className="spinner"></div>
-          </div>
+          <button onClick={handleButtonClick} disabled={loading} className="button">
+            {loading ? "Loading..." : "Predict Error"}
+          </button>
         </div>
-      )}
+
+        {loading && <div className="loading"><div className="spinner"></div></div>}
+      
 
       {prediction.length !== 0  && !loading &&
         (
@@ -272,7 +268,12 @@ function Calibration() {
         )
       }
 
+            <footer className="footer">
+                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
+            </footer>
     </div>
+
+    
   );
 }
 

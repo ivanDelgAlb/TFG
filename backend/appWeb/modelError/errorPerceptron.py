@@ -55,7 +55,7 @@ def predict_qubits(data: PredictionData):
             }
             predictions.append(prediction)
         
-        predictions = predictQubitsErrorPerceptron.predict_qubits_error(predictions, machine)
+        predictions = predictQubitsErrorPerceptron.predict_qubits_error(predictions, machine, 'error')
         all_predictions[machine] = predictions
 
     return all_predictions

@@ -22,6 +22,7 @@ class PredictionData(BaseModel):
     gate_error_2: Optional[float] = None
 
 
+
 @router.post("/")
 async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
     if(data.selection == 'Qubits'):
@@ -46,61 +47,68 @@ async def get_prediction(data: PredictionData) -> Dict[str, List[Dict[str, Union
 
     return {"prediction": prediction}
 
+
+class CalibrationData(BaseModel):
+    selection: str
+    depth: Optional[str] = None
+    file: UploadFile
+    nQubits: int
+    tGates: int
+    phaseGates: int
+    hGates: int
+    cNotGates: int
+
 @router.post("/file")
-async def get_prediction(
-    selection: str = Form(...),
-    depth: Optional[int] = Form(...),
-    file: UploadFile = File(...),
-    nQubits: int = Form(...),
-    tGates: int = Form(...),
-    phaseGates: int = Form(...),
-    hGates: int = Form(...),
-    cNotGates: int = Form(...)
-) -> Dict[str, List[Dict[str, Union[float, str]]]]:
+async def get_prediction(data: CalibrationData) -> Dict[str, List[Dict[str, Union[float, str]]]]:
+    print("HOLA")
     
     try:
 
-        content = await file.read()
+        content = await data.file.read()
         file_data = json.loads(content)
     except Exception as e:
         return{"error": f"Error reading file: {e}"}
     
     name, qubits, gates = processFile.processFile(file_data)
 
-    if(selection == 'Qubits'):
+    print("HOLA")
+
+    if(data.selection == 'Qubits'):
         prediction = {
             "T1": qubits[0]['mediana'],
             "T2": qubits[1]['mediana'],
             "Prob0": qubits[2]['mediana'],
             "Prob1": qubits[3]['mediana'],
             "Error": qubits[4]['mediana'],
-            "nQubits": nQubits,
-            "tGates": tGates,
-            "phaseGates": phaseGates,
-            "hGates": hGates,
-            "cnotGates": cNotGates,
-            "depth": depth
+            "nQubits": data.nQubits,
+            "tGates": data.tGates,
+            "phaseGates": data.phaseGates,
+            "hGates": data.hGates,
+            "cnotGates": data.cNotGates,
+            "depth": data.depth
         }
     else: 
         prediction = []
         prediction.append([
             gates[0]['mediana'], 
             gates[1]['mediana'], 
-            nQubits,
-            tGates,
-            phaseGates,
-            hGates,
-            cNotGates
+            data.nQubits,
+            data.tGates,
+            data.phaseGates,
+            data.hGates,
+            data.cNotGates
         ])
 
     predictions = []
     predictions.append(prediction)
 
+    print(predictions)
+
     name = name.replace("_", " ")
     
-    if(selection == 'Qubits'):
-        prediction = predictQubitsError.predict_qubits_error(predictions, name)
+    if(data.selection == 'Qubits'):
+        prediction = predictQubitsError.predict_qubits_error(predictions, name, 'calibration')
     else: 
         prediction = predictGatesError.predict(name, predictions)
-    
+    print(prediction)
     return {"prediction": prediction}

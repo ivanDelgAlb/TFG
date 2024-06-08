@@ -1,6 +1,11 @@
 import numpy as np
 import xgboost as xgb
 from datetime import datetime, timedelta
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 def predict(machine_name, data, depth):
     """
@@ -17,7 +22,10 @@ def predict(machine_name, data, depth):
 
     formated_name = machine_name.split(" ")[1].capitalize()
 
-    file = 'backend/models_xgboost/xgboost_qubit_model_' + formated_name + '.model'
+    if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_xgboost/')
+    else: models_directory = os.path.join(os.environ['PWD'], 'models_xgboost/')
+    
+    file = models_directory + 'xgboost_qubit_model_' + formated_name + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 

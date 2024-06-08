@@ -2,11 +2,20 @@ from datetime import datetime, timedelta
 from keras.models import load_model
 import pandas as pd
 
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 def predict_gates_error(machine_name, predictions):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
-        model = load_model('backend/models_perceptron/model_gates_' + machine_name + '.h5') 
+
+        if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_perceptron/')
+        else: models_directory = os.path.join(os.environ['PWD'], 'models_perceptron/')
+
+        model = load_model(models_directory + 'model_gates_' + machine_name + '.h5') 
         normalized_data = pd.DataFrame(predictions)
         errors = model.predict(normalized_data)
         errors = add_date_and_calibration(errors, predictions)

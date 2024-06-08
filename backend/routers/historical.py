@@ -3,6 +3,11 @@ from fastapi import APIRouter
 import pandas as pd
 from pydantic import BaseModel
 import joblib
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 router = APIRouter()
 class PredictionData(BaseModel):
@@ -24,7 +29,9 @@ async def historical(data: PredictionData):
     return {"historical": historical}
 
 def qubitsCalibration(machine):
-    dataframes_directory = 'backend/dataframes_neuralProphet/'
+    if os.getenv("DEPLOYMENT") == 'localhost': dataframes_directory = os.path.join(os.getenv("PATH_FILE"), 'dataframes_neuralProphet/')
+    else: dataframes_directory = os.path.join(os.environ['PWD'], 'dataframes_neuralProphet/')
+    
     machine = machine.split(" ")[1].capitalize()
 
     qubits = pd.read_csv(dataframes_directory + 'dataframeT1' + machine + '.csv', encoding="latin1")
@@ -50,7 +57,9 @@ def qubitsCalibration(machine):
 
 
 def gatesCalibration(machine) -> Dict[str, Union[str, str]]:
-    dataframes_directory = 'backend/dataframes_gates/'
+    if os.getenv("DEPLOYMENT") == 'localhost': dataframes_directory = os.path.join(os.getenv("PATH_FILE"), 'dataframes_gates/')
+    else: dataframes_directory = os.path.join(os.environ['PWD'], 'dataframes_gates/')
+    
     machine = machine.split(" ")[1].capitalize()
 
     gates = pd.read_csv(dataframes_directory + 'dataframe_Gates' + machine + '.csv', encoding="latin1")
@@ -62,7 +71,9 @@ def gatesCalibration(machine) -> Dict[str, Union[str, str]]:
     return {'gates': gates.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 
 def errorQubits(machine) -> Dict[str, Union[str, str]]:
-    dataframes_directory = 'backend/dataframes_perceptron/'
+    if os.getenv("DEPLOYMENT") == 'localhost': dataframes_directory = os.path.join(os.getenv("PATH_FILE"), 'dataframes_perceptron/')
+    else: dataframes_directory = os.path.join(os.environ['PWD'], 'dataframes_perceptron/')
+    
     machine = machine.split(" ")[1].capitalize()
 
     # Leer el archivo CSV
@@ -78,7 +89,9 @@ def errorQubits(machine) -> Dict[str, Union[str, str]]:
     return {'errorQubits': errorQubits.to_dict(orient='records')}  # Convertir DataFrame a lista de diccionarios
 
 def errorGates(machine) -> Dict[str, Union[str, str]]:
-    dataframes_directory = 'backend/dataframes_xgboost/'
+    if os.getenv("DEPLOYMENT") == 'localhost': dataframes_directory = os.path.join(os.getenv("PATH_FILE"), 'dataframes_xgboost/')
+    else: dataframes_directory = os.path.join(os.environ['PWD'], 'dataframes_xgboost/')
+    
     machine = machine.split(" ")[1].capitalize()
 
     # Leer el archivo CSV

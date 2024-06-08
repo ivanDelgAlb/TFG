@@ -3,6 +3,11 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import joblib
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
     index_of_date = df.index[df['date'] == date].tolist()
@@ -21,8 +26,11 @@ def get_sequence_for_date(df, df_normalized, date, window_size):
 def predict_future(machine, n_steps):
     machine_name = machine.split(" ")[1].capitalize()
     window_size = 10
-    models_directory = "backend/models_lstm_qubits/"
-    data_directory = "backend/dataframes_neuralProphet/"
+    if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_lstm_qubits/')
+    else: models_directory = os.path.join(os.environ['PWD'], 'models_lstm_qubits/')
+
+    if os.getenv("DEPLOYMENT") == 'localhost': data_directory = os.path.join(os.getenv("PATH_FILE"), 'dataframes_neuralProphet/')
+    else: data_directory = os.path.join(os.environ['PWD'], 'dataframes_neuralProphet/')
     
     model = load_model(models_directory + "model_" + machine_name + ".keras")
 

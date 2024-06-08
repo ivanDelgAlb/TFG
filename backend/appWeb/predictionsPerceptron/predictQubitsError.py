@@ -2,11 +2,20 @@ from datetime import datetime, timedelta
 from keras.models import load_model
 import pandas as pd
 import joblib
+import os
+from dotenv import load_dotenv
+
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
 
 def predict_qubits_error(predictions, machine_name, type):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
-        model = load_model('backend/models_perceptron/model_qubits_' + machine_name + '.h5') 
+
+        if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_neuralProphet/')
+        else: models_directory = os.path.join(os.environ['PWD'], 'models_neuralProphet/')
+
+        model = load_model(models_directory + 'model_qubits_' + machine_name + '.h5') 
         normalized_data = pd.DataFrame(predictions)
         print(normalized_data)
         if type == 'calibration': 
@@ -25,7 +34,10 @@ def predict_qubits_error(predictions, machine_name, type):
     
 def add_date_and_calibration(errors, predictions, machine_name, type):
     data_list = []
-    scaler_path = f'backend/dataframes_neuralProphet/scalerT1{machine_name}.pkl'
+
+    if os.getenv("DEPLOYMENT") == 'localhost': scaler_path = os.path.join(os.getenv("PATH_FILE"), 'dataframes_neuralProphet/')
+    else: scaler_path = os.path.join(os.environ['PWD'], 'dataframes_neuralProphet/')
+    scaler_path = scaler_path + 'scalerT1' + machine_name + '.pkl'
 
     scaler = joblib.load(scaler_path)
     date = datetime.now()

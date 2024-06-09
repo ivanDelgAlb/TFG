@@ -6,7 +6,6 @@ import joblib
 import os
 from dotenv import load_dotenv
 
-# Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
 def get_sequence_for_date(df, df_normalized, date, window_size):

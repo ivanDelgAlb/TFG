@@ -36,15 +36,13 @@ def calcMediana(datos, nqubit, atributo):
         else:
             for qubit in dato:
                 if qubit['name'] == atributo:
-                    valores.append(qubit['value'])  # Agrega el qubit a la lista si cumple con las condiciones
+                    valores.append(qubit['value'])
     valores.sort()
     n = len(valores)
     
     if n % 2 == 0:
-        # Si el número de datos es par
         mediana = (valores[n//2 - 1] + valores[n//2]) / 2
     else:
-        # Si el número de datos es impar
         mediana = valores[n//2]
 
     return mediana
@@ -65,7 +63,7 @@ def calcDesviacion(datos, nqubit, atributo):
                     valores.append(qubit['value'])
 
     if len(valores) < 2:
-        return None  # None si no hay suficientes datos
+        return None
 
     desviacion_estandar = statistics.stdev(valores)
     return desviacion_estandar

@@ -3,7 +3,6 @@ import pickle
 import os
 from dotenv import load_dotenv
 
-# Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
 def predict_qubits_calibration(n_steps, machine_name):

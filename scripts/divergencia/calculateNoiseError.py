@@ -138,7 +138,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     ("Calculating qubit configuration error")
     circuit.measure_all()
 
-    shots = 1000
+    shots = 30
 
     noise_model = NoiseModel.from_backend(backend)
 
@@ -146,13 +146,11 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     real_backend = generate_qubit_backend_configuration(T1, T2, prob_meas0_prep1, prob_meas1_prep0,
                                                         readout_error_qubits, backend)
     real_machine = AerSimulator.from_backend(real_backend)
-    job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
+    job_real_machine = real_machine.run(transpiled_circuit, shots=shots, max_parallel_shots=30)
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
     ("Backend with noise executed")
-
-    # ----------------------------------------------------------------------------------------
 
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)
@@ -193,7 +191,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
 
     noise_model = NoiseModel.from_backend(backend)
 
-    transpiled_circuit = transpile(circuit, backend=backend) # Reducir tiempo de ejecución poniendo heuristica a 1
+    transpiled_circuit = transpile(circuit, backend=backend)
     real_backend = generate_gate_backend_configuration(error_one_qubit_gates, error_two_qubit_gates, backend)
     real_machine = AerSimulator.from_backend(real_backend)
     job_real_machine = real_machine.run(transpiled_circuit, shots=shots)
@@ -201,8 +199,6 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
     ("Backend with noise executed")
-
-    # ----------------------------------------------------------------------------------------
 
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)

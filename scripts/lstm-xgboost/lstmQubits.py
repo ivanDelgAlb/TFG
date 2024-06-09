@@ -78,7 +78,7 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
 
     future_date = pd.to_datetime(future_date)
 
-    num_steps = int((future_date - current_date).total_seconds() / (2 * 3600))  # Suponiendo intervalos de 2 horas
+    num_steps = int((future_date - current_date).total_seconds() / (2 * 3600))
 
     current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date, window_size)
     predictions = []

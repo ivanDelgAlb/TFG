@@ -78,8 +78,6 @@ from keras.models import load_model
 
 
 
-
-# Crear el modelo del perceptrón multicapa
 def create_model(machine, X_train, X_test, y_train, y_test):
     model = Sequential()
     model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
@@ -100,13 +98,10 @@ def create_model(machine, X_train, X_test, y_train, y_test):
 
 
 def predict(machine, X_test, y_test):
-    # Reconstrucción de datos de prueba
-    # Cargar el modelo
     directory = 'backend/models_perceptron/model_qubits_' + machine + '.h5'
     model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
-    # Comparación entre datos originales y datos reconstruidos
     for i in range(len(X_test)):
         original_data_y = y_test.iloc[i]  # Accede al valor de la etiqueta i del DataFrame y_test
         reconstructed_sample_X = reconstructed_data_X[i]  # Predicción reconstruida para la muestra i de X
@@ -142,15 +137,12 @@ for machine in machines:
     X['h_gates'] = filas_filtradas['h_gates']
     X['cnot_gates'] = filas_filtradas['cnot_gates']
 
-    y = filas_filtradas['jensen-error']  # Etiqueta (divergencia)
+    y = filas_filtradas['jensen-error']
 
-    # Dividir los datos en conjuntos de entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Crear y entrenar el modelo
     create_model(machine, X_train, X_test, y_train, y_test)
 
-    # Realizar predicciones y evaluarlas
     #predict(machine, X_test, y_test)
 
 ("Models created")

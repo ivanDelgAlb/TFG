@@ -81,8 +81,6 @@ def dataFrame(nombre_maquina):
 
     scaler = MinMaxScaler()
 
-    print("archivos")
-
     df_T1.iloc[:, 1:] = scaler.fit_transform(df_T1.iloc[:, 1:])
     joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerT1' + formated_name + '.pkl')
 

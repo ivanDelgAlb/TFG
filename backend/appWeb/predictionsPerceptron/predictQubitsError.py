@@ -5,27 +5,25 @@ import joblib
 import os
 from dotenv import load_dotenv
 
-# Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
 def predict_qubits_error(predictions, machine_name, type):
     try:
         machine_name = machine_name.split(" ")[1].capitalize()
 
-        if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_neuralProphet/')
-        else: models_directory = os.path.join(os.environ['PWD'], 'models_neuralProphet/')
+        if os.getenv("DEPLOYMENT") == 'localhost': models_directory = os.path.join(os.getenv("PATH_FILE"), 'models_perceptron/')
+        else: models_directory = os.path.join(os.environ['PWD'], 'models_perceptron/')
 
         model = load_model(models_directory + 'model_qubits_' + machine_name + '.h5') 
         normalized_data = pd.DataFrame(predictions)
-        print(normalized_data)
+
         if type == 'calibration': 
             columns_to_normalize = ["T1", "T2", "Prob0", "Prob1", "Error"]
 
-            # Crear un DataFrame separado para las columnas normalizadas
             normalized_df = normalized_data[columns_to_normalize].apply(lambda row: (row - row.min()) / (row.max() - row.min()), axis=1)
 
-            # Añadir las columnas normalizadas al DataFrame original
             normalized_data[["T1", "T2", "Prob0", "Prob1", "Error"]] = normalized_df
+            
         errors = model.predict(normalized_data)
         errors = add_date_and_calibration(errors, predictions, machine_name, type)
         return errors
@@ -50,7 +48,7 @@ def add_date_and_calibration(errors, predictions, machine_name, type):
         columns = ['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
 
         if i < len(predictions):
-            print(predictions)
+
             prediction = predictions[i]
             data = {
                 'y': prediction.get('T1', None),

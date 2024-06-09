@@ -152,8 +152,6 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
     ("Backend with noise executed")
 
-    # ----------------------------------------------------------------------------------------
-
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)
 
@@ -201,8 +199,6 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
     ("Backend with noise executed")
-
-    # ----------------------------------------------------------------------------------------
 
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)

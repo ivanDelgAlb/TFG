@@ -4,10 +4,8 @@ import statistics
 import os
 from dotenv import load_dotenv
 
-# Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
-# Configuración de MongoDB Atlas (reemplaza con tus propios valores)
 mongo_uri_Origen = "mongodb+srv://marinasayago2002:clavetfg@tfg-part3.jphrtkl.mongodb.net/"
 #mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART2")
 client_Origen = MongoClient(mongo_uri_Origen)
@@ -16,20 +14,11 @@ client_Origen = MongoClient(mongo_uri_Origen)
 mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
 client_Destino = MongoClient(mongo_uri_Destino)
 
-print(mongo_uri_Destino)
-
-# Nombre de la colección en MongoDB Compass
 collection_name_Destino = "derivado"
 collection_name_Origen = "data"
 
-# Conectarse a la base de datos en MongoDB Atlas
 db_Origen = client_Origen["TFG"]
 db_Destino = client_Destino["TFG"]
-
-print("HOLA")
-
-# db_Destino[collection_name_Destino].drop()
-# print("Colección borrada con éxito")
 
 
 def calcMedia(datos, nqubit, atributo):
@@ -67,15 +56,13 @@ def calcMediana(datos, nqubit, atributo):
         else:
             for qubit in dato:
                 if qubit['name'] == atributo:
-                    valores.append(qubit['value'])  # Agrega el qubit a la lista si cumple con las condiciones
+                    valores.append(qubit['value'])
     valores.sort()
     n = len(valores)
     
     if n % 2 == 0:
-        # Si el número de datos es par
         mediana = (valores[n//2 - 1] + valores[n//2]) / 2
     else:
-        # Si el número de datos es impar
         mediana = valores[n//2]
 
     return mediana
@@ -96,7 +83,7 @@ def calcDesviacion(datos, nqubit, atributo):
                     valores.append(qubit['value'])
 
     if len(valores) < 2:
-        return None  # None si no hay suficientes datos
+        return None
 
     desviacion_estandar = statistics.stdev(valores)
     return desviacion_estandar

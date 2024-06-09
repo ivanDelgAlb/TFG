@@ -89,8 +89,12 @@ function Historical() {
                             <option value="">Choose an option</option>
                             <option value="Qubits">Qubits</option>
                             <option value="Gates">Gates</option>
+                            {
+                            /*
                             <option value="ErrorQubits">Error Qubits</option>
                             <option value="ErrorGates">Error Gates</option>
+                            */
+                            }
                         </select>
                     </div>
 
@@ -140,16 +144,19 @@ function Historical() {
                         </div>
                     )}
 
-                    {(option === "" || option === "ErrorQubits") && calibration.length > 0 && showCalibrationGraphs &&(
+                    {/*
+                    (option === "" || option === "ErrorQubits") && calibration.length > 0 && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of qubits:</h2>
                                 <Graph predictions={calibration[2].errorQubits} type={'jensen_error'} historical={false} color={'#e6e600'}/>
                             </div>
                         </div>
-                    )}
+                    )*/
+                    }
 
-                    {(option === "" || option === "ErrorGates") && calibration.length > 0 && showCalibrationGraphs &&(
+                    {/*
+                    (option === "" || option === "ErrorGates") && calibration.length > 0 && showCalibrationGraphs &&(
                         <div>
                             <div style={{ marginBottom: '40px' }}>
                                 <h2>Historical error Jensen of gates:</h2>
@@ -158,7 +165,8 @@ function Historical() {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )*/
+                    }
                 </div>
             )}
 

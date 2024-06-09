@@ -166,7 +166,6 @@ for machine in machines:
     df = pd.DataFrame(inverted_df, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
     df['ds'] = dates
 
-    # Seleccionar los últimos 4 datos del DataFrame
     data = df.iloc[-nPredictions:]
 
     data.to_csv('scripts/experimentos/dataframe_experimentNeuralQubits' + machine + '.csv', index=False)
@@ -174,7 +173,6 @@ for machine in machines:
 for machine in machines:
     future_T1 = predict_gates(nPredictions, machine)
 
-    # Seleccionar los últimos 4 datos del DataFrame
     data = future_T1.iloc[-nPredictions:]
 
     data.to_csv('scripts/experimentos/dataframe_experimentNeuralGates' + machine + '.csv', index=False)

@@ -149,7 +149,7 @@ def predict_qubits(n_steps, machine_name):
 import joblib
 
 machines = ['Brisbane', 'Kyoto', 'Osaka']
-nPredictions = 12
+nPredictions = 36
 
 for machine in machines:
     future_T1 = predict_qubits(nPredictions, machine)
@@ -168,11 +168,11 @@ for machine in machines:
 
     data = df.iloc[-nPredictions:]
 
-    data.to_csv('scripts/experimentos/dataframe_experimentNeuralQubits' + machine + '.csv', index=False)
+    data.to_csv('scripts/experimentos/experimento3/neural/dataframe_experimentNeuralQubits' + machine + '.csv', index=False)
 
 for machine in machines:
     future_T1 = predict_gates(nPredictions, machine)
 
     data = future_T1.iloc[-nPredictions:]
 
-    data.to_csv('scripts/experimentos/dataframe_experimentNeuralGates' + machine + '.csv', index=False)
+    data.to_csv('scripts/experimentos/experimento3/neural/dataframe_experimentNeuralGates' + machine + '.csv', index=False)

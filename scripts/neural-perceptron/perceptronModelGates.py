@@ -89,8 +89,8 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
 
     mse, mae = model.evaluate(X_test, y_test)
-    (f"Error cuadrático medio ({machine}):", mse)
-    (f"Error absoluto medio ({machine}):", mae)
+    print(f"Error cuadrático medio ({machine}):", mse)
+    print(f"Error absoluto medio ({machine}):", mae)
 
     directory = f'backend/models_perceptron/model_gates_{machine}.h5'
     model.save(directory)
@@ -105,9 +105,9 @@ def predict(machine, X_test, y_test):
     for i in range(len(X_test)):
         original_data_y = y_test.iloc[i]  # Accede al valor de la etiqueta i del DataFrame y_test
         reconstructed_sample_X = reconstructed_data_X[i]  # Predicción reconstruida para la muestra i de X
-        ("Original_Y:", original_data_y)
-        ("Reconstruido_X:", reconstructed_sample_X)
-        ("\n")
+        print("Original_Y:", original_data_y)
+        print("Reconstruido_X:", reconstructed_sample_X)
+        print("\n")
 '''
 circuit = generate_circuit(20, 5)
 service = QiskitRuntimeService(channel='ibm_quantum',
@@ -128,7 +128,7 @@ for machine in machines:
     X = filas_filtradas.drop(['date', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
 
 
-    (X)
+    print(X)
 
     
     X['n_qubits'] = filas_filtradas['n_qubits']
@@ -145,7 +145,7 @@ for machine in machines:
 
     #predict(machine, X_test, y_test)
 
-("Models created")
+print("Models created")
 
 #predict()
 

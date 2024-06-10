@@ -2,16 +2,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from keras import Sequential
 from keras.layers import Dense
-from generateCircuit import generate_circuit
 from calculateNoiseError import calculate_configuration_qubit_error
 from qiskit_ibm_runtime import QiskitRuntimeService
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
-from sklearn.preprocessing import MinMaxScaler
-
 from pymongo import MongoClient
 import csv
-
+import math
 
 
 def extraer_dataframe_normalizado(circuit, fake_backend):
@@ -52,7 +49,7 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
             readout_error = item['properties']['qubits'][4]['mediana']
 
             divergence = calculate_configuration_qubit_error(circuit, fake_backend, T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
-            print("Divergencia calculada :)")
+            ("Divergencia calculada :)")
             fila_min = min(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
             fila_max = max(T1, T2, probMeas0Prep1, probMeas1Prep0, readout_error)
 
@@ -73,7 +70,7 @@ def extraer_dataframe_normalizado(circuit, fake_backend):
             escritor_csv = csv.writer(archivo_csv)
             escritor_csv.writerows(dataFrame)
 
-        print("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
+        ("El archivo {} ha sido creado exitosamente.".format(nombre_archivo))
 
     normalized("ibm_brisbane")
 
@@ -87,12 +84,11 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
     model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2)
-
+    print("Metricas: ", model.get_metrics_result())
     mse, mae = model.evaluate(X_test, y_test)
-    print(f"Error cuadrático medio ({machine}):", mse)
-    print(f"Error absoluto medio ({machine}):", mae)
+    print(f"Error cuadrático medio ({machine}):", math.sqrt(mse))
 
-    directory = f'backend/models_perceptron/model_qubits_{machine}.h5'
+    directory = f'scripts/experimentos/experiment_perceptron_qubits_{machine}.h5'
     model.save(directory)
 
 
@@ -120,18 +116,15 @@ extraer_dataframe_normalizado(circuit, fake_backend)
 
 machines = ["Brisbane", "Kyoto", "Osaka"]
 for machine in machines:
-    directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
+    directory = 'scripts/experimentos/dataframe_experiment_qubit_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
     filas_filtradas = dataFrame[(dataFrame['jensen-error'].notna())]
 
-    X = filas_filtradas.drop(['date', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
+    X = filas_filtradas.drop(['n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
 
     X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
 
-    print(X_normalizado)
-
-    
     X_normalizado['n_qubits'] = filas_filtradas['n_qubits']
     X_normalizado['depth'] = filas_filtradas['depth']
     X_normalizado['t_gates'] = filas_filtradas['t_gates']

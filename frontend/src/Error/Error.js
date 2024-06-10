@@ -268,16 +268,21 @@ function Error() {
 
           
         </div>
+        <div>
+          {nQubits && <label>Number of qubits selected:</label>}
+          {nQubits && <br/>}
+          <select value={nQubits} onChange={handleChangeNQubits} aria-label='nQubitsInput' className='input-qubits'>
+                      <option value="">Select the number of qubits</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+          </select>
+        </div>
 
-        
 
         <div className="table-container">
           <table>
             <tbody>
-              <tr>
-                <td><label>Number of qubits:</label></td>
-                <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeNQubits} min={0} aria-label='nQubitsInput'/></td>
-              </tr>
               <tr>
                 <td><label>Number of T gates:</label></td>
                 <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
@@ -353,10 +358,6 @@ function Error() {
 
           </div>
         )}
-
-        <footer className="footer">
-                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
-            </footer>
       </div>
     </>
   );

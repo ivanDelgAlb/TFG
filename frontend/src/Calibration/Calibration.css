@@ -105,6 +105,14 @@ h2{
   margin-right: 10px;
 }
 
+.input-qubits{
+  width: 50%;
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
 
 .table-container {
   margin-top: 20px;

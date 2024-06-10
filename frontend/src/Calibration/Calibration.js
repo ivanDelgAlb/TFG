@@ -211,14 +211,21 @@ function Calibration() {
           </>
         }
 
+      <div>
+          {nQubits && <label>Number of qubits selected:</label>}
+          {nQubits && <br/>}
+          <select value={nQubits} onChange={handleChangeQubits} aria-label='nQubitsInput' className='input-qubits'>
+                      <option value="">Select the number of qubits</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+          </select>
+        </div>
+
         <h5>Introduce the number of gates of the circuit to be executed:</h5>
 
-        <table style={{borderCollapse: 'separate', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
+        <table style={{borderCollapse: 'collapse', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
           <tbody>
-            <tr>
-              <td><label>Number of qubits:</label></td>
-              <td><input className='input-gates' type="number" value={nQubits || ""} onChange={handleChangeQubits} min={0} aria-label='nQubitsInput'/></td>
-            </tr>
             <tr>
               <td><label>Number of T gates:</label></td>
               <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
@@ -267,10 +274,6 @@ function Calibration() {
           </div>
         )
       }
-
-            <footer className="footer">
-                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
-            </footer>
     </div>
 
     

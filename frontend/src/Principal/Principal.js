@@ -33,8 +33,8 @@ export default function Principal() {
                 <section id="about" className="about">
                     <h2>About Us</h2>
                     <p>
-                        We are final year Software Engineering students at the University of Málaga.
-                        This application is part of our final degree project, aimed at improving the efficiency of quantum computing.
+                        We are two students cursing our final year of Software Engineering at the University of Málaga.
+                        This application is part of our final degree project, aimed at improving the efficiency of quantum computing by providing a tool to predict whenever an execution of a circuit will be more reliable.
                     </p>
                 </section>
                 <section id="contact" className="contact">
@@ -42,9 +42,6 @@ export default function Principal() {
                     <p>If you have any questions or feedback, feel free to reach out!</p>
                 </section>
             </main>
-            <footer className="footer">
-                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
-            </footer>
         </>
     );
 }

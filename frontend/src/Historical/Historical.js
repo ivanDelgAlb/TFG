@@ -169,10 +169,6 @@ function Historical() {
                     }
                 </div>
             )}
-
-            <footer className="footer">
-                <p>&copy; 2024 Quantum Performance Predictor. All rights reserved.</p>
-            </footer>
         </div>
     );
 }

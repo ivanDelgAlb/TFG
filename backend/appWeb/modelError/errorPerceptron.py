@@ -87,7 +87,7 @@ def predict_gates(data: PredictionData):
             }
             predictions.append(prediction)
 
-        predictions = predictGatesErrorPerceptron.predict_gates_error(data.machine, predictions)
+        predictions = predictGatesErrorPerceptron.predict_gates_error(machine, predictions)
         all_predictions[machine] = predictions
         
     return all_predictions

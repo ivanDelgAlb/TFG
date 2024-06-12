@@ -33,7 +33,9 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
     n_steps = calculate_time_difference(data.date)
     for machine in machines:
         predictions = predictQubitsCalibration.predict_future(machine, n_steps)
-        
+        predictions = np.array(predictions)
+
+        predictions[predictions < 0] = 0
         t1 = []
         t2 = []
         prob0 = []
@@ -70,14 +72,13 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
 
         predictions = np.column_stack((T1, T2, Prob0, Prob1, Error, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
     
-        predictions = predictQubitsError.predict(machine, predictions, data.depth)
+        predictions = predictQubitsError.predict(machine, predictions)
         all_predictions[machine] = predictions
 
     return all_predictions
 
 
 def predict_gates(data: PredictionData):
-
     if data.machine == "All":
         machines = ["ibm brisbane", "ibm kyoto", "ibm osaka"]
     else:
@@ -86,8 +87,10 @@ def predict_gates(data: PredictionData):
     all_predictions = {}
     n_steps = calculate_time_difference(data.date)
     for machine in machines:
-        predictions = predictGatesCalibration.predict_future(data.machine, n_steps)
-
+        predictions = predictGatesCalibration.predict_future(machine, n_steps)
+        predictions = np.array(predictions)
+        predictions[predictions < 0] = 0
+        
         gate_errors_1 = []
         gate_errors_2 = []
         n_qubits = []
@@ -115,7 +118,7 @@ def predict_gates(data: PredictionData):
 
         predictions = np.column_stack((gate_errors_1, gate_errors_2, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
 
-        predictions = predictGatesError.predict(data.machine, predictions)
+        predictions = predictGatesError.predict(machine, predictions)
         all_predictions[machine] = predictions
 
     return all_predictions

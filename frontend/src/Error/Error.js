@@ -42,8 +42,12 @@ function Error() {
   const [cnotGates, setCnotGates] = useState(null); 
   const [model, setModel] = useState("");
 
+
   const handleChangeModel = (event) => {
     setModel(event.target.value);
+    if (machine === 'All' && event.target.value === 'Perceptron-XgBoost') {
+      window.alert('Warning: Selecting "All machines" and "Both models" will result in a longer prediction time.');
+    }
   };
 
   const handleChangeNQubits = (event) => {
@@ -93,6 +97,9 @@ function Error() {
 
   const handleChangeMachine = (event) => {
     setMachine(event.target.value);
+    if (event.target.value === 'All' && model === 'Perceptron-XgBoost') {
+      window.alert('Warning: Selecting "All machines" and "Both models" will result in a longer prediction time.');
+  }
   };
 
   const handleChangeSelection = (event) => {
@@ -265,8 +272,6 @@ function Error() {
             {date && <td><label>Date selected:</label></td>}
             <DateTimePicker selectedDateTime={date} onChange={setDate} />
           </div>
-
-          
         </div>
         <div>
           {nQubits && <label>Number of qubits selected:</label>}
@@ -312,8 +317,9 @@ function Error() {
         </div>
 
         {loading && <div className="loading"><div className="spinner"></div></div>}
+        
 
-        {showCalibrationGraphs && prediction && (
+        {!loading && showCalibrationGraphs && prediction && (
           <div className="graph-container" aria-label='graph-container'>
             <h2>Error Predictions:</h2>
             <Graph predictions={prediction} type={'divergence'}/>
@@ -322,23 +328,23 @@ function Error() {
               <div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical T1:</h2>
-                  <Graph predictions={prediction} type={'T1'} historical={true}/>
+                  <Graph predictions={prediction} type={'T1'} historical={true} calibraciones={false}/>
                 </div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical T2:</h2>
-                  <Graph predictions={prediction} type={'T2'} historical={true}/>
+                  <Graph predictions={prediction} type={'T2'} historical={true} calibraciones={false}/>
                 </div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical Prob_Meas0_Prep1:</h2>
-                  <Graph predictions={prediction} type={'Prob0'} historical={true}/>
+                  <Graph predictions={prediction} type={'Prob0'} historical={true} calibraciones={false}/>
                 </div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical Prob_Meas1_Prep0:</h2>
-                  <Graph predictions={prediction} type={'Prob1'} historical={true}/>
+                  <Graph predictions={prediction} type={'Prob1'} historical={true} calibraciones={false}/>
                 </div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical Readout_error:</h2>
-                  <Graph predictions={prediction} type={'Error'} historical={true}/>
+                  <Graph predictions={prediction} type={'Error'} historical={true}calibraciones={false}/>
                 </div>
               </div>
             )}
@@ -347,11 +353,11 @@ function Error() {
               <div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical Gate error of one-qubit input:</h2>
-                  <Graph predictions={prediction} type={'error_gate_1_qubit'} historical={true}/>
+                  <Graph predictions={prediction} type={'error_gate_1_qubit'} historical={true} calibraciones={false}/>
                 </div>
                 <div style={{ marginBottom: '40px' }}>
                   <h2>Historical Gate error of two-qubit input:</h2>
-                  <Graph predictions={prediction} type={'error_gate_2_qubit'} historical={true}/>
+                  <Graph predictions={prediction} type={'error_gate_2_qubit'} historical={true} calibraciones={false}/>
                 </div>
               </div>
             )}

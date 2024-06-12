@@ -1,6 +1,6 @@
-from neuralprophet import NeuralProphet, set_log_level
 import pandas as pd
 import pickle
+import joblib
 
 
 def predict_gates(n_steps, machine_name):
@@ -145,8 +145,6 @@ def predict_qubits(n_steps, machine_name):
 
 
 
-
-import joblib
 
 machines = ['Brisbane', 'Kyoto', 'Osaka']
 nPredictions = 36

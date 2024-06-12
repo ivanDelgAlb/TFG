@@ -1,7 +1,11 @@
 from pymongo import MongoClient
 import csv
+import os
+from dotenv import load_dotenv
 
-mongo_uri = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+load_dotenv()
+
+mongo_uri = os.getenv("MONGO_URI_IVAN_PART1")
 client = MongoClient(mongo_uri)
 
 collection_name_Origen = "derivado"

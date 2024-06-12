@@ -52,13 +52,13 @@ def predict_gates(n_steps, machine_name):
     machine_name = machine_name.split("_")[1].capitalize()
 
     try:
-        models_directory = '../../backend/models_neuralProphet/'
+        models_directory = 'backend/models_neuralProphet/'
         with open(models_directory + 'modelError1' + machine_name + '.pkl', "rb") as file:
             model_error_1 = pickle.load(file)
         with open(models_directory + 'modelError2' + machine_name + '.pkl', "rb") as file:
             model_error_2 = pickle.load(file)
 
-        dataframes_directory = '../../backend/dataframes_neuralProphet/'
+        dataframes_directory = 'backend/dataframes_neuralProphet/'
 
         df_error_1 = pd.read_csv(dataframes_directory + 'dataframeError1' + machine_name + '.csv', encoding="latin1")
         df_error_2 = pd.read_csv(dataframes_directory + 'dataframeError2' + machine_name + '.csv', encoding="latin1")

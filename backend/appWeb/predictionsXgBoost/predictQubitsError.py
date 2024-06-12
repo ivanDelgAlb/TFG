@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def predict(machine_name, data, depth):
+def predict(machine_name, data):
     """
     Predicts for the selected machine the error associated to the provided data
     :param machine_name: The name of the quantum machine
@@ -46,6 +46,7 @@ def add_date_and_calibration(errors, predictions):
     date = datetime.now()
 
     for i, error in enumerate(errors):
+        error = abs(error) if error < 0 else error
         error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
         date += timedelta(hours=2)
         error_dict['divergence'] = error

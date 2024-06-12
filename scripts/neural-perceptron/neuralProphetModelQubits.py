@@ -1,7 +1,7 @@
 from neuralprophet import NeuralProphet, set_log_level
 import pandas as pd
 import pickle
-
+import joblib
 
 def create_model_qubits(file):
     """
@@ -155,7 +155,7 @@ def predict_qubits(n_steps, machine_name):
 # ("Models created")
 
 
-import joblib
+
 
 future_T1 = predict_qubits(4, "ibm_Brisbane")
 
@@ -170,13 +170,6 @@ inverted_df = scaler.inverse_transform(df_values)
 
 df = pd.DataFrame(inverted_df, columns=['T1', 'T2', 'prob0', 'prob1', 'error'])
 df['ds'] = dates
-
-# Seleccionar los últimos 4 datos del DataFrame
-last_4_data = df.iloc[-4:]
-
-last_4_data.to_csv('last_4_data.csv', index=False)
-
-print(last_4_data)
 
 
 

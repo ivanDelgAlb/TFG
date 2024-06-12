@@ -103,44 +103,6 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
 
     return qubits_errors_predictions
 
-def plot_predictions(predictions, future_date):
-    current_date = datetime.now()
-    future_date = pd.to_datetime(future_date)
-    x_dates = pd.date_range(start=current_date, end=future_date, freq='2h')
-
-    fig, ax1 = plt.subplots(figsize=(10, 6))
-
-    ax1.plot(x_dates[:-1], predictions[:, :, 0].flatten(), label='T1', color='blue')
-
-    date_format = mdates.DateFormatter('%d-%m-%y %H:%M:%S')
-    ax1.xaxis.set_major_formatter(date_format)
-
-    ax1.set_title('Predicción de T1')
-    ax1.set_xlabel('Fecha y Hora')
-    ax1.set_ylabel('Valor de predicción')
-
-    plt.xticks(rotation=45)
-
-    ax1.legend()
-
-    plt.show()
-
-    fig, ax2 = plt.subplots(figsize=(10, 6))
-
-    ax2.plot(x_dates[:-1], predictions[:, :, 1].flatten(), label='T2', color='red')
-
-    ax2.xaxis.set_major_formatter(date_format)
-
-    ax2.set_title('Predicción de T2')
-    ax2.set_xlabel('Fecha y Hora')
-    ax2.set_ylabel('Valor de predicción')
-
-    plt.xticks(rotation=45)
-
-    ax2.legend()
-
-    plt.show()
-
 machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
 future_date = '2024-05-30' 

@@ -5,9 +5,8 @@ from keras import Sequential
 from keras.layers import LSTM, Dense
 from keras.models import load_model
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime, timedelta
-import joblib
+from datetime import datetime
+
 
 
 def preprocess_data(file_path, window_size):
@@ -83,46 +82,6 @@ def predict_future(model_path, data_file, window_size, future_date):
     gate_errors_predictions = predictions_flat[:, :, :2]
 
     return gate_errors_predictions
-
-import matplotlib.dates as mdates
-def plot_predictions(predictions, future_date):
-    current_date = datetime.now()
-    future_date = pd.to_datetime(future_date)
-    x_dates = pd.date_range(start=current_date, end=future_date, freq='2h')
-
-    fig, ax1 = plt.subplots(figsize=(10, 6))
-
-    ax1.plot(x_dates[:-1], predictions[:, :, 0].flatten(), label='Predicción gate_error_1', color='blue')
-
-    date_format = mdates.DateFormatter('%d-%m-%y %H:%M:%S')
-    ax1.xaxis.set_major_formatter(date_format)
-
-    ax1.set_title('Predicción de gate_error_1')
-    ax1.set_xlabel('Fecha y Hora')
-    ax1.set_ylabel('Valor de predicción')
-
-    plt.xticks(rotation=45)
-
-    ax1.legend()
-
-    plt.show()
-
-    fig, ax2 = plt.subplots(figsize=(10, 6))
-
-    ax2.plot(x_dates[:-1], predictions[:, :, 1].flatten(), label='Predicción gate_error_2', color='red')
-
-    ax2.xaxis.set_major_formatter(date_format)
-
-    ax2.set_title('Predicción de gate_error_2')
-    ax2.set_xlabel('Fecha y Hora')
-    ax2.set_ylabel('Valor de predicción')
-
-    plt.xticks(rotation=45)
-
-    ax2.legend()
-
-    plt.show()
-
 
 
 machines = ["Brisbane", "Kyoto", "Osaka"]

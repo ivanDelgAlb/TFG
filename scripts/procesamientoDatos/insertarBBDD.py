@@ -1,14 +1,21 @@
 import requests
 from pymongo import MongoClient
 from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-mongo_uri_part1 = "mongodb+srv://Marina:mongoTFG@tfg.qet3gme.mongodb.net/"
+load_dotenv()
+
+mongo_uri_origen = os.getenv("MONGO_URI_MARINA_PART1")
+mongo_uri_destino = os.getenv("MONGO_URI_IVAN_PART1")
+
+mongo_uri_part1 = os.getenv("MONGO_URI_MARINA_PART1")
 client_part1 = MongoClient(mongo_uri_part1)
 
-mongo_uri_part2 = "mongodb+srv://marinasayago:TFG@tfg.fo8wxgc.mongodb.net/"
+mongo_uri_part2 = os.getenv("MONGO_URI_MARINA_PART2")
 client_part2 = MongoClient(mongo_uri_part2)
 
-mongo_uri_part3 = "mongodb+srv://marinasayago2002:clavetfg@tfg-part3.jphrtkl.mongodb.net/"
+mongo_uri_part3 = os.getenv("MONGO_URI_MARINA_PART3")
 client_part3 = MongoClient(mongo_uri_part3)
 
 github_repo_url = "https://github.com/Zakaria-Dahi/TFG_UMA_2023_2204"

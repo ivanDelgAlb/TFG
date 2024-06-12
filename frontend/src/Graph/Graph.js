@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import './Graph.css';
 
-const Graph = ({ predictions, type, historical }) => {
+const Graph = ({ predictions, type, historical, calibraciones, colors }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -12,7 +12,9 @@ const Graph = ({ predictions, type, historical }) => {
     }
 
     const datasets = [];
-    const palette = ['#FF6B6B', '#78c2ad', '#FFE66D', '#7A92FF', '#FF9F80'];
+    const palette = ['#FF6B6B', '#78c2ad', '#FFE66D', '#7A92FF', '#B5EAEA', '#FFB6C1'];
+
+
     let index = 0;
 
     const processPredictions = (model, machine, machinePredictions) => {
@@ -29,9 +31,9 @@ const Graph = ({ predictions, type, historical }) => {
       datasets.push({
         label: historical ? `${model ? model + ' ' : ''}${machine} ${type}` : `${model ? model + ' ' : ''}${machine} (${type} Best Result: ${Math.min(...typeData)})`,
         data: typeData,
-        borderColor: palette[index % palette.length],
-        backgroundColor: palette[index % palette.length],
-        pointBackgroundColor: palette[index % palette.length],
+        borderColor: calibraciones ? palette[colors] : palette[index % palette.length],
+        backgroundColor: calibraciones ? palette[colors] : palette[index % palette.length],
+        pointBackgroundColor: calibraciones ? palette[colors] : palette[index % palette.length],
         pointRadius: !historical ? typeData.map((_, i) => (i === bestResultIndex ? 6 : 2)) : 3,
       });
 

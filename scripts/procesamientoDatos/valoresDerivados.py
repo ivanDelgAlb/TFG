@@ -6,12 +6,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-mongo_uri_Origen = "mongodb+srv://marinasayago2002:clavetfg@tfg-part3.jphrtkl.mongodb.net/"
-#mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART2")
+mongo_uri_Origen = os.getenv("MONGO_URI_MARINA_PART1")
 client_Origen = MongoClient(mongo_uri_Origen)
 
-#mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART2")
-mongo_uri_Destino = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
+mongo_uri_Destino = os.getenv("MONGO_URI_IVAN_PART1")
 client_Destino = MongoClient(mongo_uri_Destino)
 
 collection_name_Destino = "derivado"

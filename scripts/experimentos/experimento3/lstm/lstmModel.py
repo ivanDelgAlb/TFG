@@ -103,30 +103,30 @@ machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
 future_date = '2024-06-07 10:00:00' 
 
-for machine in machines:
-    data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
-    model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
-    scaler_path = 'backend/dataframes_neuralProphet/scalerT1' + machine + '.pkl'
-    scaler = joblib.load(scaler_path)
+# for machine in machines:
+#     data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
+#     model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
+#     scaler_path = 'backend/dataframes_neuralProphet/scalerT1' + machine + '.pkl'
+#     scaler = joblib.load(scaler_path)
 
-    predictions = predict_future_qubits(scaler_path, model_path, data_file, window_size, future_date)
+#     predictions = predict_future_qubits(scaler_path, model_path, data_file, window_size, future_date)
 
-    predictions = np.array(predictions)
-    predictions = predictions.reshape(-1, 5)
+#     predictions = np.array(predictions)
+#     predictions = predictions.reshape(-1, 5)
 
-    time = pd.date_range(start='2024-06-03 11:50:00', periods=len(predictions), freq='2H')
+#     time = pd.date_range(start='2024-06-03 11:50:00', periods=len(predictions), freq='2H')
 
-    # Crear un DataFrame con los datos y la columna de tiempo
-    predictions = scaler.inverse_transform(predictions)
-    df = pd.DataFrame(predictions, columns=['T1', 'T2', 'Prob0', 'Prob1', 'Error'])
-    df['Date'] = time
+#     # Crear un DataFrame con los datos y la columna de tiempo
+#     predictions = scaler.inverse_transform(predictions)
+#     df = pd.DataFrame(predictions, columns=['T1', 'T2', 'Prob0', 'Prob1', 'Error'])
+#     df['Date'] = time
 
-    # Reordenar columnas para tener el tiempo primero
-    df = df[['Date', 'T1', 'T2', 'Prob0', 'Prob1', 'Error']]
+#     # Reordenar columnas para tener el tiempo primero
+#     df = df[['Date', 'T1', 'T2', 'Prob0', 'Prob1', 'Error']]
 
-    df.to_csv('scripts/experimentos/experimento3/lstm/dataframe_experimentLSTMQubits' + machine + '.csv', index=False)
+#     df.to_csv('scripts/experimentos/experimento3/lstm/dataframe_experimentLSTMQubits' + machine + '.csv', index=False)
 
-    print(df)
+#     print(df)
 
 for machine in machines:
     data_file = "backend/dataframes_neuralProphet/dataframeError1" + machine + ".csv"

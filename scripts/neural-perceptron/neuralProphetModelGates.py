@@ -2,7 +2,45 @@ from neuralprophet import NeuralProphet, set_log_level
 import pandas as pd
 import pickle
 
-def predict_qubits(n_steps, machine_name):
+def create_model_gates(file):
+    """
+    Creates a NeuralProphet model in the directory models_neuralProphet from the given dataframe
+    :param file: A csv dataframe of the data
+    :return: None
+    """
+
+    directory = 'backend/dataframes_neuralProphet/'
+    df = pd.read_csv(directory + file, encoding="latin1")
+    columns = df.columns.to_list()
+
+    start = file.find("dataframe") + len("dataframe")
+    end = file.find(".csv")
+    substring = file[start:end]
+
+    train_index = int(len(df) * 0.8)
+    df_train = df.iloc[:train_index]
+    df_test = df.iloc[train_index:]
+
+    model = NeuralProphet(
+        n_forecasts=1,
+        learning_rate=0.1
+    )
+
+    set_log_level("ERROR")
+
+    model.add_lagged_regressor(columns[2])
+
+    model.set_plotting_backend("plotly-static")
+
+    metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
+    (metrics)
+
+    file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
+    with open(file_name, "wb") as file:
+        pickle.dump(model, file)
+
+
+def predict_gates(n_steps, machine_name):
     """
     Predicts the configuration for a given machine in n_steps (each step is an hour)
     :param n_steps: the number of steps to predict

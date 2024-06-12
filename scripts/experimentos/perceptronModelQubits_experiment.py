@@ -116,7 +116,7 @@ extraer_dataframe_normalizado(circuit, fake_backend)
 
 machines = ["Brisbane", "Kyoto", "Osaka"]
 for machine in machines:
-    directory = 'scripts/experimentos/dataframe_experiment_qubit_' + machine + ".csv"
+    directory = 'scripts/experimentos/exp1/dataframe_experiment_qubit_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
     filas_filtradas = dataFrame[(dataFrame['jensen-error'].notna())]

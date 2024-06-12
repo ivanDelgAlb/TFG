@@ -37,7 +37,7 @@ def create_model_qubits(file):
     model.set_plotting_backend("plotly-static")
 
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
-    #(metrics)
+    #print(metrics)
 
     file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:

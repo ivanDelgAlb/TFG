@@ -13,7 +13,7 @@ collection_name_Origen = "derivado"
 db = client["TFG"]
 
 db[collection_name_Destino].drop()
-("Colección borrada con éxito")
+print("Colección borrada con éxito")
 
 datos = db[collection_name_Origen].find()
 
@@ -32,7 +32,7 @@ for documento in datos:
         }
 
         db[collection_name_Destino].update_one({"_id": documento_existente["_id"]},{"$push": {"data": nuevos_datos}})
-        (f"Datos actualizados para {nombre_maquina}")
+        print(f"Datos actualizados para {nombre_maquina}")
     else:
         datos = {
             "name": nombre_maquina,
@@ -46,6 +46,6 @@ for documento in datos:
             }]
         }
         db[collection_name_Destino].insert_one(datos)
-        (f"Nuevo documento creado para {nombre_maquina}")
+        print(f"Nuevo documento creado para {nombre_maquina}")
 
-("Iteración sobre la base de datos completada")
+print("Iteración sobre la base de datos completada")

@@ -10,9 +10,9 @@ load_dotenv()
 def dataFrame(nombre_maquina):
     formated_name = nombre_maquina.split("_")[1].capitalize()
     mongo_uri_1 = "mongodb+srv://ivandelgadoalba:claveMongo@cluster0.pn3zcyq.mongodb.net/"
-    mongo_uri_2 = os.getenv("MONGO_URI_IVAN_PART2")
+    #mongo_uri_2 = os.getenv("MONGO_URI_IVAN_PART2")
     client_1 = MongoClient(mongo_uri_1)
-    client_2 = MongoClient(mongo_uri_2)
+    #client_2 = MongoClient(mongo_uri_2)
     collection_name_Origen = "derivado"
     db_1 = client_1["TFG"]
     #db_2 = client_2["TFG"]
@@ -48,8 +48,6 @@ def dataFrame(nombre_maquina):
         data_gates_gate_error_2.append([date, error_2, error_1])
     
     #data = db_2[collection_name_Origen].find({"name": nombre_maquina})
-
-    print("Todos los datos, empezamos")
     # for item in data:
     #     date = item['date']
     #     T1 = item['properties']['qubits'][0]['mediana']

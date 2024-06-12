@@ -16,11 +16,9 @@ db_origen = client_origen["TFG"]
 db_destino = client_destino["TFG"]
 
 db_destino[collection_name_Destino].drop()
-("Colección borrada con éxito")
+print("Colección borrada con éxito")
 
 datos = db_origen[collection_name_Origen].find()
-#numero_elementos = len(datos)
-#(numero_elementos)
 for dato in datos:
 
     qubits = dato['properties']['qubits']
@@ -43,7 +41,7 @@ for dato in datos:
     collection = db_destino[collection_name_Destino]
     collection.insert_one(dato)
 
-("Se han seleccionado los datos correctamente")
+print("Se han seleccionado los datos correctamente")
 
 
 '''

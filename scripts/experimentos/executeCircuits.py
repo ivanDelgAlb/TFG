@@ -30,11 +30,9 @@ def execute_qubit_circuit(backend_name):
 
     name = backend_name.split("_")[1].capitalize()
 
-    qubits_csv_file = 'scripts/experimentos/dataframe_experiment' + name + '.csv'
+    qubits_csv_file = f'dataframe{name}_experiment_2.csv'
 
     df_qubits = pd.read_csv(qubits_csv_file)
-    ("Dataframe obtained")
-    (df_qubits)
 
     for index, row in df_qubits.iterrows():
 
@@ -48,7 +46,6 @@ def execute_qubit_circuit(backend_name):
         probability = float(row['probability'])
 
         circuit = generate_circuit(n_qubits, depth, probability)
-        ("Circuit generated")
 
         dag = circuit_to_dag(circuit)
 
@@ -56,42 +53,32 @@ def execute_qubit_circuit(backend_name):
 
         t_gates, phase_gates, h_gates, cnot_gates = count_gates(op_nodes)
 
-        results_kullback = []
-        results_jensen = []
-        times = []
+        fake_backend = service.get_backend(backend_name)
 
-        for i in range(0, 5):
-            fake_backend = service.get_backend(backend_name)
+        circuit_copy = circuit.copy()
 
-            circuit_copy = circuit.copy()
+        start_time = time.time()
 
-            start_time = time.time()
+        kullback_qubit_error, jensen_qubit_error = calculate_configuration_qubit_error(circuit_copy,
+                                                                                        fake_backend, T1,
+                                                                                        T2,
+                                                                                        probMeas0Prep1,
+                                                                                        probMeas1Prep0,
+                                                                                        qubit_error)
 
-            kullback_qubit_error, jensen_qubit_error = calculate_configuration_qubit_error(circuit_copy,
-                                                                                           fake_backend, T1,
-                                                                                           T2,
-                                                                                           probMeas0Prep1,
-                                                                                           probMeas1Prep0,
-                                                                                           qubit_error)
+        end_time = time.time()
 
-            end_time = time.time()
-
-            execution_time = end_time - start_time
-
-            results_kullback.append(kullback_qubit_error)
-            results_jensen.append(jensen_qubit_error)
-            times.append(execution_time)
+        execution_time = end_time - start_time
 
         df_qubits.at[index, 't_gates'] = t_gates
         df_qubits.at[index, 'phase_gates'] = phase_gates
         df_qubits.at[index, 'h_gates'] = h_gates
         df_qubits.at[index, 'cnot_gates'] = cnot_gates
-        df_qubits.at[index, 'kullback_error'] = sum(results_kullback) / len(results_kullback)
-        df_qubits.at[index, 'jensen-error'] = sum(results_jensen) / len(results_jensen)
-        df_qubits.at[index, 'time'] = sum(times) / len(times)
+        df_qubits.at[index, 'kullback_error'] = kullback_qubit_error
+        df_qubits.at[index, 'jensen-error'] = jensen_qubit_error
+        df_qubits.at[index, 'time'] = execution_time
 
         df_qubits.to_csv(qubits_csv_file, index=False)
-        (f"Row {index} saved")
+        print(f"Row {index} saved")
 
-
-execute_qubit_circuit("ibm_osaka")
+execute_qubit_circuit("ibm_kyoto")

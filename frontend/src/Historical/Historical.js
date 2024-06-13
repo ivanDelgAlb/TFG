@@ -38,14 +38,12 @@ function Historical() {
         setCalibration([]);
 
         try {
-            const response = await fetch('http://localhost:8000/historical', {
-                method: 'POST',
+            const params = new URLSearchParams({machine: machine})
+            const response = await fetch(`http://localhost:8000/historical?${params.toString()}`, {
+                method: 'GET',
                 headers: {
                   'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    machine: machine
-                })
+                }
             });
 
             const data = await response.json();
@@ -86,7 +84,7 @@ function Historical() {
                 <div>
                     <div className="option-selector">
                         <select value={option} onChange={handleChangeOption} className="selector-option-select">
-                            <option value="">Choose an option</option>
+                            <option value="">All the historical data</option>
                             <option value="Qubits">Qubits</option>
                             <option value="Gates">Gates</option>
                         </select>

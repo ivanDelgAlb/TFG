@@ -12,18 +12,14 @@ router = APIRouter()
 class PredictionData(BaseModel):
     machine: str
 
-@router.post("/")
-async def historical(data: PredictionData):
+@router.get("/")
+async def historical(machine: str):
     historical = []
 
-    qubits = qubitsCalibration(data.machine)
-    gates = gatesCalibration(data.machine)
-    #qubitsError = errorQubits(data.machine)
-    #gatesError = errorGates(data.machine)
+    qubits = qubitsCalibration(machine)
+    gates = gatesCalibration(machine)
     historical.append(qubits)
     historical.append(gates)
-    #historical.append(qubitsError)
-    #historical.append(gatesError)
         
     return {"historical": historical}
 

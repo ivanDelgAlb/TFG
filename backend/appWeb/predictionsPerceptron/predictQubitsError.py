@@ -26,6 +26,7 @@ def predict_qubits_error(predictions, machine_name, type):
             
         errors = model.predict(normalized_data)
         errors = add_date_and_calibration(errors, predictions, machine_name, type)
+        print(errors)
         return errors
     except FileNotFoundError:
         raise FileNotFoundError("The model is missing")

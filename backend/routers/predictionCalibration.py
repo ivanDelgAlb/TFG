@@ -102,7 +102,7 @@ async def get_prediction(
     if(selection == 'Qubits'):
         prediction = predictQubitsError.predict_qubits_error(predictions, name, 'calibration')
     else: 
-        prediction = predictGatesError.predict(name, predictions)
+        prediction = predictGatesError.predict(name, predictions, 'calibration')
     
     prediction[0]['divergence'] = abs(prediction[0]['divergence'])
 

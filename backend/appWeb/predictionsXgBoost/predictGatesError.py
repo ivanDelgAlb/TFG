@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def predict(machine_name, data):
+def predict(machine_name, data, type):
     """
     Predicts for the selected machine the error associated to the provided data
     :param machine_name: The name of the quantum machine
@@ -27,20 +27,22 @@ def predict(machine_name, data):
     xgb_model.load_model(file)
 
     data_np = np.array(data)
-    (data_np)
 
     if data_np.ndim == 1:
         data_np = data_np.reshape(1, -1)
+
+    if type == 'calibration' and data_np.ndim == 3:
+        data_np = data_np.reshape(data_np.shape[0], -1)
 
     matrix_data = xgb.DMatrix(data_np)
 
     errors = xgb_model.predict(matrix_data)
 
-    predictions = add_date_and_calibration(errors, data)
+    predictions = add_date_and_calibration(errors, data, type)
 
     return predictions
 
-def add_date_and_calibration(errors, predictions):
+def add_date_and_calibration(errors, predictions, type):
     data_list = []
 
     date = datetime.now()
@@ -52,8 +54,12 @@ def add_date_and_calibration(errors, predictions):
         error_dict['divergence'] = error
 
         if i < len(predictions):
-            error_dict['error_gate_1_qubit'] = predictions[i][0]
-            error_dict['error_gate_2_qubit'] = predictions[i][1]
+            if type == 'calibration':
+                error_dict['error_gate_1_qubit'] = predictions[i][0][1]
+                error_dict['error_gate_2_qubit'] = predictions[i][0][2]
+            else:
+                error_dict['error_gate_1_qubit'] = predictions[i][0]
+                error_dict['error_gate_2_qubit'] = predictions[i][1]
 
         data_list.append(error_dict)
 

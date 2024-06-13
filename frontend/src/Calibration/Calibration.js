@@ -155,7 +155,7 @@ function Calibration() {
         formData.append('hGates', hGates)
         formData.append('cNotGates', cNotGates)
 
-        const response = await fetch('http://localhost:8000/predictCalibration/file', {
+        const response = await fetch('http://localhost:8000/predictCalibration/', {
             method: 'POST',
             body: formData
         })

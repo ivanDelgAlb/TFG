@@ -6,8 +6,6 @@ from sklearn.model_selection import train_test_split
 from keras.models import load_model
 
 
-
-
 def create_model(machine, X_train, X_test, y_train, y_test):
     model = Sequential()
     model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
@@ -24,8 +22,7 @@ def create_model(machine, X_train, X_test, y_train, y_test):
 
     directory = f'backend/models_perceptron/model_qubits_{machine}.h5'
     model.save(directory)
-
-
+    
 
 def predict(machine, X_test, y_test):
     directory = 'backend/models_perceptron/model_qubits_' + machine + '.h5'

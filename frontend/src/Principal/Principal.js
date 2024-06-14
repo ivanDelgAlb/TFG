@@ -18,15 +18,15 @@ export default function Principal() {
                     <div className="feature-list">
                         <div className="feature-item" onClick={() => window.location.href = '/error'}>
                             <h3>Error Calculation</h3>
-                            <p>Calculate errors for various dates and parameters.</p>
+                            <p>Calculate when it will be better for your circuit to be executed.</p>
                         </div>
                         <div className="feature-item" onClick={() => window.location.href = '/calibration'}>
                             <h3>Custom Calibrations</h3>
-                            <p>Input custom calibrations or upload JSON files.</p>
+                            <p>Predict the error of a circuit with your custom calibration by uploading JSON files.</p>
                         </div>
                         <div className="feature-item" onClick={() => window.location.href = '/historical'}>
                             <h3>Historical Data</h3>
-                            <p>Analyze the historical performance of your machines.</p>
+                            <p>Analyze the historical calibrations of the machines.</p>
                         </div>
                     </div>
                 </section>

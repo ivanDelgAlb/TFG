@@ -269,7 +269,7 @@ function Error() {
           </div>
 
           <div className="date-selector">
-            {date && <td><label>Date selected:</label></td>}
+            {date && <td><label>Maximum date of prediction:</label></td>}
             <DateTimePicker selectedDateTime={date} onChange={setDate} />
           </div>
         </div>

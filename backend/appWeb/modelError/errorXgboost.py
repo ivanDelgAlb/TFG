@@ -33,6 +33,7 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
     n_steps = calculate_time_difference(data.date)
     for machine in machines:
         predictions = predictQubitsCalibration.predict_future(machine, n_steps)
+        
         predictions = np.array(predictions)
 
         predictions[predictions < 0] = 0
@@ -71,8 +72,8 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
         cnot_gates = np.array(cnot_gates)
 
         predictions = np.column_stack((T1, T2, Prob0, Prob1, Error, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
-    
-        predictions = predictQubitsError.predict(machine, predictions, 'error')
+
+        predictions = predictQubitsError.predict(machine, predictions)
         all_predictions[machine] = predictions
 
     return all_predictions

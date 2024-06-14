@@ -2,9 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from keras import Sequential
 from keras.layers import Dense
-from sklearn.model_selection import train_test_split
 from keras.models import load_model
-
 
 def create_model(machine, X_train, X_test, y_train, y_test):
     model = Sequential()
@@ -20,13 +18,11 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     print(f"Error cuadrático medio ({machine}):", mse)
     print(f"Error absoluto medio ({machine}):", mae)
 
-    directory = f'backend/models_perceptron/model_gates_{machine}.h5'
+    directory = '../../backend/models_perceptron/model_gates_' + machine + '.h5'
     model.save(directory)
 
-
-
 def predict(machine, X_test, y_test):
-    directory = 'backend/models_perceptron/model_qubits_' + machine + '.h5'
+    directory = '../../backend/models_perceptron/model_gates_' + machine + '.h5'
     model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
@@ -37,27 +33,20 @@ def predict(machine, X_test, y_test):
         print("Reconstruido_X:", reconstructed_sample_X)
         print("\n")
 
-
 machines = ["Brisbane", "Kyoto", "Osaka"]
 for machine in machines:
-    directory = 'backend/dataframes_perceptron/dataframe_perceptron_gates_' + machine + ".csv"
+    directory = '../../backend/dataframes_perceptron/dataframe_perceptron_gates_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
     filas_filtradas = dataFrame[(dataFrame['jensen-error'].notna())]
+    filas_filtradas = filas_filtradas.apply(pd.to_numeric, errors='coerce')
 
-    X = filas_filtradas.drop(['date', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'kullback_error', 'jensen-error'], axis=1)
-
+    X = filas_filtradas.drop(['date', 'kullback_error', 'jensen-error'], axis=1)
 
     print(X)
+    y = filas_filtradas['jensen-error'].loc[X.index]
 
-    
-    X['n_qubits'] = filas_filtradas['n_qubits']
-    X['t_gates'] = filas_filtradas['t_gates']
-    X['phase_gates'] = filas_filtradas['phase_gates']
-    X['h_gates'] = filas_filtradas['h_gates']
-    X['cnot_gates'] = filas_filtradas['cnot_gates']
-
-    y = filas_filtradas['jensen-error']
+    print(y)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -68,4 +57,3 @@ for machine in machines:
 print("Models created")
 
 #predict()
-

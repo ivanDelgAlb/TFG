@@ -25,17 +25,17 @@ def predict_qubits_error(predictions, machine_name):
 
 predictions = [
     {
-        'T1': 234,
-        'T2': 213,
-        'probMeas0Prep1': 1,
-        'probMeas1Prep0': 2,
-        'readout_qubit_error': 0.2,
-        'n_qubits': 5,
-        'depth': 5,
-        't_gates': 12,
-        'phase_gates': 11,
-        'h_gates': 14,
-        'cnot_gates': 13
+        'T1': 220.5563820634488,
+        'T2': 96.8492816613982,
+        'probMeas0Prep1': 0.0146,
+        'probMeas1Prep0': 0.0162,
+        'readout_qubit_error': 0.0153999999999999,
+        'n_qubits': 10,
+        'depth': 10,
+        't_gates': 22,
+        'phase_gates': 15,
+        'h_gates': 15,
+        'cnot_gates': 16
      }
 ]
 

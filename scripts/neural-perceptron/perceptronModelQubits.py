@@ -20,12 +20,12 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     print(f"Error cuadrático medio ({machine}):", mse)
     print(f"Error absoluto medio ({machine}):", mae)
 
-    directory = f'backend/models_perceptron/model_qubits_{machine}.h5'
+    directory = '../../backend/models_perceptron/model_qubits_' + machine +'.keras'
     model.save(directory)
     
 
 def predict(machine, X_test, y_test):
-    directory = 'backend/models_perceptron/model_qubits_' + machine + '.h5'
+    directory = '../../backend/models_perceptron/model_qubits_' + machine + '.h5'
     model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
@@ -39,7 +39,7 @@ def predict(machine, X_test, y_test):
 
 machines = ["Brisbane", "Kyoto", "Osaka"]
 for machine in machines:
-    directory = 'dataframes_perceptron/dataframe_perceptron_qubits_' + machine + ".csv"
+    directory = '../../backend/dataframes_perceptron/dataframe_perceptron_qubits_' + machine + '.csv'
     dataFrame = pd.read_csv(directory)
 
     filas_filtradas = dataFrame[(dataFrame['jensen-error'].notna())]

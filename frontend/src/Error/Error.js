@@ -284,8 +284,6 @@ function Error() {
           </select>
         </div>
 
-        <h5>Introduce the number of gates of the circuit to be executed:</h5>
-
         <div className="table-container">
           <table>
             <tbody>

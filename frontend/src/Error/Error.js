@@ -274,16 +274,17 @@ function Error() {
           </div>
         </div>
         <div>
-          {nQubits && <label>Number of qubits selected:</label>}
+          {nQubits && <label>Number of qubits of the circuit selected:</label>}
           {nQubits && <br/>}
           <select value={nQubits} onChange={handleChangeNQubits} aria-label='nQubitsInput' className='input-qubits'>
-                      <option value="">Select the number of qubits</option>
+                      <option value="">Select the number of qubits of the circuit</option>
                       <option value="5">5</option>
                       <option value="10">10</option>
                       <option value="15">15</option>
           </select>
         </div>
 
+        <h5>Introduce the number of gates of the circuit to be executed:</h5>
 
         <div className="table-container">
           <table>

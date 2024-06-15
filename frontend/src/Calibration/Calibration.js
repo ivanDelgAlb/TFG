@@ -1,5 +1,9 @@
 import React, { useState, useRef } from 'react';
 import './Calibration.css'
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 function Calibration() {
   const [prediction, setPrediction] = useState([]);
@@ -180,6 +184,10 @@ function Calibration() {
             body: formData
         })
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
         console.log(data.prediction[0].divergence)
         if (data.prediction && data.prediction.length > 0) {
@@ -190,7 +198,14 @@ function Calibration() {
             setError('There was not any valid prediction');
         }
     } catch (error) {
-      console.error('Error fetching prediction:', error);
+      if(error.message.includes('400')){
+        MySwal.fire({
+          title: "Error!",
+          text: "The JSON file provided is not valid"
+        })
+      }else{
+        console.error('Error fetching prediction:', error);
+      }
     }finally {
       setLoading(false);
     }
@@ -265,7 +280,7 @@ function Calibration() {
           </tbody>
         </table>
 
-        <h5>Introduce a json file with the configuration of the machine (qiskit properties format):</h5>
+        <h5>Introduce a json file with the configuration of the machine (Qiskit properties format):</h5>
         <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}} aria-label='fileInput' />
         {selectedFile && (
             <div>

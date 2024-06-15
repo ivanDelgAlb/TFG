@@ -1,12 +1,10 @@
-from fastapi import APIRouter, FastAPI, File, Form, UploadFile
-from pydantic import BaseModel
+from fastapi import APIRouter, File, Form, UploadFile, HTTPException
 from appWeb.predictionsPerceptron import predictQubitsError
 from appWeb.predictionsXgBoost import predictGatesError
 from appWeb import processFile
 from typing import List, Dict, Union
 from typing import Optional
 import json
-import math
 
 router = APIRouter()
 
@@ -24,11 +22,10 @@ async def get_prediction(
     try:
         content = await file.read()
         file_data = json.loads(content)
+        name, qubits, gates = processFile.processFile(file_data)
     except Exception as e:
-        return{"error": f"Error reading file: {e}"}
+        raise HTTPException(status_code=400, detail=f"Error reading file: {e}")
     
-    name, qubits, gates = processFile.processFile(file_data)
-
     if(selection == 'Qubits'):
         prediction = {
             "T1": qubits[0]['mediana'],

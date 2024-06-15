@@ -61,38 +61,53 @@ function Error() {
   const handleChangeTGates = (event) => {
     const value = event.target.value;
     if(value < 0){
+      setError("The number of T gates must be positive")
+      return;
+    }else if(!Number.isInteger(Number(value))){
+      setError("The number of T gates must be an integer")
       return;
     }
+    setError(null)
     setTGates(event.target.value);
   };
 
   const handleChangePhaseGates = (event) => {
     const value = event.target.value;
     if(value < 0){
+      setError("The number of phase gates must be positive")
+      return;
+    }else if(!Number.isInteger(Number(value))){
+      setError("The number of phase gates must be an integer")
       return;
     }
+    setError(null)
     setPhaseGates(event.target.value);
   };
 
   const handleChangeHGates = (event) => {
     const value = event.target.value;
     if(value < 0){
+      setError("The number of Hadamard gates must be positive")
+      return;
+    }else if(!Number.isInteger(Number(value))){
+      setError("The number of Hadamard gates must be an integer")
       return;
     }
+    setError(null)
     setHGates(event.target.value);
   };
 
   const handleChangeCnotGates = (event) => {
     const value = event.target.value;
     if(value < 0){
+      setError("The number of C-Not gates must be positive")
+      return;
+    }else if(!Number.isInteger(Number(value))){
+      setError("The number of C-Not gates must be an integer")
       return;
     }
+    setError(null)
     setCnotGates(event.target.value);
-  };
-
-
-  const handleButtonCalibration = () => {
-    setShowCalibrationGraphs(!showCalibrationGraphs);
   };
 
   const handleChangeMachine = (event) => {
@@ -310,7 +325,7 @@ function Error() {
         {error && <div className="error-message">{error}</div>}
 
         <div className="container-button">
-          <button onClick={handleButtonClick} disabled={loading} className="button">
+          <button onClick={handleButtonClick} disabled={loading} className={loading ? "button-disabled" : "button-enabled"}>
             {loading ? "Loading..." : "Predict Error"}
           </button>
         </div>

@@ -154,7 +154,7 @@ table th {
   margin: 20px 0;
 }
 
-.button {
+.button-enabled {
   background-color: #64ace8;
   color: #fff;
   border: none;
@@ -165,7 +165,18 @@ table th {
   transition: background-color 0.3s;
 }
 
-.button:hover {
+.button-disabled {
+  background-color: #cccccc;
+  color: #666666;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: not-allowed;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.button-enabled:hover {
   background-color: #333;
 }
 

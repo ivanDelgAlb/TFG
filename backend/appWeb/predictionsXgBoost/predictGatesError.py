@@ -48,7 +48,9 @@ def add_date_and_calibration(errors, predictions, type):
     date = datetime.now()
 
     for i, error in enumerate(errors):
-        error = abs(error) if error < 0 else error
+        if error < 0: error = min(abs(error), 1)
+        elif error > 1: error = 1
+        else: error   
         error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
         date = date + timedelta(hours=2)
         error_dict['divergence'] = error

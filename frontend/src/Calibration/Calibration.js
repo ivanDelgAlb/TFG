@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
-import './Calibration.css'
+import './Calibration.css';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
 function Calibration() {
-  const [prediction, setPrediction] = useState([]);
+  const [prediction, setPrediction] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [depth, setDepth] = useState("");
@@ -18,7 +18,12 @@ function Calibration() {
   const [selection, setSelection] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
+  const [model, setModel] = useState("");
 
+
+  const handleChangeModel = (event) => {
+    setModel(event.target.value);
+  };
 
   const handleChangeSelection = (event) => {
     setSelection(event.target.value);
@@ -39,172 +44,190 @@ function Calibration() {
   const handleChangeTGates = (event) => {
     const value = event.target.value;
     if(value < 0){
-      setError("The number of T gates must be positive")
+      setError("The number of T gates must be positive");
       return;
     }else if(!Number.isInteger(Number(value))){
-      setError("The number of T gates must be an integer")
+      setError("The number of T gates must be an integer");
       return;
     }
-    setError(null)
+    setError(null);
     setTGates(event.target.value);
-  }
+  };
 
   const handleChangePhaseGates = (event) => {
     const value = event.target.value;
     if(value < 0){
-      setError("The number of phase gates must be positive")
+      setError("The number of phase gates must be positive");
       return;
     }else if(!Number.isInteger(Number(value))){
-      setError("The number of phase gates must be an integer")
+      setError("The number of phase gates must be an integer");
       return;
     }
-    setError(null)
+    setError(null);
     setPhaseGates(event.target.value);
-  }
+  };
 
   const handleChangeHGates = (event) => {
     const value = event.target.value;
     if(value < 0){
-      setError("The number of Hadamard gates must be positive")
+      setError("The number of Hadamard gates must be positive");
       return;
     }else if(!Number.isInteger(Number(value))){
-      setError("The number of Hadamard gates must be an integer")
+      setError("The number of Hadamard gates must be an integer");
       return;
     }
-    setError(null)
+    setError(null);
     setHGates(event.target.value);
-  }
+  };
 
   const handleChangeCNotGates = (event) => {
     const value = event.target.value;
     if(value < 0){
-      setError("The number of C-Not gates must be positive")
+      setError("The number of C-Not gates must be positive");
       return;
     }else if(!Number.isInteger(Number(value))){
-      setError("The number of C-Not gates must be an integer")
+      setError("The number of C-Not gates must be an integer");
       return;
     }
-    setError(null)
+    setError(null);
     setCNotGates(event.target.value);
-  }
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if(file){
-      const fileExtension = file.name.split('.').pop()
-      console.log(fileExtension)
+      const fileExtension = file.name.split('.').pop();
       if(fileExtension !== 'json'){
-
-        setError("The configuration file must be a JSON")
-        setSelectedFile(null)
-
+        setError("The configuration file must be a JSON");
+        setSelectedFile(null);
         if(fileInputRef.current){
           fileInputRef.current.value = null;
         }
       }else{
-        setError("")
+        setError("");
         setSelectedFile(file);
       }
     }else{
-      setSelectedFile(null)
+      setSelectedFile(null);
     }
-  }
+  };
 
   const handleFileRemove = () => {
     setSelectedFile(null);
     if(fileInputRef.current){
-        fileInputRef.current.value = null
+      fileInputRef.current.value = null;
     }
+  };
+
+  const popup = async () => {
+    MySwal.fire({
+      title: 'Prediction Result',
+      text: `Prediction: ${prediction}`,
+      icon: 'info',
+    });
   }
 
   const handleButtonClick = async () => {
-    setError("")
-    setLoading(true); 
+    setError("");
+    setLoading(true);
     if (!selection) {
       setError("You must select an option");
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
     if(selection === 'Qubits' && !depth){
-      setError("You must select a depth")
-      setLoading(false)
+      setError("You must select a depth");
+      setLoading(false);
       return;
     }
 
     if(!nQubits){
-      setError("You must select the number of qubits")
-      setLoading(false)
+      setError("You must select the number of qubits");
+      setLoading(false);
       return;
     }
 
     if(!tGates){
-      setError("You must select the number of T gates")
-      setLoading(false)
+      setError("You must select the number of T gates");
+      setLoading(false);
       return;
     }
 
     if(!phaseGates){
-      setError("You must select the number of phase gates")
-      setLoading(false)
+      setError("You must select the number of phase gates");
+      setLoading(false);
       return;
     }
 
     if(!hGates){
-      setError("You must select the number of Hadamard gates")
-      setLoading(false)
+      setError("You must select the number of Hadamard gates");
+      setLoading(false);
       return;
     }
 
     if(!cNotGates){
-      setError("You must select the number of C-Not gates")
-      setLoading(false)
+      setError("You must select the number of C-Not gates");
+      setLoading(false);
       return;
     }
 
     if(selectedFile === null){
-        setError("You must submit a configuration file")
-        setLoading(false)
-        return;
+      setError("You must submit a configuration file");
+      setLoading(false);
+      return;
     }
 
     try {
-        const formData = new FormData()
-        formData.append('selection', selection)
-        formData.append('depth', depth)
-        formData.append('file', selectedFile)
-        formData.append('nQubits', nQubits)
-        formData.append('tGates', tGates)
-        formData.append('phaseGates', phaseGates)
-        formData.append('hGates', hGates)
-        formData.append('cNotGates', cNotGates)
+      const formData = new FormData();
+      formData.append('selection', selection);
+      formData.append('depth', depth);
+      formData.append('model', model);
+      formData.append('file', selectedFile);
+      formData.append('nQubits', nQubits);
+      formData.append('tGates', tGates);
+      formData.append('phaseGates', phaseGates);
+      formData.append('hGates', hGates);
+      formData.append('cNotGates', cNotGates);
 
-        const response = await fetch('http://localhost:8000/predictCalibration/', {
-            method: 'POST',
-            body: formData
-        })
+      const response = await fetch('http://localhost:8000/predictCalibration/', {
+        method: 'POST',
+        body: formData
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-        const data = await response.json();
-        console.log(data.prediction[0].divergence)
-        if (data.prediction && data.prediction.length > 0) {
-            console.log(data)
-            setPrediction(data.prediction[0].divergence);
-            setError(null);
-        } else {
-            setError('There was not any valid prediction');
-        }
+      const data = await response.json();
+      console.log(data)
+      if (data.prediction && data.prediction.length > 0) {
+        
+        setError(null);
+        console.log(prediction)
+        MySwal.fire({
+          title: 'Prediction Result',
+          text: `Prediction: ${data.prediction[0].divergence}`,
+          icon: 'info',
+        });
+        setPrediction(data.prediction[0].divergence);
+      } else {
+        setError('There was not any valid prediction');
+      }
     } catch (error) {
       if(error.message.includes('400')){
         MySwal.fire({
-          title: "Error!",
-          text: "The JSON file provided is not valid"
-        })
+          title: 'Error!',
+          text: 'The JSON file provided is not valid',
+          icon: 'error',
+        });
       }else{
         console.error('Error fetching prediction:', error);
+        MySwal.fire({
+          title: 'Error!',
+          text: 'An unexpected error occurred',
+          icon: 'error',
+        });
       }
     }finally {
       setLoading(false);
@@ -212,106 +235,130 @@ function Calibration() {
   };
 
   return (
-
     <div className="container">
-
       <div className="bar">
         <h1 className="title">Noise prediction of a calibration</h1>
       </div>
 
-      <div className="selectors-row">
-
-        <div className="option-selector">
-          <select value={selection} onChange={handleChangeSelection} className="option-selector-select" aria-label='optionSelector'>
+      <div className="selectors">
+      <div className="option-selector">
+          <select
+            value={selection}
+            onChange={handleChangeSelection}
+            className={`option-selector-select ${selection ? 'selected' : ''}`}
+            aria-label="Select an option"
+          >
             <option value="">Select an option</option>
             <option value="Qubits">Qubits</option>
             <option value="Gates">Gates</option>
           </select>
+          {selection && <label htmlFor="nQubitsInput" className="select-label">Option selected:</label>}
         </div>
 
+        {selection === 'Qubits' && (
+          <div className="depth-selector">
+            <select
+              value={depth}
+              onChange={handleChangeDepth}
+              className={`option-selector-select ${depth ? 'selected' : ''}`}
+              aria-label="Select a depth"
+            >
+              <option value="">Select a depth</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+            {depth && <label htmlFor="nQubitsInput" className="select-label">Depth selected:</label>}
+          </div>
+        )}
+          <div className="model-selector">
+            <select
+              value={model}
+              onChange={handleChangeModel}
+              className={`option-selector-select ${model ? 'selected' : ''}`}
+              aria-label='Select a model'
+            >
+              <option value="">Select a model</option>
+              <option value="Perceptron">Multilayer Perceptron</option>
+              <option value="XgBoost">XgBoost</option>
+              <option value="Perceptron-XgBoost">Both</option>
+            </select>
+            {model && <label htmlFor="nQubitsInput" className="select-label">Model selected:</label>}
+          </div>
       </div>
 
-        {selection === 'Qubits' && 
-          <>
-            <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
-              <div className="depth-selector">
-                <select value={depth} onChange={handleChangeDepth} className="selector-option-select" aria-label='depthSelector'>
-                  <option value="">Choose a depth</option>
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="15">15</option>
-                </select>
-              </div>
-            </div>
-          </>
-        }
-
-      <div>
-          {nQubits && <label>Number of qubits of the circuit selected:</label>}
-          {nQubits && <br/>}
-          <select value={nQubits} onChange={handleChangeQubits} aria-label='nQubitsInput' className='input-qubits'>
-                      <option value="">Select the number of qubits of the circuit</option>
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
+          <div className="select-container">
+          <select
+            id="nQubitsInput"
+            value={nQubits}
+            onChange={handleChangeQubits}
+            aria-label="nQubitsInput"
+            className={`input-qubits ${nQubits ? 'selected' : ''}`}
+          >
+            <option value="">Select the number of qubits of the circuit</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
           </select>
+         {nQubits &&  
+          <label htmlFor="nQubitsInput" className="select-label">
+            Select the number of qubits of the circuit
+          </label>}
         </div>
 
-        <h5>Introduce the number of gates of the circuit to be executed:</h5>
+      <h5>Introduce the number of gates of the circuit to be executed:</h5>
 
-        <table style={{borderCollapse: 'collapse', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
-          <tbody>
-            <tr>
-              <td><label>Number of T gates:</label></td>
-              <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput'/></td>
-            </tr>
-            <tr>
-              <td><label>Number of Phase gates:</label></td>
-              <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput'/></td>
-            </tr>
-            <tr>
-              <td><label>Number of Hadamard gates:</label></td>
-              <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} min={0} aria-label='hGatesInput'/></td>
-            </tr>
-            <tr>
-              <td><label>Number of C-Not gates:</label></td>
-              <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} min={0} aria-label='cGatesInput'/></td>
-            </tr>
-          </tbody>
-        </table>
+      <table style={{ borderCollapse: 'collapse', borderSpacing: '10px', marginBottom: '10px', marginTop: '10px'}}>
+        <tbody>
+          <tr>
+            <td><label>Number of T gates:</label></td>
+            <td><input className='input-gates' type="number" value={tGates || ""} onChange={handleChangeTGates} min={0} aria-label='tGatesInput' /></td>
+          </tr>
+          <tr>
+            <td><label>Number of Phase gates:</label></td>
+            <td><input className='input-gates' type="number" value={phaseGates || ""} onChange={handleChangePhaseGates} min={0} aria-label='phaseGatesInput' /></td>
+          </tr>
+          <tr>
+            <td><label>Number of Hadamard gates:</label></td>
+            <td><input className='input-gates' type="number" value={hGates || ""} onChange={handleChangeHGates} min={0} aria-label='hGatesInput' /></td>
+          </tr>
+          <tr>
+            <td><label>Number of C-Not gates:</label></td>
+            <td><input className='input-gates' type="number" value={cNotGates || ""} onChange={handleChangeCNotGates} min={0} aria-label='cGatesInput' /></td>
+          </tr>
+        </tbody>
+      </table>
 
-        <h5>Introduce a json file with the configuration of the machine (Qiskit properties format):</h5>
-        <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{marginTop: '10px'}} aria-label='fileInput' />
-        {selectedFile && (
-            <div>
-                <button onClick={handleFileRemove} style={{marginTop: '10px'}}>Remove file</button>
-            </div>
-        )}
+      <h5>Introduce a json file with the configuration of the machine (Qiskit properties format):</h5>
+      <input type="file" onChange={handleFileChange} ref={fileInputRef} style={{ marginTop: '10px' }} aria-label='fileInput' />
+      {selectedFile && (
+        <div>
+          <button onClick={handleFileRemove} style={{ marginTop: '10px' }}>Remove file</button>
+        </div>
+      )}
 
-      {error && 
-        <p className="error-message">{error}</p>
-      }
+      {error && <p className="error-message">{error}</p>}
 
       <div className="container-button">
+        <div className='button-loading'>
           <button onClick={handleButtonClick} disabled={loading} className={loading ? "button-disabled" : "button-enabled"}>
             {loading ? "Loading..." : "Predict Error"}
           </button>
         </div>
 
-        {loading && <div className="loading"><div className="spinner"></div></div>}
+        <div>
+          {prediction && 
+          <button onClick={popup} disabled={loading} className={loading ? "button-disabled" : "button-enabled"}>
+            Show Prediction
+          </button>
+        }
+        </div>
+      </div>
+
       
 
-      {prediction.length !== 0  && !loading &&
-        (
-          <div>
-            <h1>Quantum Noise Prediction</h1>
-            <p>Prediction: {prediction}</p>
-          </div>
-        )
-      }
+      {loading && <div className="loading"><div className="spinner"></div></div>}
     </div>
-
-    
   );
 }
 

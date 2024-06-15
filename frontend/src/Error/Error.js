@@ -5,6 +5,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import Graph from '../Graph/Graph';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const CustomDateTimePickerInput = React.forwardRef(({ value, onClick }, ref) => (
   <div className="custom-datepicker-input" onClick={onClick} ref={ref} aria-label='selected date'>
@@ -45,9 +49,6 @@ function Error() {
 
   const handleChangeModel = (event) => {
     setModel(event.target.value);
-    if (machine === 'All' && event.target.value === 'Perceptron-XgBoost') {
-      window.alert('Warning: Selecting "All machines" and "Both models" will result in a longer prediction time.');
-    }
   };
 
   const handleChangeNQubits = (event) => {
@@ -112,9 +113,6 @@ function Error() {
 
   const handleChangeMachine = (event) => {
     setMachine(event.target.value);
-    if (event.target.value === 'All' && model === 'Perceptron-XgBoost') {
-      window.alert('Warning: Selecting "All machines" and "Both models" will result in a longer prediction time.');
-  }
   };
 
   const handleChangeSelection = (event) => {
@@ -196,6 +194,11 @@ function Error() {
     const isoDate = date.toISOString();
 
     try {
+      MySwal.fire({
+        title: 'Warning',
+        text: 'The prediction may take some time to execute.',
+        icon: 'info',
+      });
       const response = await fetch('http://localhost:8000/predictError', {
         method: 'POST',
         headers: {
@@ -242,62 +245,92 @@ function Error() {
         
         <div className="selectors">
           <div className="machine-selector">
-            {machine && <td><label>Machine selected:</label></td>}
-            <select value={machine} onChange={handleChangeMachine} aria-label="Select a machine">
-              <option value="">Select a machine</option>
-              <option value="ibm Brisbane">ibm Brisbane</option>
-              <option value="ibm Kyoto">ibm Kyoto</option>
-              <option value="ibm Osaka">ibm Osaka</option>
-              <option value="All">All of the options</option>
-            </select>
-          </div>
-          
-          <div className="option-selector">
-            {selection && <td><label>Option selected:</label></td>}
-            <select value={selection} onChange={handleChangeSelection} className="option-selector-select" aria-label="Select an option">
-              <option value="">Select an option</option>
-              <option value="Qubits">Qubits</option>
-              <option value="Gates">Gates</option>
-            </select>
-          </div>
+          <select
+            value={machine}
+            onChange={handleChangeMachine}
+            aria-label="Select a Select"
+            className={`option-selector-select ${machine ? 'selected' : ''}`}
+          >
+            <option value="">Select a machine</option>
+            <option value="ibm Brisbane">ibm Brisbane</option>
+            <option value="ibm Kyoto">ibm Kyoto</option>
+            <option value="ibm Osaka">ibm Osaka</option>
+            <option value="All">All of the options</option>
+          </select>
+          {machine && <label htmlFor="nQubitsInput" className="select-label">Machine selected:</label>}
+        </div>
 
-          {selection === 'Qubits' && 
-            <div className="depth-selector">
-              {depth && <td><label>Depth selected:</label></td>}
-              <select value={depth} onChange={handleChangeDepth} className="option-selector-select" aria-label='Select a depth'>
-                <option value="">Select a depth</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </div>
-          }
+        <div className="option-selector">
+          <select
+            value={selection}
+            onChange={handleChangeSelection}
+            className={`option-selector-select ${selection ? 'selected' : ''}`}
+            aria-label="Select an option"
+          >
+            <option value="">Select an option</option>
+            <option value="Qubits">Qubits</option>
+            <option value="Gates">Gates</option>
+          </select>
+          {selection && <label htmlFor="nQubitsInput" className="select-label">Option selected:</label>}
+        </div>
 
+        {selection === 'Qubits' && (
+          <div className="depth-selector">
+            <select
+              value={depth}
+              onChange={handleChangeDepth}
+              className={`option-selector-select ${depth ? 'selected' : ''}`}
+              aria-label="Select a depth"
+            >
+              <option value="">Select a depth</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+            {depth && <label htmlFor="nQubitsInput" className="select-label">Depth selected:</label>}
+          </div>
+        )}
           <div className="model-selector">
-            {model && <td><label>Model selected:</label></td>}
-            <select value={model} onChange={handleChangeModel} className="option-selector-select" aria-label='Select a model'>
+            <select
+              value={model}
+              onChange={handleChangeModel}
+              className={`option-selector-select ${model ? 'selected' : ''}`}
+              aria-label='Select a model'
+            >
               <option value="">Select a model</option>
               <option value="Perceptron">Multilayer Perceptron</option>
               <option value="XgBoost">XgBoost</option>
               <option value="Perceptron-XgBoost">Both</option>
             </select>
+            {model && <label htmlFor="nQubitsInput" className="select-label">Model selected:</label>}
           </div>
-
+          
           <div className="date-selector">
-            {date && <td><label>Maximum date of prediction:</label></td>}
             <DateTimePicker selectedDateTime={date} onChange={setDate} />
           </div>
         </div>
-        <div>
-          {nQubits && <label>Number of qubits of the circuit selected:</label>}
-          {nQubits && <br/>}
-          <select value={nQubits} onChange={handleChangeNQubits} aria-label='nQubitsInput' className='input-qubits'>
-                      <option value="">Select the number of qubits of the circuit</option>
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
+
+        <div className="select-container">
+          <select
+            id="nQubitsInput"
+            value={nQubits}
+            onChange={handleChangeNQubits}
+            aria-label="nQubitsInput"
+            className={`input-qubits ${nQubits ? 'selected' : ''}`}
+          >
+            <option value="">Select the number of qubits of the circuit</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
           </select>
+         {nQubits &&  
+          <label htmlFor="nQubitsInput" className="select-label">
+            Select the number of qubits of the circuit
+          </label>}
         </div>
+
+
+        
 
         <div className="table-container">
           <table>

@@ -12,6 +12,7 @@ router = APIRouter()
 async def get_prediction(
     selection: str = Form(...),
     depth: Optional[str] = Form(None),
+    model: str = Form(...),
     nQubits: int = Form(...),
     tGates: int = Form(...),
     phaseGates: int = Form(...),

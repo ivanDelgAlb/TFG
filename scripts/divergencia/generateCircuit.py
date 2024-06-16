@@ -86,7 +86,7 @@ class CircuitGenerationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             generate_circuit(5, 5, -1)
             
-    def test_probability_greater_than_zero_should_raise_exception(self):
+    def test_probability_greater_than_one_should_raise_exception(self):
         with self.assertRaises(ValueError):
             generate_circuit(5, 5, 5)
 

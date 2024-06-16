@@ -43,7 +43,7 @@ function Historical() {
 
         try {
             const params = new URLSearchParams({machine: machine})
-            const url = urlLocal
+            let url = urlLocal
 
             if (deployment !== 'localhost') url = urlDesploy
 

@@ -10,6 +10,10 @@ import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
 
+const urlLocal = process.env.REACT_APP_URL_LOCALHOST;
+const urlDesploy = process.env.REACT_APP_URL_DEPLOYMENT;
+const deployment = process.env.REACT_APP_DEPLOYMENT;
+
 const CustomDateTimePickerInput = React.forwardRef(({ value, onClick }, ref) => (
   <div className="custom-datepicker-input" onClick={onClick} ref={ref} aria-label='selected date'>
     <span>{value}</span>
@@ -194,13 +198,20 @@ function Error() {
 
     const isoDate = date.toISOString();
 
+    
+
     try {
       MySwal.fire({
         title: 'Warning',
         text: 'The prediction may take some time to execute.',
         icon: 'info',
       });
-      const response = await fetch('http://localhost:8000/predictError', {
+      const url = urlLocal
+
+      if (deployment !== 'localhost') url = urlDesploy
+
+      console.log(url)
+      const response = await fetch(url + 'predictError', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -4,6 +4,9 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 const MySwal = withReactContent(Swal);
+const urlLocal = process.env.REACT_APP_URL_LOCALHOST;
+const urlDesploy = process.env.REACT_APP_URL_DEPLOYMENT;
+const deployment = process.env.REACT_APP_DEPLOYMENT;
 
 function Calibration() {
   const [prediction, setPrediction] = useState("");
@@ -190,7 +193,12 @@ function Calibration() {
       formData.append('hGates', hGates);
       formData.append('cNotGates', cNotGates);
 
-      const response = await fetch('http://localhost:8000/predictCalibration/', {
+      const url = urlLocal
+
+      if (deployment !== 'localhost') url = urlDesploy
+
+      console.log(url)
+      const response = await fetch( url + 'predictCalibration/', {
         method: 'POST',
         body: formData
       });

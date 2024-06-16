@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import Graph from '../Graph/Graph';
 import './Historical.css';
 
+const urlLocal = process.env.REACT_APP_URL_LOCALHOST;
+const urlDesploy = process.env.REACT_APP_URL_DEPLOYMENT;
+const deployment = process.env.REACT_APP_DEPLOYMENT;
+
 function Historical() {
     const [calibration, setCalibration] = useState([]);
     const [selectedMachine, setSelectedMachine] = useState("");
@@ -39,7 +43,12 @@ function Historical() {
 
         try {
             const params = new URLSearchParams({machine: machine})
-            const response = await fetch(`http://localhost:8000/historical?${params.toString()}`, {
+            const url = urlLocal
+
+            if (deployment !== 'localhost') url = urlDesploy
+
+            console.log(url)
+            const response = await fetch(url + `historical?${params.toString()}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json'

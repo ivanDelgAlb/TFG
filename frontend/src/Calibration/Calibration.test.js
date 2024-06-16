@@ -223,7 +223,7 @@ describe('Calibration Component', () => {
         })
     })
 
-    test('shows prediction when the fields are submitted correctly', async () => {
+    test('starts processing when the fields are submitted correctly', async () => {
         render(<Calibration/>);
 
         const optionSelector = screen.getByLabelText(/optionSelector/i)

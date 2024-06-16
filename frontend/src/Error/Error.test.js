@@ -252,7 +252,7 @@ describe('Error Component', () => {
 
     })
 
-    test('shows graphics when the form is submitted correctly', async () => {
+    test('starts processing when the form is submitted correctly', async () => {
         render(<Error />);
     
         fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });

@@ -44,7 +44,7 @@ describe('Historical Component', () => {
     expect(osakaButton).toBeInTheDocument();
   });
 
-  test('shows graphs when an option is selected', async () => {
+  test('starts processing when an option is selected', async () => {
     render(<Historical/>);
 
     const brisbaneButton = screen.getByText('ibm Brisbane');

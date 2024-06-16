@@ -122,7 +122,7 @@ function Calibration() {
   const popup = async () => {
     MySwal.fire({
       title: 'Prediction Result',
-      text: `Prediction: ${prediction}`,
+      text: `Prediction: ${"HELO"}`,
       icon: 'info',
     });
   }
@@ -201,19 +201,36 @@ function Calibration() {
 
       const data = await response.json();
       console.log(data)
-      if (data.prediction && data.prediction.length > 0) {
-        
+      if (data != null) {
         setError(null);
-        console.log(prediction)
-        MySwal.fire({
-          title: 'Prediction Result',
-          text: `Prediction: ${data.prediction[0].divergence}`,
-          icon: 'info',
-        });
-        setPrediction(data.prediction[0].divergence);
-      } else {
-        setError('There was not any valid prediction');
-      }
+        console.log(data);
+    
+        let text = '';
+    
+        if (data['Perceptron']) {
+          console.log("ENTRO")
+            text += `Prediction Multilayer Perceptron: ${data['Perceptron'][0]['divergence']}`;
+        }
+    
+        if (data['XgBoost']) {
+          console.log("ENTRO")
+            if (text !== '') {
+                text += '<br>'; // Agregar un salto de línea si hay texto previo
+            }
+            text += `Prediction XGBoost: ${data['XgBoost'][0]['divergence']}`;
+        }
+    
+        if (text !== '') {
+            MySwal.fire({
+                title: 'Prediction Result',
+                html: text,
+                icon: 'info',
+            });
+            setPrediction(data.prediction);
+        } else {
+            setError('There was not any valid prediction');
+        }}
+    
     } catch (error) {
       if(error.message.includes('400')){
         MySwal.fire({

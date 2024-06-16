@@ -3,9 +3,9 @@ from typing import Optional
 from datetime import datetime
 import pytz
 from appWeb.predictionsXgBoost import predictQubitsCalibration
-from appWeb.predictionsXgBoost import predictQubitsError
+from appWeb.predictionsXgBoost import predictQubitsErrorXgBoost
 from appWeb.predictionsXgBoost import predictGatesCalibration
-from appWeb.predictionsXgBoost import predictGatesError
+from appWeb.predictionsXgBoost import predictGatesErrorXgBoost
 from typing import List, Dict, Union
 import numpy as np
 
@@ -43,6 +43,7 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
         prob1 = []
         readout_error = []
         n_qubits = []
+        depth = []
         t_gates = []
         h_gates = []
         phase_gates = []
@@ -55,6 +56,7 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
             prob1.append(prediction[0][3])
             readout_error.append(prediction[0][4])
             n_qubits.append(data.nQubits)
+            depth.append(data.depth)
             t_gates.append(data.tGates)
             h_gates.append(data.hGates)
             phase_gates.append(data.phaseGates)
@@ -66,14 +68,15 @@ def predict_qubits(data: PredictionData) -> List[Dict[str, Union[float, str, str
         Prob1 = np.array(prob1)
         Error = np.array(readout_error)
         n_qubits = np.array(n_qubits)
+        depth = np.array(depth)
         t_gates = np.array(t_gates)
         h_gates = np.array(h_gates)
         phase_gates = np.array(phase_gates)
         cnot_gates = np.array(cnot_gates)
 
-        predictions = np.column_stack((T1, T2, Prob0, Prob1, Error, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
+        predictions = np.column_stack((T1, T2, Prob0, Prob1, Error, n_qubits, depth, t_gates, h_gates, phase_gates, cnot_gates))
 
-        predictions = predictQubitsError.predict(machine, predictions)
+        predictions = predictQubitsErrorXgBoost.predict(machine, predictions, 'error')
         all_predictions[machine] = predictions
 
     return all_predictions
@@ -119,7 +122,7 @@ def predict_gates(data: PredictionData):
 
         predictions = np.column_stack((gate_errors_1, gate_errors_2, n_qubits, t_gates, h_gates, phase_gates, cnot_gates))
 
-        predictions = predictGatesError.predict(machine, predictions, 'error')
+        predictions = predictGatesErrorXgBoost.predict(machine, predictions, 'error')
         all_predictions[machine] = predictions
 
     return all_predictions

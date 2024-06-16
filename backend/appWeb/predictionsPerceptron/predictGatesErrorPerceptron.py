@@ -29,13 +29,13 @@ def add_date_and_calibration(errors, predictions):
 
     for i, error in enumerate(errors):
 
-        if error < 0: error = min(abs(error), 1)
+        if error < 0: error = 0
         elif error > 1: error = 1
         else: error   
 
         error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
         date = date + timedelta(hours=2)
-        error_dict['divergence'] = error[0]
+        error_dict['divergence'] = error
 
         columns = ['error_gate_1_qubit', 'error_gate_2_qubit']
 

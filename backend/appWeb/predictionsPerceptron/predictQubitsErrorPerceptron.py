@@ -43,13 +43,13 @@ def add_date_and_calibration(errors, predictions, machine_name, type):
 
     for i, error in enumerate(errors):
         print(error)
-        if error < 0: error = min(abs(error), 1)
+        if error < 0: error = 0
         elif error > 1: error = 1
         else: error   
 
         error_dict = {"Date": date.strftime("%Y-%m-%d %H:%M:%S")}
         date = date + timedelta(hours=2)
-        error_dict['divergence'] = error[0]
+        error_dict['divergence'] = error
 
         columns = ['y', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']
 

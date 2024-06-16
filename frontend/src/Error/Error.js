@@ -128,6 +128,7 @@ function Error() {
   const handleButtonClick = async () => {
     setError(null);
     setLoading(true);
+    setPrediction([])
 
     if (!machine) {
       setError("You must select a machine");

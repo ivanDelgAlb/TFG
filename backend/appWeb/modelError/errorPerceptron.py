@@ -4,13 +4,10 @@ from datetime import datetime
 import pytz
 from appWeb.predictionsPerceptron import (
     predictQubitsCalibration as predictQubitsCalibrationPerceptron,
-    predictQubitsError as predictQubitsErrorPerceptron,
-    predictGatesCalibration as predictGatesCalibrationPerceptron,
-    predictGatesError as predictGatesErrorPerceptron
+    predictGatesCalibration as predictGatesCalibrationPerceptron
 )
 
-from typing import List, Dict, Union
-import numpy as np
+from appWeb.predictionsPerceptron import predictGatesErrorPerceptron as predictGatesErrorPerceptron, predictQubitsErrorPerceptron as predictQubitsErrorPerceptron
 
 class PredictionData(BaseModel):
     machine: str

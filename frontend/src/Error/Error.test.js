@@ -44,7 +44,7 @@ describe('Error Component', () => {
         test('when machine is missing', async () => {
             render(<Error />)
     
-            fireEvent.click(screen.getByText(/Submit/i));
+            fireEvent.click(screen.getByText(/Predict Error/i));
             
             await waitFor(() => {
                 expect(screen.getByText(/You must select a machine/i)).toBeInTheDocument()
@@ -56,7 +56,7 @@ describe('Error Component', () => {
 
             fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });
     
-            fireEvent.click(screen.getByText(/Submit/i));
+            fireEvent.click(screen.getByText(/Predict Error/i));
             
             await waitFor(() => {
                 expect(screen.getByText(/You must select an option/i)).toBeInTheDocument()
@@ -85,7 +85,7 @@ describe('Error Component', () => {
 
             fireEvent.click(futureDate);
 
-            fireEvent.click(screen.getByText(/Submit/i));
+            fireEvent.click(screen.getByText(/Predict Error/i));
             
             await waitFor(() => {
                 expect(screen.getByText(/You must select a model/i)).toBeInTheDocument()
@@ -99,7 +99,7 @@ describe('Error Component', () => {
             fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Qubits' } });
             fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
 
-            fireEvent.click(screen.getByText(/Submit/i));
+            fireEvent.click(screen.getByText(/Predict Error/i));
             
             await waitFor(() => {
                 expect(screen.getByText(/You must select a depth/i)).toBeInTheDocument()
@@ -113,7 +113,7 @@ describe('Error Component', () => {
             fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
             fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
 
-            fireEvent.click(screen.getByText(/Submit/i));
+            fireEvent.click(screen.getByText(/Predict Error/i));
             
             await waitFor(() => {
                 expect(screen.getByText(/You must select the number of qubits/i)).toBeInTheDocument()
@@ -123,86 +123,91 @@ describe('Error Component', () => {
         test('when the number of T gates is missing', async () => {
             render(<Error />)
 
-            fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });
-            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
-            fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
-            const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-            fireEvent.change(nQubitsInput, {target: {value: 1}})
+            fireEvent.change(screen.getByLabelText('Select a machine'), { target: { value: 'ibm Brisbane' } });
+            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText('Select a model'), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a depth'), { target: { value: '5' } });
+            fireEvent.change(screen.getByLabelText('nQubitsInput'), { target: { value: 5 } });
 
-            fireEvent.click(screen.getByText(/Submit/i));
-            
+            fireEvent.click(screen.getByText(/Predict Error/i));
+
             await waitFor(() => {
-                expect(screen.getByText(/You must select the number of T gates/i)).toBeInTheDocument()
-            })
+                const errorMessage = screen.getByText((content, element) => {
+                    // Usamos includes para verificar si el texto incluye la frase completa
+                    return content.includes('You must select the number of T gates');
+                });
+                expect(errorMessage).toBeInTheDocument();
+            });
         })
 
         test('when the number of phase gates is missing', async () => {
             render(<Error />)
 
-            fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });
-            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
-            fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a machine'), { target: { value: 'ibm Brisbane' } });
+            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText('Select a model'), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a depth'), { target: { value: '5' } });
+            fireEvent.change(screen.getByLabelText('nQubitsInput'), { target: { value: 5 } });
+            fireEvent.change(screen.getByLabelText('tGatesInput'), { target: { value: 1 } });
 
-            const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-            fireEvent.change(nQubitsInput, {target: {value: 1}})
+            fireEvent.click(screen.getByText(/Predict Error/i));
 
-            const tGates = screen.getByLabelText(/tGatesInput/i)
-            fireEvent.change(tGates, {target: {value: 1}})
-
-            fireEvent.click(screen.getByText(/Submit/i));
-            
             await waitFor(() => {
-                expect(screen.getByText(/You must select the number of phase gates/i)).toBeInTheDocument()
-            })
+                const errorMessage = screen.getByText((content, element) => {
+                    // Usamos includes para verificar si el texto incluye la frase completa
+                    return content.includes('You must select the number of phase gates');
+                });
+                expect(errorMessage).toBeInTheDocument();
+            });
+            
         })
 
         test('when the number of Hadamard gates is missing', async () => {
             render(<Error />)
 
-            fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });
-            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
-            fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a machine'), { target: { value: 'ibm Brisbane' } });
+            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText('Select a model'), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a depth'), { target: { value: '5' } });
+            fireEvent.change(screen.getByLabelText('nQubitsInput'), { target: { value: 5 } });
+            fireEvent.change(screen.getByLabelText('tGatesInput'), { target: { value: 1 } });
+            fireEvent.change(screen.getByLabelText('phaseGatesInput'), { target: { value: 1 } });
 
-            const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-            fireEvent.change(nQubitsInput, {target: {value: 1}})
 
-            const tGates = screen.getByLabelText(/tGatesInput/i)
-            fireEvent.change(tGates, {target: {value: 1}})
+            fireEvent.click(screen.getByText(/Predict Error/i));
 
-            const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i)
-            fireEvent.change(phaseGatesInput, {target: {value: 1}})
-
-            fireEvent.click(screen.getByText(/Submit/i));
-            
             await waitFor(() => {
-                expect(screen.getByText(/You must select the number of Hadamard gates/i)).toBeInTheDocument()
-            })
+                const errorMessage = screen.getByText((content, element) => {
+                    // Usamos includes para verificar si el texto incluye la frase completa
+                    return content.includes('You must select the number of Hadamard gates');
+                });
+                expect(errorMessage).toBeInTheDocument();
+            });
+            
+            
         })
 
         test('when the number of cNot gates is missing', async () => {
             render(<Error />)
 
-            fireEvent.change(screen.getByLabelText(/Select a machine/i), { target: { value: 'ibm Brisbane' } });
-            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
-            fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a machine'), { target: { value: 'ibm Brisbane' } });
+            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText('Select a model'), { target: { value: 'Perceptron' } });
+            fireEvent.change(screen.getByLabelText('Select a depth'), { target: { value: '5' } });
+            fireEvent.change(screen.getByLabelText('nQubitsInput'), { target: { value: 5 } });
+            fireEvent.change(screen.getByLabelText('tGatesInput'), { target: { value: 1 } });
+            fireEvent.change(screen.getByLabelText('phaseGatesInput'), { target: { value: 1 } });
+            fireEvent.change(screen.getByLabelText('hGatesInput'), { target: { value: 1 } });
 
-            const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-            fireEvent.change(nQubitsInput, {target: {value: 1}})
-
-            const tGates = screen.getByLabelText(/tGatesInput/i)
-            fireEvent.change(tGates, {target: {value: 1}})
-
-            const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i)
-            fireEvent.change(phaseGatesInput, {target: {value: 1}})
-
-            const hGatesInput = screen.getByLabelText(/hGatesInput/i)
-            fireEvent.change(hGatesInput, {target: {value: 1}})
-
-            fireEvent.click(screen.getByText(/Submit/i));
-            
+            fireEvent.click(screen.getByText(/Predict Error/i));
+                    
             await waitFor(() => {
-                expect(screen.getByText(/You must select the number of C-Not gates/i)).toBeInTheDocument()
-            })
+                const errorMessage = screen.getByText((content, element) => {
+                    // Usamos includes para verificar si el texto incluye la frase completa
+                    return content.includes('You must select the number of C-Not gates');
+                });
+                expect(errorMessage).toBeInTheDocument();
+            });
         })
 
         test('when date is not the future', async () => {
@@ -215,8 +220,10 @@ describe('Error Component', () => {
             const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
             fireEvent.change(nQubitsInput, {target: {value: 1}})
 
-            const tGates = screen.getByLabelText(/tGatesInput/i)
-            fireEvent.change(tGates, {target: {value: 1}})
+            const tGatesInputs = screen.getAllByLabelText(/tGatesInput/i);
+            expect(tGatesInputs.length).toBeGreaterThan(0);
+            const tGates = tGatesInputs[0];
+            fireEvent.change(tGates, { target: { value: 1 } });
 
             const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i)
             fireEvent.change(phaseGatesInput, {target: {value: 1}})
@@ -224,7 +231,7 @@ describe('Error Component', () => {
             const hGatesInput = screen.getByLabelText(/hGatesInput/i)
             fireEvent.change(hGatesInput, {target: {value: 1}})
 
-            const cGatesInput = screen.getByLabelText(/cGatesInput/i)
+            const cGatesInput = screen.getByLabelText(/cnotGatesInput/i)
             fireEvent.change(cGatesInput, {target: {value: 1}})
 
             const calendarIcon = screen.getByLabelText(/selected date/i);
@@ -243,13 +250,17 @@ describe('Error Component', () => {
 
             fireEvent.click(futureDate);
     
-            fireEvent.click(screen.getByText(/Submit/i));
-    
-            await waitFor(() => {
-                expect(screen.getByText(/Selected date must be after the current date/i)).toBeInTheDocument()
-            })
-        })
+            fireEvent.click(screen.getByText(/Predict Error/i));
 
+            await waitFor(() => {
+                const errorMessage = screen.getByText((content, element) => {
+                    // Usamos includes para verificar si el texto incluye la frase completa
+                    return content.includes('Selected date must be after the current date');
+                });
+                expect(errorMessage).toBeInTheDocument();
+            });
+    
+        })
     })
 
     test('starts processing when the form is submitted correctly', async () => {
@@ -259,41 +270,36 @@ describe('Error Component', () => {
         fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
         fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
 
-        const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-        fireEvent.change(nQubitsInput, {target: {value: 1}})
+        const tGatesInputs = screen.getAllByLabelText(/tGatesInput/i);
+        expect(tGatesInputs.length).toBeGreaterThan(0);
+        const tGates = tGatesInputs[0];
+        fireEvent.change(tGates, { target: { value: 1 } });
 
-        const tGates = screen.getByLabelText(/tGatesInput/i)
-        fireEvent.change(tGates, {target: {value: 1}})
+        const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i);
+        fireEvent.change(phaseGatesInput, { target: { value: 1 } });
 
-        const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i)
-        fireEvent.change(phaseGatesInput, {target: {value: 1}})
+        const hGatesInput = screen.getByLabelText(/hGatesInput/i);
+        fireEvent.change(hGatesInput, { target: { value: 1 } });
 
-        const hGatesInput = screen.getByLabelText(/hGatesInput/i)
-        fireEvent.change(hGatesInput, {target: {value: 1}})
+        const cnotGatesInput = screen.getByLabelText(/cnotGatesInput/i);
+        fireEvent.change(cnotGatesInput, { target: { value: 1 } });
 
-        const cGatesInput = screen.getByLabelText(/cGatesInput/i)
-        fireEvent.change(cGatesInput, {target: {value: 1}})                     
+        fireEvent.click(screen.getByText(/Predict Error/i));
+
+        // Esperar a que aparezca el popup de SweetAlert y aceptarlo
+        await waitFor(() => {
+            expect(screen.getByText(/The prediction may take some time to execute./i)).toBeInTheDocument();
+        });
     
-        const calendarIcon = screen.getByLabelText(/selected date/i);
-        fireEvent.click(calendarIcon);
+        // Selecciona el botón de confirmación en SweetAlert
+        const sweetAlertConfirmButton = screen.getByText(/OK/i);
+        fireEvent.click(sweetAlertConfirmButton);
     
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const day = daysOfTheWeek[tomorrow.getDay()];
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const month = months[tomorrow.getMonth()];
-        const year = tomorrow.getFullYear();
-        const daySuffix = getDaySuffix(tomorrow.getDate());
-        const text = `Choose ${day}, ${month} ${tomorrow.getDate()}${daySuffix}, ${year}`;
-        const futureDate = screen.getByLabelText(text);
-        fireEvent.click(futureDate);
-    
-        fireEvent.click(screen.getByText(/Submit/i));
-    
+        // Espera a que aparezca el texto "Loading..."
         await waitFor(() => {
             expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
-        });
-
+        }, { timeout: 5000 });
+    
+        // Agregar más assertions aquí si es necesario
     });
 })

@@ -21,7 +21,7 @@ const CustomDateTimePickerInput = React.forwardRef(({ value, onClick }, ref) => 
   </div>
 ));
 
-const DateTimePicker = ({ selectedDateTime, onChange }) => (
+const DateTimePicker = ({ selectedDateTime, onChange, id }) => (
   <DatePicker
     selected={selectedDateTime}
     onChange={onChange}
@@ -30,6 +30,7 @@ const DateTimePicker = ({ selectedDateTime, onChange }) => (
     timeIntervals={60}
     dateFormat="dd/MM/yyyy HH:mm"
     customInput={<CustomDateTimePickerInput />}
+    id={id} 
   />
 );
 
@@ -260,7 +261,7 @@ function Error() {
             <select
               value={machine}
               onChange={handleChangeMachine}
-              aria-label="Select a Select"
+              aria-label="Select a machine"
               className={`option-selector-select ${machine ? 'selected' : ''}`}
             >
               <option value="">Select a machine</option>
@@ -319,8 +320,9 @@ function Error() {
           
           <div className="datetime-picker-container">
             <label htmlFor="dateTimePicker" className="date-label">Date selected:</label>
-            <DateTimePicker className="datetime-picker" selectedDateTime={date} onChange={setDate} id="dateTimePicker"/>
+            <DateTimePicker id="dateTimePicker" selectedDateTime={date} onChange={setDate} className="datetime-picker" aria-label='dateTimePicker'/>
           </div>
+
         </div>
 
         <div className="select-container">

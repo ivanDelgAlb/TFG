@@ -29,9 +29,9 @@ describe('Historical Component', () => {
         fireEvent.click(brisbaneButton);
     })
 
-    expect(screen.getByText('Choose an option')).toBeInTheDocument();
+    expect(screen.getByText('All the historical data')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByText('Choose an option'), { target: { value: 'Qubits' } });
+    fireEvent.change(screen.getByText('All the historical data'), { target: { value: 'Qubits' } });
     fireEvent.click(screen.getByText(/Show Calibration Charts/i));
 
     expect(screen.getByText('Hide Calibration Charts')).toBeInTheDocument()

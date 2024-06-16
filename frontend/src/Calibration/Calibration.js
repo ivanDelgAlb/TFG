@@ -145,6 +145,12 @@ function Calibration() {
       return;
     }
 
+    if(!model){
+      setError("You must select a model");
+      setLoading(false);
+      return;
+    }
+
     if(!nQubits){
       setError("You must select the number of qubits");
       setLoading(false);

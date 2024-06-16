@@ -257,34 +257,34 @@ function Error() {
         
         <div className="selectors">
           <div className="machine-selector">
-          <select
-            value={machine}
-            onChange={handleChangeMachine}
-            aria-label="Select a Select"
-            className={`option-selector-select ${machine ? 'selected' : ''}`}
-          >
-            <option value="">Select a machine</option>
-            <option value="ibm Brisbane">ibm Brisbane</option>
-            <option value="ibm Kyoto">ibm Kyoto</option>
-            <option value="ibm Osaka">ibm Osaka</option>
-            <option value="All">All of the options</option>
-          </select>
-          {machine && <label htmlFor="nQubitsInput" className="select-label">Machine selected:</label>}
-        </div>
+            <select
+              value={machine}
+              onChange={handleChangeMachine}
+              aria-label="Select a Select"
+              className={`option-selector-select ${machine ? 'selected' : ''}`}
+            >
+              <option value="">Select a machine</option>
+              <option value="ibm Brisbane">ibm Brisbane</option>
+              <option value="ibm Kyoto">ibm Kyoto</option>
+              <option value="ibm Osaka">ibm Osaka</option>
+              <option value="All">All of the options</option>
+            </select>
+            {machine && <label htmlFor="nQubitsInput" className="select-label">Machine selected:</label>}
+          </div>
 
-        <div className="option-selector">
-          <select
-            value={selection}
-            onChange={handleChangeSelection}
-            className={`option-selector-select ${selection ? 'selected' : ''}`}
-            aria-label="Select an option"
-          >
-            <option value="">Select an option</option>
-            <option value="Qubits">Qubits</option>
-            <option value="Gates">Gates</option>
-          </select>
-          {selection && <label htmlFor="nQubitsInput" className="select-label">Option selected:</label>}
-        </div>
+          <div className="option-selector">
+            <select
+              value={selection}
+              onChange={handleChangeSelection}
+              className={`option-selector-select ${selection ? 'selected' : ''}`}
+              aria-label="Select an option"
+            >
+              <option value="">Select an option</option>
+              <option value="Qubits">Qubits</option>
+              <option value="Gates">Gates</option>
+            </select>
+            {selection && <label htmlFor="nQubitsInput" className="select-label">Option selected:</label>}
+          </div>
 
         {selection === 'Qubits' && (
           <div className="depth-selector">
@@ -317,8 +317,9 @@ function Error() {
             {model && <label htmlFor="nQubitsInput" className="select-label">Model selected:</label>}
           </div>
           
-          <div className="date-selector">
-            <DateTimePicker selectedDateTime={date} onChange={setDate} />
+          <div className="datetime-picker-container">
+            <label htmlFor="dateTimePicker" className="date-label">Date selected:</label>
+            <DateTimePicker className="datetime-picker" selectedDateTime={date} onChange={setDate} id="dateTimePicker"/>
           </div>
         </div>
 

@@ -227,8 +227,8 @@ def predict_gate(machine_name, data):
     return prediction
 
 
-create_model_qubits("ibm_brisbane")
-create_model_qubits("ibm_osaka")
+# create_model_qubits("ibm_brisbane")
+# create_model_qubits("ibm_osaka")
 create_model_qubits("ibm_kyoto")
 # create_model_gates("ibm_brisbane")
 # create_model_gates("ibm_osaka")

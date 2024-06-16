@@ -33,7 +33,7 @@ def predict(machine, X_test, y_test):
         print("Reconstruido_X:", reconstructed_sample_X)
         print("\n")
 
-machines = ["Brisbane", "Kyoto", "Osaka"]
+machines = ["Kyoto"]
 for machine in machines:
     directory = '../../backend/dataframes_perceptron/dataframe_perceptron_gates_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)

@@ -92,11 +92,17 @@ function Historical() {
             {selectedMachine && calibration.length > 0 &&(
                 <div>
                     <div className="option-selector">
-                        <select value={option} onChange={handleChangeOption} className="selector-option-select">
+                        <select 
+                            value={option} 
+                            onChange={handleChangeOption} 
+                            className={`option-selector-select ${'selected'}`}
+                            aria-label="Select an option"
+                        >
                             <option value="">All the historical data</option>
                             <option value="Qubits">Qubits</option>
                             <option value="Gates">Gates</option>
                         </select>
+                        <label htmlFor="nQubitsInput" className="select-label">Option selected:</label>
                     </div>
 
                     {error && <p className="error-message">{error}</p>}

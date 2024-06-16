@@ -73,8 +73,22 @@ body, html {
   border-radius: 5px;
 }
 
-.date-selector {
-  top: -20px
+.datetime-picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* Espacio entre la etiqueta y el DateTimePicker */
+  margin-top: -20px; /* Ajusta este valor según sea necesario para colocar el contenedor correctamente */
+}
+
+.date-label {
+  font-size: 12px;
+  color: #333;
+}
+
+.datetime-picker {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
 }
 
 h2 {

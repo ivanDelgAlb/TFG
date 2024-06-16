@@ -206,11 +206,11 @@ function Error() {
         text: 'The prediction may take some time to execute.',
         icon: 'info',
       });
-      const url = urlLocal
+      let url = urlLocal
 
       if (deployment !== 'localhost') url = urlDesploy
 
-      console.log(url)
+      console.log(deployment)
       const response = await fetch(url + 'predictError', {
         method: 'POST',
         headers: {

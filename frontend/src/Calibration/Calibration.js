@@ -193,11 +193,11 @@ function Calibration() {
       formData.append('hGates', hGates);
       formData.append('cNotGates', cNotGates);
 
-      const url = urlLocal
+      let url = urlLocal
 
       if (deployment !== 'localhost') url = urlDesploy
 
-      console.log(url)
+      console.log(deployment)
       const response = await fetch( url + 'predictCalibration/', {
         method: 'POST',
         body: formData

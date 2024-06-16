@@ -16,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.include_router(predictionError.router, prefix="/predictError")
 app.include_router(predictionCalibration.router, prefix="/predictCalibration")
 app.include_router(historical.router, prefix="/historical")

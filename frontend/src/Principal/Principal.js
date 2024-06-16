@@ -40,6 +40,31 @@ export default function Principal() {
                 <section id="contact" className="contact">
                     <h2>Contact Us</h2>
                     <p>If you have any questions or feedback, feel free to reach out!</p>
+                    <div>
+                        <a href="https://github.com/marinasayago" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <img 
+                            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" 
+                            alt="GitHub" 
+                            width="20" 
+                            height="20" 
+                            style={{ verticalAlign: 'middle', marginRight: '8px' }} 
+                            />
+                            Marina Sayago Gutiérrez
+                        </a>
+                    </div>
+                    <div>
+                        <a href="https://github.com/IvanUma" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <img 
+                            src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" 
+                            alt="GitHub" 
+                            width="20" 
+                            height="20" 
+                            style={{ verticalAlign: 'middle', marginRight: '8px' }} 
+                            />
+                            Iván Delgado Alba
+                        </a>
+                    </div>
+
                 </section>
             </main>
         </>

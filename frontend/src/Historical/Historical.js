@@ -47,8 +47,8 @@ function Historical() {
 
             if (deployment !== 'localhost') url = urlDesploy
 
-            console.log(url)
-            const response = await fetch(urlDesploy + `historical?${params.toString()}`, {
+            console.log(deployment)
+            const response = await fetch(url + `historical?${params.toString()}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json'

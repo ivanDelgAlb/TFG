@@ -218,7 +218,7 @@ describe('Error Component', () => {
             fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
 
             const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-            fireEvent.change(nQubitsInput, {target: {value: 1}})
+            fireEvent.change(nQubitsInput, {target: {value: "5"}})
 
             const tGatesInputs = screen.getAllByLabelText(/tGatesInput/i);
             expect(tGatesInputs.length).toBeGreaterThan(0);
@@ -254,7 +254,6 @@ describe('Error Component', () => {
 
             await waitFor(() => {
                 const errorMessage = screen.getByText((content, element) => {
-                    // Usamos includes para verificar si el texto incluye la frase completa
                     return content.includes('Selected date must be after the current date');
                 });
                 expect(errorMessage).toBeInTheDocument();
@@ -270,6 +269,9 @@ describe('Error Component', () => {
         fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Gates' } });
         fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
 
+        const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
+        fireEvent.change(nQubitsInput, {target: {value: "5"}})
+
         const tGatesInputs = screen.getAllByLabelText(/tGatesInput/i);
         expect(tGatesInputs.length).toBeGreaterThan(0);
         const tGates = tGatesInputs[0];
@@ -284,22 +286,34 @@ describe('Error Component', () => {
         const cnotGatesInput = screen.getByLabelText(/cnotGatesInput/i);
         fireEvent.change(cnotGatesInput, { target: { value: 1 } });
 
+        const calendarIcon = screen.getByLabelText(/selected date/i);
+        fireEvent.click(calendarIcon);
+    
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const day = daysOfTheWeek[tomorrow.getDay()];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const month = months[tomorrow.getMonth()];
+        const year = tomorrow.getFullYear();
+        const daySuffix = getDaySuffix(tomorrow.getDate());
+        const text = `Choose ${day}, ${month} ${tomorrow.getDate()}${daySuffix}, ${year}`;
+        const futureDate = screen.getByLabelText(text);
+
+        fireEvent.click(futureDate);
+
         fireEvent.click(screen.getByText(/Predict Error/i));
 
-        // Esperar a que aparezca el popup de SweetAlert y aceptarlo
         await waitFor(() => {
             expect(screen.getByText(/The prediction may take some time to execute./i)).toBeInTheDocument();
         });
     
-        // Selecciona el botón de confirmación en SweetAlert
         const sweetAlertConfirmButton = screen.getByText(/OK/i);
         fireEvent.click(sweetAlertConfirmButton);
     
-        // Espera a que aparezca el texto "Loading..."
         await waitFor(() => {
             expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
         }, { timeout: 5000 });
     
-        // Agregar más assertions aquí si es necesario
     });
 })

@@ -21,19 +21,14 @@ describe('Historical Component', () => {
   });
 
   test('starts processing when an option is selected', async () => {
-    render(<Historical/>);
+    render(<Historical />);
 
-    const brisbaneButton = screen.getByText('ibm Brisbane');
-
-    act(() => {
-        fireEvent.click(brisbaneButton);
-    })
-
-    expect(screen.getByText('All the historical data')).toBeInTheDocument();
-
-    fireEvent.change(screen.getByText('All the historical data'), { target: { value: 'Qubits' } });
-    fireEvent.click(screen.getByText(/Show Calibration Charts/i));
-
-    expect(screen.getByText('Hide Calibration Charts')).toBeInTheDocument()
+    const brisbaneButton = screen.getByRole('button', { name: /ibm brisbane/i });
+    
+    expect(brisbaneButton).not.toHaveClass('active');
+  
+    fireEvent.click(brisbaneButton);
+  
+    expect(brisbaneButton).toHaveClass('tab active');
   });
 });

@@ -9,63 +9,67 @@ describe('Calibration Component', () => {
 
         expect(screen.getByText(/Noise prediction of a calibration/i)).toBeInTheDocument();
 
-        const optionSelector = screen.getByText(/Select an option/i)
-        expect(optionSelector).toBeInTheDocument()
+        const optionSelector = screen.getByLabelText(/Select an option/i);
+        expect(optionSelector).toBeInTheDocument();
 
-        const nQubitsInput = screen.getByLabelText(/nQubitsInput/i)
-        expect(nQubitsInput).toBeInTheDocument()
+        const nQubitsInput = screen.getByLabelText(/nQubitsInput/i);
+        expect(nQubitsInput).toBeInTheDocument();
 
-        const tGates = screen.getByLabelText(/tGatesInput/i)
-        expect(tGates).toBeInTheDocument()
+        const tGates = screen.getByLabelText(/tGatesInput/i);
+        expect(tGates).toBeInTheDocument();
 
-        const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i)
-        expect(phaseGatesInput).toBeInTheDocument()
+        const phaseGatesInput = screen.getByLabelText(/phaseGatesInput/i);
+        expect(phaseGatesInput).toBeInTheDocument();
 
-        const hGatesInput = screen.getByLabelText(/hGatesInput/i)
-        expect(hGatesInput).toBeInTheDocument()
+        const hGatesInput = screen.getByLabelText(/hGatesInput/i);
+        expect(hGatesInput).toBeInTheDocument();
 
-        const cGatesInput = screen.getByLabelText(/cGatesInput/i)
-        expect(cGatesInput).toBeInTheDocument()
+        const cGatesInput = screen.getByLabelText(/cGatesInput/i);
+        expect(cGatesInput).toBeInTheDocument();
 
-        const fileInput = screen.getByLabelText(/fileInput/i)
-        expect(fileInput).toBeInTheDocument()
-    })
+        const fileInput = screen.getByLabelText(/fileInput/i);
+        expect(fileInput).toBeInTheDocument();
+    });
 
     describe('shows error', () => {
         test('when the option is missing', async () => {
             render(<Calibration/>);
-    
-            fireEvent.click(screen.getByText(/Predict Error/i))
-    
+
+            fireEvent.click(screen.getByText(/Predict Error/i));
+
             await waitFor(() => {
-                expect(screen.getByText(/You must select an option/i)).toBeInTheDocument()
-            })
-        })
+                expect(screen.getByText(/You must select an option/i)).toBeInTheDocument();
+            });
+        });
 
         test('when the model is missing', async () => {
             render(<Calibration/>);
 
-            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
-    
-            fireEvent.click(screen.getByText(/Predict Error/i))
-    
+            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText(/Select a depth/i), { target: { value: '5' } });
+
+            fireEvent.click(screen.getByText(/Predict Error/i));
+
             await waitFor(() => {
-                expect(screen.getByText(/You must select a model/i)).toBeInTheDocument()
-            })
-        })
+                expect(screen.getByText(/You must select a model/i)).toBeInTheDocument();
+            });
+        });
 
         test('when the depth is missing', async () => {
             render(<Calibration/>);
 
-            fireEvent.change(screen.getByLabelText('Select an option'), { target: { value: 'Qubits' } });
-            fireEvent.change(screen.getByLabelText('Select a model'), { target: { value: 'Perceptron' } });
-    
-            fireEvent.click(screen.getByText(/Predict Error/i))
-    
+            fireEvent.change(screen.getByLabelText(/Select an option/i), { target: { value: 'Qubits' } });
+            fireEvent.change(screen.getByLabelText(/Select a model/i), { target: { value: 'Perceptron' } });
+
+            fireEvent.click(screen.getByText(/Predict Error/i));
+
             await waitFor(() => {
-                expect(screen.getByText(/You must select a depth/i)).toBeInTheDocument()
-            })
-        })
+                expect(screen.getByText(/You must select a depth/i)).toBeInTheDocument();
+            });
+        });
+
+        // Añadir más pruebas según sea necesario para cubrir otros errores y estados
+    
 
         test('when the number of qubits is missing', async () => {
             render(<Calibration/>);

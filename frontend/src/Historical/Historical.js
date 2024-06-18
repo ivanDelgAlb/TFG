@@ -34,7 +34,6 @@ function Historical() {
     };
 
     const handleTabChange = async (machine) => {
-        console.log(machine);
         setSelectedMachine(machine);
         setOption("");
         setShowCalibrationGraphs(false);
@@ -47,7 +46,6 @@ function Historical() {
 
             if (deployment !== 'localhost') url = urlDesploy
 
-            console.log(deployment)
             const response = await fetch(url + `historical?${params.toString()}`, {
                 method: 'GET',
                 headers: {
@@ -56,11 +54,9 @@ function Historical() {
             });
 
             const data = await response.json();
-            console.log(data);
             setCalibration(data.historical);
-            console.log(data.historical[0].qubits);
         } catch (error) {
-            console.error("Error fetching calibration data:", error);
+            setError("Error fetching calibration data:")
         } finally {
             setLoading(false);
             setShowCalibrationGraphs(true)

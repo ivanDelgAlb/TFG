@@ -2,6 +2,7 @@ from neuralprophet import NeuralProphet, set_log_level
 import pandas as pd
 import pickle
 
+
 def create_model_gates(file):
     """
     Creates a NeuralProphet model in the directory models_neuralProphet from the given dataframe
@@ -9,7 +10,7 @@ def create_model_gates(file):
     :return: None
     """
 
-    directory = 'backend/dataframes_neuralProphet/'
+    directory = '../../backend/dataframes_neuralProphet/'
     df = pd.read_csv(directory + file, encoding="latin1")
     columns = df.columns.to_list()
 
@@ -35,7 +36,7 @@ def create_model_gates(file):
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
     (metrics)
 
-    file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
+    file_name = '../../backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
         pickle.dump(model, file)
 
@@ -52,13 +53,13 @@ def predict_gates(n_steps, machine_name):
     machine_name = machine_name.split("_")[1].capitalize()
 
     try:
-        models_directory = 'backend/models_neuralProphet/'
+        models_directory = '../../backend/models_neuralProphet/'
         with open(models_directory + 'modelError1' + machine_name + '.pkl', "rb") as file:
             model_error_1 = pickle.load(file)
         with open(models_directory + 'modelError2' + machine_name + '.pkl', "rb") as file:
             model_error_2 = pickle.load(file)
 
-        dataframes_directory = 'backend/dataframes_neuralProphet/'
+        dataframes_directory = '../../backend/dataframes_neuralProphet/'
 
         df_error_1 = pd.read_csv(dataframes_directory + 'dataframeError1' + machine_name + '.csv', encoding="latin1")
         df_error_2 = pd.read_csv(dataframes_directory + 'dataframeError2' + machine_name + '.csv', encoding="latin1")
@@ -98,10 +99,10 @@ files = ["dataframeError1", "dataframeError2"]
 
 for machine in machines:
     for file in files:
-        ("Maquina: " + machine + ", fichero: " + file)
+        print("Machine: " + machine + ", file: " + file)
         csv = file + machine + '.csv'
         create_model_gates(csv)
-("Models created")
+print("Models created")
 
 
 # future_Error_1 = predict_qubits(1, "ibm_Brisbane")

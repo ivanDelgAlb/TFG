@@ -3,6 +3,7 @@ import pandas as pd
 import pickle
 import joblib
 
+
 def create_model_qubits(file):
     """
     Creates a NeuralProphet model in the directory models_neuralProphet from the given dataframe
@@ -10,7 +11,7 @@ def create_model_qubits(file):
     :return: None
     """
 
-    directory = 'backend/dataframes_neuralProphet/'
+    directory = '../../backend/dataframes_neuralProphet/'
     df = pd.read_csv(directory + file, encoding="latin1")
     columns = df.columns.to_list()
 
@@ -39,7 +40,7 @@ def create_model_qubits(file):
     metrics = model.fit(df=df_train, freq="2H", validation_df=df_test)
     #print(metrics)
 
-    file_name = 'backend/models_neuralProphet/model' + substring + '.pkl'
+    file_name = '../../backend/models_neuralProphet/model' + substring + '.pkl'
     with open(file_name, "wb") as file:
         pickle.dump(model, file)
 
@@ -56,7 +57,7 @@ def predict_qubits(n_steps, machine_name):
     machine_name = machine_name.split("_")[1].capitalize()
 
     try:
-        models_directory = 'backend/models_neuralProphet/'
+        models_directory = '../../backend/models_neuralProphet/'
         with open(models_directory + 'modelT1' + machine_name + '.pkl', "rb") as file:
             model_T1 = pickle.load(file)
         with open(models_directory + 'modelT2' + machine_name + '.pkl', "rb") as file:
@@ -68,7 +69,7 @@ def predict_qubits(n_steps, machine_name):
         with open(models_directory + 'modelError' + machine_name + '.pkl', "rb") as file:
             model_error = pickle.load(file)
         
-        dataframes_directory = 'backend/dataframes_neuralProphet/'
+        dataframes_directory = '../../backend/dataframes_neuralProphet/'
 
         df_T1 = pd.read_csv(dataframes_directory + 'dataframeT1' + machine_name + '.csv', encoding="latin1")
         df_T2 = pd.read_csv(dataframes_directory + 'dataframeT2' + machine_name + '.csv', encoding="latin1")
@@ -143,23 +144,19 @@ def predict_qubits(n_steps, machine_name):
         raise FileNotFoundError("One of the models is missing")
 
 
-
 # machines = ["Brisbane", "Kyoto", "Osaka"]
 # files = ["dataframeT1", "dataframeT2", "dataframeProb0", "dataframeProb1", "dataframeError"]
 
 # for machine in machines:
 #     for file in files:
-#         ("Maquina: " + machine + ", fichero: " + file)
+#         print("Machine: " + machine + ", file: " + file)
 #         csv = file + machine + '.csv'
 #         create_model_qubits(csv)
-# ("Models created")
-
-
-
+# print("Models created")
 
 future_T1 = predict_qubits(4, "ibm_Brisbane")
 
-path = "backend/dataframes_neuralProphet/scalerT1Brisbane.pkl"
+path = "../../backend/dataframes_neuralProphet/scalerT1Brisbane.pkl"
 
 scaler = joblib.load(path)
 

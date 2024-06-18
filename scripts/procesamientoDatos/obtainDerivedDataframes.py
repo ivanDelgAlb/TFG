@@ -7,13 +7,14 @@ import os
 
 load_dotenv()
 
-def dataFrame(nombre_maquina):
-    formated_name = nombre_maquina.split("_")[1].capitalize()
+
+def generate_dataframe(machine_name):
+    formatted_name = machine_name.split("_")[1].capitalize()
     mongo_uri_1 = os.getenv("MONGO_URI_IVAN_PART1")
     client_1 = MongoClient(mongo_uri_1)
-    collection_name_Origen = "derivado"
+    origin_collection_name = "derivado"
     db_1 = client_1["TFG"]
-    data = db_1[collection_name_Origen].find({"name": nombre_maquina})
+    data = db_1[origin_collection_name].find({"name": machine_name})
 
     data_qubits_T1 = []
     data_qubits_T2 = []
@@ -56,40 +57,40 @@ def dataFrame(nombre_maquina):
     scaler = MinMaxScaler()
 
     df_T1.iloc[:, 1:] = scaler.fit_transform(df_T1.iloc[:, 1:])
-    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerT1' + formated_name + '.pkl')
+    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerT1' + formatted_name + '.pkl')
 
     scaler = MinMaxScaler()
     df_T2.iloc[:, 1:] = scaler.fit_transform(df_T2.iloc[:, 1:])
-    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerT2' + formated_name + '.pkl')
+    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerT2' + formatted_name + '.pkl')
 
     scaler = MinMaxScaler()
     df_Prob0.iloc[:, 1:] = scaler.fit_transform(df_Prob0.iloc[:, 1:])
-    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerProb0' + formated_name + '.pkl')
+    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerProb0' + formatted_name + '.pkl')
 
     scaler = MinMaxScaler()
     df_Prob1.iloc[:, 1:] = scaler.fit_transform(df_Prob1.iloc[:, 1:])
-    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerProb1' + formated_name + '.pkl')
+    joblib.dump(scaler, '../../backend/dataframes_neuralProphet/scalerProb1' + formatted_name + '.pkl')
 
     scaler = MinMaxScaler()    
     df_error.iloc[:, 1:] = scaler.fit_transform(df_error.iloc[:, 1:])
-    joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerError' + formated_name + '.pkl')
+    joblib.dump(scaler, 'backend/dataframes_neuralProphet/scalerError' + formatted_name + '.pkl')
 
     directory = '../../backend/dataframes_neuralProphet/'
 
-    df_T1.to_csv(os.path.join(directory, f'dataframeT1{formated_name}.csv'), index=False)
-    df_T2.to_csv(os.path.join(directory, f'dataframeT2{formated_name}.csv'), index=False)
-    df_Prob0.to_csv(os.path.join(directory, f'dataframeProb0{formated_name}.csv'), index=False)
-    df_Prob1.to_csv(os.path.join(directory, f'dataframeProb1{formated_name}.csv'), index=False)
-    df_error.to_csv(os.path.join(directory, f'dataframeError{formated_name}.csv'), index=False)
+    df_T1.to_csv(os.path.join(directory, f'dataframeT1{formatted_name}.csv'), index=False)
+    df_T2.to_csv(os.path.join(directory, f'dataframeT2{formatted_name}.csv'), index=False)
+    df_Prob0.to_csv(os.path.join(directory, f'dataframeProb0{formatted_name}.csv'), index=False)
+    df_Prob1.to_csv(os.path.join(directory, f'dataframeProb1{formatted_name}.csv'), index=False)
+    df_error.to_csv(os.path.join(directory, f'dataframeError{formatted_name}.csv'), index=False)
 
-    df_error_1.to_csv(os.path.join(directory, f'dataframeError1{formated_name}.csv'), index=False)
-    df_error_2.to_csv(os.path.join(directory, f'dataframeError2{formated_name}.csv'), index=False)
+    df_error_1.to_csv(os.path.join(directory, f'dataframeError1{formatted_name}.csv'), index=False)
+    df_error_2.to_csv(os.path.join(directory, f'dataframeError2{formatted_name}.csv'), index=False)
 
-    print("Extracción finalizada")
+    print("Extraction completed")
 
 
 maquinas = ["ibm_brisbane", "ibm_kyoto", "ibm_osaka"] 
 
 for maquina in maquinas:
-    dataFrame(maquina)
+    generate_dataframe(maquina)
 

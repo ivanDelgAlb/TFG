@@ -6,7 +6,7 @@ import os
 
 mongo_uri_1 = os.getenv("MONGO_URI_IVAN_PART1")
 client_1 = MongoClient(mongo_uri_1)
-collection_name_Origen = "derivado"
+origin_collection_name = "derivado"
 db_1 = client_1["TFG"]
 
 dataframe_qubits = [
@@ -17,10 +17,11 @@ dataframe_gates = [
     ['date', 'gate_error_one_qubit', 'gate_error_two_qubit']
 ]
 
-def normalised_qubits(machine_name):
-    formated_name = machine_name.split("_")[1].capitalize()
+
+def normalized_qubits(machine_name):
+    formatted_name = machine_name.split("_")[1].capitalize()
     data_qubits = []
-    data = db_1[collection_name_Origen].find({"name": machine_name})
+    data = db_1[origin_collection_name].find({"name": machine_name})
 
     for item in data:
         T1 = item['properties']['qubits'][0]['mediana']
@@ -37,17 +38,17 @@ def normalised_qubits(machine_name):
     scaler = MinMaxScaler()
 
     df_qubits.iloc[:, :] = scaler.fit_transform(df_qubits)
-    joblib.dump(scaler, 'backend/dataframes_qubits/scalerQubits' + formated_name + '.pkl')
+    joblib.dump(scaler, 'backend/dataframes_qubits/scalerQubits' + formatted_name + '.pkl')
 
-    df_qubits.to_csv(os.path.join(file_name, f'dataframeQubits{formated_name}.csv'), index=False)
+    df_qubits.to_csv(os.path.join(file_name, f'dataframeQubits{formatted_name}.csv'), index=False)
 
     ("The file {} has been created.".format(file_name))
 
 
 def generate_dataframe_gates(machine_name):
-    formated_name = machine_name.split("_")[1].capitalize()
+    formatted_name = machine_name.split("_")[1].capitalize()
     data_gates = []
-    data = db_1[collection_name_Origen].find({"name": machine_name})
+    data = db_1[origin_collection_name].find({"name": machine_name})
 
     for item in data:
         date = item['date']
@@ -60,14 +61,14 @@ def generate_dataframe_gates(machine_name):
 
     file_name = 'backend/dataframes_gates/'
 
-    df_gates.to_csv(os.path.join(file_name, f'dataframe_Gates{formated_name}.csv'), index=False)
+    df_gates.to_csv(os.path.join(file_name, f'dataframe_Gates{formatted_name}.csv'), index=False)
 
     ("The file {} has been created.".format(file_name))
 
 
-normalised_qubits("ibm_brisbane")
-normalised_qubits("ibm_kyoto")
-normalised_qubits("ibm_osaka")
+normalized_qubits("ibm_brisbane")
+normalized_qubits("ibm_kyoto")
+normalized_qubits("ibm_osaka")
 generate_dataframe_gates("ibm_brisbane")
 generate_dataframe_gates("ibm_kyoto")
 generate_dataframe_gates("ibm_osaka")

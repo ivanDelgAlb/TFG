@@ -12,13 +12,11 @@ def create_model_qubits(machine_name):
     :type machine_name: String
     :return: None
     """
-    formated_name = machine_name.split("_")[1].capitalize()
-
-    
+    formatted_name = machine_name.split("_")[1].capitalize()
 
     columns = ['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_qubit_error', 'n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'jensen-error']
 
-    dataset = pd.read_csv('../../backend/dataframes_perceptron/dataframe_perceptron_qubits_' + formated_name + '.csv')
+    dataset = pd.read_csv('../../backend/dataframes_perceptron/dataframe_perceptron_qubits_' + formatted_name + '.csv')
     print(dataset)
 
     dataset = dataset.replace([np.inf, -np.inf], np.nan)
@@ -28,21 +26,21 @@ def create_model_qubits(machine_name):
     print(X)
     for column in columns:
         X[column] = pd.to_numeric(dataset[column], errors='coerce')
-    X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    normalized_X = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
 
-    X_normalizado['n_qubits'] = dataset['n_qubits']
-    X_normalizado['depth'] = dataset['depth']
-    X_normalizado['t_gates'] = dataset['t_gates']
-    X_normalizado['phase_gates'] = dataset['phase_gates']
-    X_normalizado['h_gates'] = dataset['h_gates']
-    X_normalizado['cnot_gates'] = dataset['cnot_gates']
-    X_normalizado['jensen-error'] = dataset['jensen-error']
+    normalized_X['n_qubits'] = dataset['n_qubits']
+    normalized_X['depth'] = dataset['depth']
+    normalized_X['t_gates'] = dataset['t_gates']
+    normalized_X['phase_gates'] = dataset['phase_gates']
+    normalized_X['h_gates'] = dataset['h_gates']
+    normalized_X['cnot_gates'] = dataset['cnot_gates']
+    normalized_X['jensen-error'] = dataset['jensen-error']
 
-    print(X_normalizado)
+    print(normalized_X)
 
     target_column = 'jensen-error'
 
-    train_set, test_set = train_test_split(X_normalizado, test_size=0.2)
+    train_set, test_set = train_test_split(normalized_X, test_size=0.2)
     train_set = train_set.dropna(subset=[target_column])
 
     x_train = train_set.drop(target_column, axis=1)
@@ -78,7 +76,7 @@ def create_model_qubits(machine_name):
     rmse = mean_squared_error(y_test, predictions, squared=False)
     print("RMSE:", rmse)
 
-    file = '../../backend/models_xgboost/xgboost_qubit_model_' + formated_name+ '.model'
+    file = '../../backend/models_xgboost/xgboost_qubit_model_' + formatted_name + '.model'
     final_model.save_model(file)
     print("Model created")
 
@@ -103,11 +101,11 @@ def create_model_gates(machine_name):
     :type machine_name: String
     :return: None
     """
-    formated_name = machine_name.split("_")[1].capitalize()
+    formatted_name = machine_name.split("_")[1].capitalize()
 
     columns = ['gate_error_one_qubit', 'gate_error_two_qubit', 'n_qubits', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates', 'jensen-error']
 
-    dataset = pd.read_csv('../../backend/dataframes_xgboost/dataframe_perceptron_gates_' + formated_name + '.csv', names=columns)
+    dataset = pd.read_csv('../../backend/dataframes_xgboost/dataframe_perceptron_gates_' + formatted_name + '.csv', names=columns)
     dataset = dataset[columns]
 
     for column in columns:
@@ -154,7 +152,7 @@ def create_model_gates(machine_name):
     rmse = mean_squared_error(y_test, predictions, squared=False)
     print("RMSE:", rmse)
 
-    file = '../../backend/models_xgboost/xgboost_gate_model_' + formated_name+ '.model'
+    file = '../../backend/models_xgboost/xgboost_gate_model_' + formatted_name + '.model'
     final_model.save_model(file)
     print("Model created")
 
@@ -182,9 +180,9 @@ def predict_qubit(machine_name, data):
     :return: The predicted value
     :rtype: list(float)
     """
-    formated_name = machine_name.split("_")[1].capitalize()
+    formatted_name = machine_name.split("_")[1].capitalize()
 
-    file = '../../backend/models_xgboost/xgboost_qubit_model_' + formated_name + '.model'
+    file = '../../backend/models_xgboost/xgboost_qubit_model_' + formatted_name + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 
@@ -209,9 +207,9 @@ def predict_gate(machine_name, data):
     :return: The predicted value
     :rtype: list(float)
     """
-    formated_name = machine_name.split("_")[1].capitalize()
+    formatted_name = machine_name.split("_")[1].capitalize()
 
-    file = '../../backend/models_xgboost/xgboost_gate_model_' + formated_name + '.model'
+    file = '../../backend/models_xgboost/xgboost_gate_model_' + formatted_name + '.model'
     xgb_model = xgb.Booster()
     xgb_model.load_model(file)
 

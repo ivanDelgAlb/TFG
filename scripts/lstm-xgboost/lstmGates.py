@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 
-
 def preprocess_data(file_path, window_size):
     df = pd.read_csv(file_path)
 
@@ -27,7 +26,6 @@ def preprocess_data(file_path, window_size):
     return X, y
 
 
-
 def create_model(X_train, y_train, X_test, y_test, model_path):
     model = Sequential([
         LSTM(100, input_shape=(X_train.shape[1], X_train.shape[2])),
@@ -36,7 +34,6 @@ def create_model(X_train, y_train, X_test, y_test, model_path):
     model.compile(loss='mse', optimizer='adam')
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
     model.save(model_path)
-
 
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
@@ -59,8 +56,8 @@ def predict_future(model_path, data_file, window_size, future_date):
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
-    df_sin_fechas = df.drop(columns=['date'])
-    df_normalizado = pd.DataFrame(df_sin_fechas, columns=df_sin_fechas.columns)
+    df_without_dates = df.drop(columns=['date'])
+    normalized_df = pd.DataFrame(df_without_dates, columns=df_without_dates.columns)
 
     current_date = datetime.now()
 
@@ -68,7 +65,7 @@ def predict_future(model_path, data_file, window_size, future_date):
 
     num_steps = int((future_date - current_date).total_seconds() / (2 * 3600))
 
-    current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date, window_size)
+    current_input_sequence = get_sequence_for_date(df, normalized_df, current_date, window_size)
     predictions = []
     for _ in range(num_steps):
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
@@ -90,8 +87,8 @@ future_date = '2024-05-24'
 
 for machine in machines:
 
-    data_file = f"backend/dataframes_gates/dataframe_Gates{machine}.csv"
-    model_path = f"backend/models_lstm/model_{machine}.keras"
+    data_file = f"../../backend/dataframes_gates/dataframe_Gates{machine}.csv"
+    model_path = f"../../backend/models_lstm/model_{machine}.keras"
 
     X, y = preprocess_data(data_file, window_size)
 

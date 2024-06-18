@@ -18,15 +18,15 @@ def preprocess_data(scaler_path, file_path, window_size):
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
-    fechas = df['date']
-    df_sin_fechas = df.drop(columns=['date'])
+    dates = df['date']
+    df_without_dates = df.drop(columns=['date'])
     scaler = joblib.load(scaler_path)
-    df_normalizado = scaler.fit_transform(df_sin_fechas)
+    df_normalized = scaler.fit_transform(df_without_dates)
 
-    df_normalizado = pd.DataFrame(df_normalizado, columns=df_sin_fechas.columns)
-    df_normalizado['date'] = fechas
+    df_normalized = pd.DataFrame(df_normalized, columns=df_without_dates.columns)
+    df_normalized['date'] = dates
 
-    (df_normalizado)
+    print(df_normalized)
 
     def create_sequences(data, window_size):
         X, y = [], []
@@ -35,9 +35,10 @@ def preprocess_data(scaler_path, file_path, window_size):
             y.append(data[i + window_size])
         return np.array(X), np.array(y)
 
-    X, y = create_sequences(df_normalizado[['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']].values, window_size)
+    X, y = create_sequences(df_normalized[['T1', 'T2', 'probMeas0Prep1', 'probMeas1Prep0', 'readout_error']].values, window_size)
 
     return X, y, scaler
+
 
 def create_model(X_train, y_train, X_test, y_test, model_path):
     model = Sequential([
@@ -47,6 +48,7 @@ def create_model(X_train, y_train, X_test, y_test, model_path):
     model.compile(loss='mse', optimizer='adam')
     model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
     model.save(model_path)
+
 
 def get_sequence_for_date(df, df_normalized, date, window_size):
     index_of_date = df.index[df['date'] == date].tolist()
@@ -60,6 +62,7 @@ def get_sequence_for_date(df, df_normalized, date, window_size):
 
     return sequence
 
+
 def predict_future(scaler_path, model_path, data_file, window_size, future_date):
     model = load_model(model_path)
 
@@ -70,9 +73,9 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values(by='date')
 
-    df_sin_fechas = df.drop(columns=['date'])
+    df_without_dates = df.drop(columns=['date'])
     scaler = joblib.load(scaler_path)
-    df_normalizado = pd.DataFrame(scaler.fit_transform(df_sin_fechas), columns=df_sin_fechas.columns)
+    normalized_dataframe = pd.DataFrame(scaler.fit_transform(df_without_dates), columns=df_without_dates.columns)
 
     current_date = datetime.now()
 
@@ -80,11 +83,11 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
 
     num_steps = int((future_date - current_date).total_seconds() / (2 * 3600))
 
-    current_input_sequence = get_sequence_for_date(df, df_normalizado, current_date, window_size)
+    current_input_sequence = get_sequence_for_date(df, normalized_dataframe, current_date, window_size)
     predictions = []
     for _ in range(num_steps):
         prediction = model.predict(np.expand_dims(current_input_sequence, axis=0))
-        (prediction)
+        print(prediction)
         predictions.append(prediction)
 
         current_input_sequence = np.concatenate([current_input_sequence[1:], prediction], axis=0)
@@ -103,15 +106,16 @@ def predict_future(scaler_path, model_path, data_file, window_size, future_date)
 
     return qubits_errors_predictions
 
+
 machines = ["Brisbane", "Kyoto", "Osaka"]
 window_size = 10
-future_date = '2024-05-30' 
+future_date = '2024-05-30'
 
 for machine in machines:
-    (machine)
-    data_file = "backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
-    model_path = "backend/models_lstm_qubits/model_" + machine + ".keras"
-    scaler_path = 'backend/dataframes_neuralProphet/scalerT1' + machine + '.pkl'
+    print(machine)
+    data_file = "../../backend/dataframes_neuralProphet/dataframeT1" + machine + ".csv"
+    model_path = "../../backend/models_lstm_qubits/model_" + machine + ".keras"
+    scaler_path = '../../backend/dataframes_neuralProphet/scalerT1' + machine + '.pkl'
 
     X, y, scaler = preprocess_data(scaler_path, data_file, window_size)
 

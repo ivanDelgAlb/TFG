@@ -135,7 +135,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-    ("Calculating qubit configuration error")
+    print("Calculating qubit configuration error")
     circuit.measure_all()
 
     shots = 30
@@ -150,7 +150,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
-    ("Backend with noise executed")
+    print("Backend with noise executed")
 
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)
@@ -159,13 +159,13 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_ideal_machine = job_ideal_machine.result().get_counts()
 
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
-    ("Ideal backend executed")
+    print("Ideal backend executed")
 
     kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    ("Kullback-Leibler divergence calculated")
+    print("Kullback-Leibler divergence calculated")
 
     jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    ("Jensen-Shannon divergence calculated")
+    print("Jensen-Shannon divergence calculated")
 
     return kullback_divergence, jensen_divergence
 
@@ -184,10 +184,10 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     :return: A tuple that contains the Kullback-Leibler divergence and the Jensen-Shannon divergence
     :rtype: tuple(float, float)
     """
-    ("Calculating gate configuration error")
+    print("Calculating gate configuration error")
     circuit.measure_all()
 
-    shots = 1000
+    shots = 30
 
     noise_model = NoiseModel.from_backend(backend)
 
@@ -198,7 +198,7 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
-    ("Backend with noise executed")
+    print("Backend with noise executed")
 
     noise_model.reset()
     ideal_machine = AerSimulator.from_backend(real_backend)
@@ -207,13 +207,13 @@ def calculate_configuration_gate_error(circuit, backend, error_one_qubit_gates, 
     counts_ideal_machine = job_ideal_machine.result().get_counts()
 
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
-    ("Ideal backend executed")
+    print("Ideal backend executed")
 
     kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    ("Kullback-Leibler divergence calculated")
+    print("Kullback-Leibler divergence calculated")
 
     jensen_divergence = calculate_jensen_divergence(probabilities_real_machine, probabilities_ideal_machine)
-    ("Jensen-Shannon divergence calculated")
+    print("Jensen-Shannon divergence calculated")
 
     return kullback_divergence, jensen_divergence
 

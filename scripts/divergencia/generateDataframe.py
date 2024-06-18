@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import os
 
+
 def extract_dataframe(backend_name):
     name = backend_name.split("_")[1].capitalize()
 
@@ -61,7 +62,7 @@ def extract_dataframe(backend_name):
     # final_qubits_data.to_csv(qubits_csv_file, index=False)
     final_gates_data.to_csv(gates_csv_file, index=False)
 
-    (f"Archivos CSV creados: {qubits_csv_file}, {gates_csv_file}")
+    print(f"CSV files created: {qubits_csv_file}, {gates_csv_file}")
 
 
 extract_dataframe("ibm_kyoto")

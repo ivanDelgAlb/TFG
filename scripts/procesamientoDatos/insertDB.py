@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-mongo_uri_origen = os.getenv("MONGO_URI_MARINA_PART1")
-mongo_uri_destino = os.getenv("MONGO_URI_IVAN_PART1")
+origin_mongo_uri = os.getenv("MONGO_URI_MARINA_PART1")
+destination_mongo_uri = os.getenv("MONGO_URI_IVAN_PART1")
 
 mongo_uri_part1 = os.getenv("MONGO_URI_MARINA_PART1")
 client_part1 = MongoClient(mongo_uri_part1)
@@ -33,7 +33,7 @@ db_part3 = client_part3["TFG"]
 auth_url = "https://api.github.com/user"
 auth_response = requests.get(auth_url, auth=(github_username, github_token))
 auth_response.raise_for_status()
-print("Autenticación exitosa")
+print("Authentication completed")
 
 repo_contents_url = f"https://api.github.com/repos/Zakaria-Dahi/TFG_UMA_2023_2204/contents/{data_directory}"
 contents_response = requests.get(repo_contents_url, auth=(github_username, github_token))
@@ -50,38 +50,38 @@ for file in files:
         response.raise_for_status()
         json_data = response.json()
 
-        fecha_str = file.split(".")[0].replace("_", " ")
+        str_date = file.split(".")[0].replace("_", " ")
 
-        fecha_objeto = datetime.strptime(fecha_str, "%Y-%m-%d %H-%M-%S")
+        object_date = datetime.strptime(str_date, "%Y-%m-%d %H-%M-%S")
 
-        fecha_formateada = fecha_objeto.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_date = object_date.strftime("%Y-%m-%d %H:%M:%S")
 
-        for documento in json_data:
-            documento['date'] = fecha_formateada
+        for document in json_data:
+            document['date'] = formatted_date
         
-        if (fecha_objeto < datetime.strptime("2024-04-15 00-00-00", "%Y-%m-%d %H-%M-%S")) :       
+        if object_date < datetime.strptime("2024-04-15 00-00-00", "%Y-%m-%d %H-%M-%S"):
             collection = db_part1[collection_name]  
-            if(collection.find_one({"date": fecha_formateada}) == None) :  
+            if collection.find_one({"date": formatted_date}) is None:
                 collection.insert_many(json_data)
-                print(f"Datos insertados con éxito para el archivo: {file}")
+                print(f"Data inserted for file: {file}")
             else: 
-                print("Ya existe ese fichero")
-        elif (fecha_objeto < datetime.strptime("2024-05-28 00-00-00", "%Y-%m-%d %H-%M-%S")) : 
+                print("File already exists")
+        elif object_date < datetime.strptime("2024-05-28 00-00-00", "%Y-%m-%d %H-%M-%S"):
             collection = db_part2[collection_name]
-            if(collection.find_one({"date": fecha_formateada}) == None) : 
+            if collection.find_one({"date": formatted_date}) is None:
                 collection.insert_many(json_data)
-                print(f"Datos insertados con éxito para el archivo: {file}")
+                print(f"Data inserted for file: {file}")
             else: 
-                print("Ya existe ese fichero")
+                print("File already exists")
         else:
             collection = db_part3[collection_name]
-            if(collection.find_one({"date": fecha_formateada}) == None) : 
+            if collection.find_one({"date": formatted_date}) is None:
                 collection.insert_many(json_data)
-                print(f"Datos insertados con éxito para el archivo: {file}")
+                print(f"Data inserted for file: {file}")
             else: 
-                print("Ya existe ese fichero")
+                print("File already exists")
 
     except Exception as e:
         print(f"Error: {e}")
 
-print("Proceso completado.")
+print("Process completed.")

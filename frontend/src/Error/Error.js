@@ -44,11 +44,11 @@ function Error() {
   const [error, setError] = useState(null);
   const [showCalibrationGraphs, setShowCalibrationGraphs] = useState(false);
 
-  const [nQubits, setNQubits] = useState(null); 
-  const [tGates, setTGates] = useState(null); 
-  const [phaseGates, setPhaseGates] = useState(null); 
-  const [hGates, setHGates] = useState(null); 
-  const [cnotGates, setCnotGates] = useState(null); 
+  const [nQubits, setNQubits] = useState(""); 
+  const [tGates, setTGates] = useState(""); 
+  const [phaseGates, setPhaseGates] = useState(""); 
+  const [hGates, setHGates] = useState(""); 
+  const [cnotGates, setCnotGates] = useState(""); 
   const [model, setModel] = useState("");
 
 
@@ -211,7 +211,6 @@ function Error() {
 
       if (deployment !== 'localhost') url = urlDesploy
 
-      console.log(deployment)
       const response = await fetch(url + 'predictError', {
         method: 'POST',
         headers: {
@@ -234,7 +233,6 @@ function Error() {
       const hasValidPredictions = Object.values(data).some(arr => Array.isArray(arr) && arr.length > 0);
 
       if (data) {
-        console.log(data)
         setPrediction(data);
         setError(null);
         setShowCalibrationGraphs(true);
@@ -242,7 +240,7 @@ function Error() {
         setError('No valid predictions found');
       }
     } catch (error) {
-      console.error('Error fetching prediction:', error);
+      setError("Error fetching prediction")
     } finally {
       setLoading(false);
     }

@@ -203,7 +203,6 @@ function Calibration() {
 
       if (deployment !== 'localhost') url = urlDesploy
 
-      console.log(deployment)
       const response = await fetch( url + 'predictCalibration/', {
         method: 'POST',
         body: formData
@@ -214,20 +213,16 @@ function Calibration() {
       }
 
       const data = await response.json();
-      console.log(data)
       if (data != null) {
         setError(null);
-        console.log(data);
     
         let text = '';
     
         if (data['Perceptron']) {
-          console.log("ENTRO")
             text += `Prediction Multilayer Perceptron: ${data['Perceptron'][0]['divergence']}`;
         }
     
         if (data['XgBoost']) {
-          console.log("ENTRO")
             if (text !== '') {
                 text += '<br>'; // Agregar un salto de línea si hay texto previo
             }
@@ -253,7 +248,6 @@ function Calibration() {
           icon: 'error',
         });
       }else{
-        console.error('Error fetching prediction:', error);
         MySwal.fire({
           title: 'Error!',
           text: 'An unexpected error occurred',

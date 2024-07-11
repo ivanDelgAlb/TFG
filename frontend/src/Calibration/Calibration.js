@@ -122,12 +122,27 @@ function Calibration() {
     }
   };
 
-  const popup = async () => {
-    MySwal.fire({
-      title: 'Prediction Result',
-      text: `Prediction: ${"HELO"}`,
-      icon: 'info',
-    });
+   const popup = async () => {
+    let text = '';
+    
+    if (prediction['Perceptron']) {
+        text += `Prediction Multilayer Perceptron: ${prediction['Perceptron'][0]['divergence']}`;
+    }
+
+    if (prediction['XgBoost']) {
+        if (text !== '') {
+            text += '<br>'; // Agregar un salto de línea si hay texto previo
+        }
+        text += `Prediction XGBoost: ${prediction['XgBoost'][0]['divergence']}`;
+    }
+
+    if (text !== '') {
+        MySwal.fire({
+            title: 'Prediction Result',
+            html: text,
+            icon: 'info',
+        });
+      }
   }
 
   const handleButtonClick = async () => {
@@ -235,7 +250,7 @@ function Calibration() {
                 html: text,
                 icon: 'info',
             });
-            setPrediction(data.prediction);
+            setPrediction(data);
         } else {
             setError('There was not any valid prediction');
         }}

@@ -48,7 +48,8 @@ def predict(machine_name, data, type):
     # Normalizar las columnas especificadas
     X = df.drop(['n_qubits', 'depth', 't_gates', 'phase_gates', 'h_gates', 'cnot_gates'], axis=1)
 
-    X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    #X_normalizado = X.apply(lambda fila: (fila - fila.min()) / (fila.max() - fila.min()), axis=1)
+    X_normalizado = X
 
     X_normalizado['n_qubits'] = df['n_qubits']
     X_normalizado['depth'] = df['depth']

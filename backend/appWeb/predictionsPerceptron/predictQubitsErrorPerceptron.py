@@ -20,7 +20,8 @@ def predict_qubits_error(predictions, machine_name, type):
         if type == 'calibration': 
             columns_to_normalize = ["T1", "T2", "Prob0", "Prob1", "Error"]
 
-            normalized_df = normalized_data[columns_to_normalize].apply(lambda row: (row - row.min()) / (row.max() - row.min()), axis=1)
+            #normalized_df = normalized_data[columns_to_normalize].apply(lambda row: (row - row.min()) / (row.max() - row.min()), axis=1)
+            normalized_df = normalized_data[columns_to_normalize]
 
             normalized_data[["T1", "T2", "Prob0", "Prob1", "Error"]] = normalized_df
             

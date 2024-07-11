@@ -150,6 +150,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_real_machine = job_real_machine.result().get_counts(0)
 
     probabilities_real_machine = {state: counts_real_machine[state] / shots for state in counts_real_machine}
+    print(probabilities_real_machine)
     print("Backend with noise executed")
 
     noise_model.reset()
@@ -159,6 +160,7 @@ def calculate_configuration_qubit_error(circuit, backend, T1, T2, prob_meas0_pre
     counts_ideal_machine = job_ideal_machine.result().get_counts()
 
     probabilities_ideal_machine = {state: counts_ideal_machine[state] / shots for state in counts_ideal_machine}
+    print(probabilities_ideal_machine)
     print("Ideal backend executed")
 
     kullback_divergence = calculate_kullback_divergence(probabilities_real_machine, probabilities_ideal_machine)
@@ -279,3 +281,13 @@ gate_kullback_error, gate_jensen_error = calculate_configuration_gate_error(circ
 ("Kullback error on gates: " + str(gate_kullback_error))
 ("Jensen error on gates: " + str(gate_jensen_error))
 '''
+
+from generateCircuit import generate_circuit
+from qiskit_ibm_runtime import QiskitRuntimeService
+
+circuit = generate_circuit(5, 5, 0.3)
+service = QiskitRuntimeService(channel='ibm_quantum',
+                                   token='8d50b217d04c7c94422e766dcdf54f2f3ccee3e61d34eafdb2f3c261211827697eeee188170e23fd9978e53673e17832185012c3c9ca7c20a5bcfdc4d21d1d5d')
+fake_backend_brisbane = service.get_backend('ibm_brisbane')
+fake_date = '2024-02-27T19:38:28'
+qubit_kullback_error, qubit_jensen_error = calculate_configuration_qubit_error(circuit, fake_backend_brisbane, 225.34260521453552, 145.04435990153732, 0.023973228346456682, 0.024713385826771656, 0.024343307086614172)

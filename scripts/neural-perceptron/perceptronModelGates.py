@@ -19,12 +19,12 @@ def create_model(machine, X_train, X_test, y_train, y_test):
     print(f"MSE ({machine}):", mse)
     print(f"MAE ({machine}):", mae)
 
-    directory = '../../backend/models_perceptron/model_gates_' + machine + '.h5'
+    directory = 'backend/models_perceptron/model_gates_' + machine + '.h5'
     model.save(directory)
 
 
 def predict(machine, X_test, y_test):
-    directory = '../../backend/models_perceptron/model_gates_' + machine + '.h5'
+    directory = 'backend/models_perceptron/model_gates_' + machine + '.h5'
     model = load_model(directory)
     reconstructed_data_X = model.predict(X_test)
 
@@ -36,9 +36,9 @@ def predict(machine, X_test, y_test):
         print("\n")
 
 
-machines = ["Kyoto"]
+machines = ["Brisbane", "Kyoto", "Osaka"]
 for machine in machines:
-    directory = '../../backend/dataframes_perceptron/dataframe_perceptron_gates_' + machine + ".csv"
+    directory = 'backend/dataframes_perceptron/dataframe_perceptron_gates_' + machine + ".csv"
     dataFrame = pd.read_csv(directory)
 
     filtered_rows = dataFrame[(dataFrame['jensen-error'].notna())]
